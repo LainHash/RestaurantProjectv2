@@ -19,12 +19,6 @@ namespace Restaurant.Infrastructure.Configurations.Personnel
             builder.Property(x => x.PublicId)
                 .IsRequired();
 
-            builder.Ignore(x => x.EmployeeCode);
-
-            builder.Property(x => x.EmployeeNumber)
-                .HasDefaultValueSql(
-                    "nextval('\"EmployeeCodeSequence\"')");
-
             builder.Property(x => x.Status)
                 .HasConversion<string>()
                 .IsRequired();

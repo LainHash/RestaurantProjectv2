@@ -20,12 +20,6 @@ namespace Restaurant.Infrastructure.Configurations.Guest
             builder.Property(x => x.PublicId)
                 .IsRequired();
 
-            builder.Ignore(x => x.CustomerCode);
-
-            builder.Property(x => x.CustomerNumber)
-                .HasDefaultValueSql(
-                    "nextval('\"CustomerCodeSequence\"')");
-
             builder.HasIndex(x => x.UserId)
                 .IsUnique();
 

@@ -6,6 +6,7 @@ namespace Restaurant.Domain.Entities.Personnel
     {
         public string Name { get; private set; } = null!;
         public string? Description { get; private set; }
+        public string PositionCode { get; private set; } = null!;
 
         public int DepartmentId { get; private set; }
         public Department Department { get; private set; } = null!;

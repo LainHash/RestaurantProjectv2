@@ -26,6 +26,9 @@ namespace Restaurant.Infrastructure.Configurations.Personnel
             builder.HasIndex(x => x.Name)
                 .IsUnique();
 
+            builder.HasIndex(x => x.PositionCode)
+                .IsUnique();
+
             builder.Property(x => x.Description)
                 .HasMaxLength(1000);
 

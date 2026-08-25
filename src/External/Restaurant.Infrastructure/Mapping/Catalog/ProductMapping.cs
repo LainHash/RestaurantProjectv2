@@ -1,0 +1,28 @@
+using AutoMapper;
+using Restaurant.Contract.DTOs.Catalog.Products;
+using Restaurant.Domain.Entities.Catalog;
+using Restaurant.Domain.Enums;
+
+namespace Restaurant.Infrastructure.Mapping.Catalog
+{
+    internal class ProductMapping : Profile
+    {
+        public ProductMapping()
+        {
+            CreateMap<Product, ProductResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.ProductPrice.UnitPrice))
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand!.Name))
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.Name))
+                .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit.Symbol))
+                .ForMember(dest => dest.PrimaryImage, opt => opt.MapFrom(src => src.ProductImages
+                                                                    .First(x => x.ProductId == src.Id && x.IsPrimary)));
+
+            CreateMap<CreateProductRequest, Product>()
+                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
+
+            CreateMap<UpdateProductRequest, Product>()
+                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
+        }
+    }
+}

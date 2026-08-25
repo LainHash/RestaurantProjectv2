@@ -1,6 +1,6 @@
-﻿using Restaurant.Domain.Entities.Commerce;
+﻿using NanoidDotNet;
+using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Identity;
-using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Models;
 
@@ -8,10 +8,7 @@ namespace Restaurant.Domain.Entities.Guest
 {
     public partial class Customer : SoftDeletableEntity
     {
-        public long CustomerNumber { get; private set; }
-
-        public string CustomerCode =>
-            $"CUS-{CustomerNumber:D6}";
+        public string CustomerCode { get; private set; } = Nanoid.Generate(size: 10);
 
         public int UserId { get; private set; }
 

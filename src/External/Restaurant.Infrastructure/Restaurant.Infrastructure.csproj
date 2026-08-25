@@ -38,7 +38,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\Core\Restaurant.Application\Restaurant.Application.csproj" />
-		<ProjectReference Include="..\..\Core\Restaurant.Contract\Restaurant.Contract.csproj" />
 		<ProjectReference Include="..\..\Core\Restaurant.Domain\Restaurant.Domain.csproj" />
 	</ItemGroup>
 

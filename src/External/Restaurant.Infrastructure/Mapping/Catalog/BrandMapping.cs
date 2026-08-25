@@ -1,0 +1,19 @@
+using AutoMapper;
+using Restaurant.Contract.DTOs.Catalog.Brands;
+using Restaurant.Domain.Entities.Catalog;
+
+namespace Restaurant.Infrastructure.Mapping.Catalog
+{
+    internal class BrandMapping : Profile
+    {
+        public BrandMapping()
+        {
+            CreateMap<Brand, BrandResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<CreateBrandRequest, Brand>();
+
+            CreateMap<UpdateBrandRequest, Brand>();
+        }
+    }
+}

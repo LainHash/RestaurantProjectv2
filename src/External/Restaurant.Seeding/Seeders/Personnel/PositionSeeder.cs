@@ -20,10 +20,10 @@ namespace Restaurant.Seeding.Seeders.Personnel
                 return;
 
             var departments = await context.Departments
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.DepartmentCode })
                 .ToListAsync();
             var departmentsDictionary = departments.ToDictionary(
-                x => x.Name,
+                x => x.DepartmentCode,
                 StringComparer.OrdinalIgnoreCase);
 
             var records =
@@ -31,8 +31,8 @@ namespace Restaurant.Seeding.Seeders.Personnel
 
             foreach (var record in records)
             {
-                if (!departmentsDictionary.TryGetValue(record.DepartmentName.ToLower(), out var department))
-                    throw new Exception($"Category '{record.DepartmentName}' not found.");
+                if (!departmentsDictionary.TryGetValue(record.DepartmentCode.ToLower(), out var department))
+                    throw new Exception($"Category '{record.DepartmentCode}' not found.");
 
                 var position = _mapper.Map<Position>(record)
                     .SetDepartment(department.Id);

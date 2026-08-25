@@ -1,7 +1,6 @@
 <Solution>
   <Folder Name="/Core/">
     <Project Path="src/Core/Restaurant.Application/Restaurant.Application.csproj" />
-    <Project Path="src/Core/Restaurant.Contract/Restaurant.Contract.csproj" />
     <Project Path="src/Core/Restaurant.Domain/Restaurant.Domain.csproj" />
   </Folder>
   <Folder Name="/External/">

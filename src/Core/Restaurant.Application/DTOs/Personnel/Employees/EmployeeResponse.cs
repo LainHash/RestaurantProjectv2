@@ -13,7 +13,7 @@ namespace Restaurant.Contract.DTOs.Personnel.Employees
 
         public string? AvatarUrl { get; set; }
 
-        public string PositionName { get; set; } = null!;
+        public string PositionCode { get; set; } = null!;
 
         public DateTime HireDate { get; set; }
         public DateTime? TerminationDate { get; set; }

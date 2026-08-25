@@ -4,5 +4,6 @@ namespace Restaurant.Seeding.DataRecords.Personnel
     {
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
+        public string DepartmentCode { get; set; } = null!;
     }
 }

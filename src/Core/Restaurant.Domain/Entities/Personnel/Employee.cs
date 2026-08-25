@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Identity;
+﻿using NanoidDotNet;
+using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
@@ -7,10 +8,7 @@ namespace Restaurant.Domain.Entities.Personnel
 {
     public partial class Employee : SoftDeletableEntity
     {
-        public long EmployeeNumber { get; private set; }
-
-        public string EmployeeCode =>
-            $"EMP-{EmployeeNumber:D6}";
+        public string EmployeeCode { get; private set; } = Nanoid.Generate(size: 10);
 
         public int UserId { get; private set; }
         public User User { get; private set; } = null!;
