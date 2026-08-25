@@ -363,5 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 
 .env
-src/External/Restaurant.Infrastruture/Migrations
+src/External/Restaurant.Infrastructure/Migrations
 *.xlsx#
