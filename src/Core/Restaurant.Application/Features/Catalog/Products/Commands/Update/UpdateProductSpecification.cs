@@ -1,0 +1,18 @@
+﻿using Restaurant.Domain.Entities.Catalog;
+using Restaurant.Domain.Specifications;
+
+namespace Restaurant.Application.Features.Catalog.Products.Commands.Update
+{
+    public class UpdateProductSpecification
+        : BaseSpecification<Product>
+    {
+        public UpdateProductSpecification(UpdateProductCommand command)
+        {
+            Criteria = p => p.PublicId == command.Id;
+
+            AddInclude(p => p.ProductCategory);
+            AddInclude(p => p.Brand!);
+            AddInclude(p => p.ProductPrice);
+        }
+    }
+}

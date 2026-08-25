@@ -1,0 +1,47 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Restaurant.Application.Services.Business;
+using Restaurant.Domain.Entities.Pricing;
+using Restaurant.Infrastructure.Context;
+using Restaurant.Seeding.DataRecords.Pricing;
+
+namespace Restaurant.Seeding.Seeders.Pricing
+{
+    internal class IngredientPriceSeeder(
+        IDataImporter importer,
+        IMapper mapper) : IDataSeeder
+    {
+        private readonly IDataImporter _importer = importer;
+        private readonly IMapper _mapper = mapper;
+
+        public async Task SeedAsync(RestaurantDbContext context)
+        {
+            if (await context.IngredientPrices.AnyAsync())
+                return;
+
+            var ingredients = await context.Ingredients
+                .Select(x => new { x.Id, x.Name })
+                .ToListAsync();
+
+            var ingredientsDictionary = ingredients.ToDictionary(
+                x => x.Name.ToLower(),
+                StringComparer.OrdinalIgnoreCase);
+
+            var records =
+                _importer.Read<IngredientPriceRecord>("IngredientPrices");
+
+            foreach (var record in records)
+            {
+                if (!ingredientsDictionary.TryGetValue(record.IngredientName, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientName}' not found.");
+
+                var price = _mapper.Map<IngredientPrice>(record)
+                    .SetIngredient(ingredient.Id);
+
+                context.IngredientPrices.Add(price);
+            }
+
+            await context.SaveChangesAsync();
+        }
+    }
+}
