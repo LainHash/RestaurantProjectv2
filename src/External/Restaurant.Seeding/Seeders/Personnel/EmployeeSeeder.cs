@@ -33,6 +33,13 @@ namespace Restaurant.Seeding.Seeders.Personnel
                 x => x.Name,
                 StringComparer.OrdinalIgnoreCase);
 
+            var branches = await context.Branches
+                .Select(x => new { x.Id, x.Code })
+                .ToListAsync();
+            var branchDictionary = branches.ToDictionary(
+                x => x.Code,
+                StringComparer.OrdinalIgnoreCase);
+
             var records =
                 _importer.Read<EmployeeRecord>("Employees");
 
@@ -44,9 +51,13 @@ namespace Restaurant.Seeding.Seeders.Personnel
                 if (!positionsDictionary.TryGetValue(record.PositionName.ToLower(), out var position))
                     throw new Exception($"Position '{record.PositionName}' not found.");
 
+                if (!branchDictionary.TryGetValue(record.BranchCode, out var branch))
+                    throw new Exception($"Branch '{record.BranchCode}' not found.");
+
                 var employee = _mapper.Map<Employee>(record)
                     .SetUser(user.Id)
-                    .SetPosition(position.Id);
+                    .SetPosition(position.Id)
+                    .SetBranch(branch.Id);
 
                 context.Employees.Add(employee);
             }

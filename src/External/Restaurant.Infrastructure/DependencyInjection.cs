@@ -103,6 +103,7 @@ namespace Restaurant.Infrastructure
             services.AddScoped<IRecipeService, RecipeService>();
 
             services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IOtpVerificationService, OtpVerificationService>();
             services.AddScoped<IPersonalProfileService, PersonalProfileService>();

@@ -74,7 +74,6 @@ namespace Restaurant.Infrastructure.Services.Auth
             var token = _jwtProvider.GenerateToken(user.PublicId, user.UserName, user.Email, roleName);
 
             var response = new AuthenticationResponse(user, token);
-
             return Result<AuthenticationResponse>
                 .Succeed(response, "Login successfully.");
         }

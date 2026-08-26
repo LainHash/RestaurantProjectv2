@@ -8,7 +8,7 @@ namespace Restaurant.Domain.Entities.Guest
 {
     public partial class Customer : SoftDeletableEntity
     {
-        public string CustomerCode { get; private set; } = Nanoid.Generate(size: 10);
+        public string CustomerCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",20);
 
         public int UserId { get; private set; }
 

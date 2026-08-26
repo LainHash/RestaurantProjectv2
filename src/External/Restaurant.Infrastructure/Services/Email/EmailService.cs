@@ -21,8 +21,10 @@ namespace Restaurant.Infrastructure.Services.Email
             _logger = logger;
         }
 
-        public async Task
-            SendEmailAsync(string to, EmailMessage message, CancellationToken cancellationToken = default)
+        public async Task SendEmailAsync(
+            string to,
+            EmailMessage message,
+            CancellationToken cancellationToken = default)
         {
             using var client = new SmtpClient(_settings.SmtpServer, _settings.SmtpPort)
             {

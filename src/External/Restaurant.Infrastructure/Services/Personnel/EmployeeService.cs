@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Restaurant.Application.Features.Personnel.Employees.Commands.Create;
 using Restaurant.Application.Features.Personnel.Employees.Queries.GetAll;
 using Restaurant.Application.Features.Personnel.Employees.Queries.GetById;
 using Restaurant.Application.Services.Business;
@@ -54,6 +55,13 @@ namespace Restaurant.Infrastructure.Services.Personnel
             var response = _mapper.Map<EmployeeResponse>(employee);
             return Result<EmployeeResponse>
                 .Succeed(response, Success<Employee>.Retrieved);
+        }
+
+        public Task<Result<EmployeeResponse>> CreateAsync(
+            CreateEmployeeCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }

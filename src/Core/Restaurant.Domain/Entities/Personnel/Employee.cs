@@ -1,6 +1,7 @@
 ﻿using NanoidDotNet;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Entities.Storage;
+using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
@@ -8,13 +9,16 @@ namespace Restaurant.Domain.Entities.Personnel
 {
     public partial class Employee : SoftDeletableEntity
     {
-        public string EmployeeCode { get; private set; } = Nanoid.Generate(size: 10);
+        public string EmployeeCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
         public int UserId { get; private set; }
         public User User { get; private set; } = null!;
 
         public int PositionId { get; private set; }
         public Position Position { get; private set; } = null!;
+
+        public int BranchId { get; private set; }
+        public Branch Branch { get; private set; } = null!;
 
         public DateTime HireDate { get; private set; }
         public DateTime? TerminationDate { get; private set; }
@@ -44,6 +48,12 @@ namespace Restaurant.Domain.Entities.Personnel
         public Employee SetAvatar(int imageId)
         {
             AvatarImageId = imageId;
+            return this;
+        }
+
+        public Employee SetBranch(int branchId)
+        {
+            BranchId = branchId;
             return this;
         }
         public Employee ClearAvatar()

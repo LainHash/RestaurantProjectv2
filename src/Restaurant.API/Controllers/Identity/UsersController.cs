@@ -2,10 +2,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
+using Restaurant.Application.DTOs.Identity.Users;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.CompleteProfile;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
+using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
 using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using System.Security.Claims;
@@ -65,6 +67,17 @@ namespace Restaurant.API.Controllers.Identity
             }
 
             var command = new UpdatePersonalProfileCommand(userId, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("create-employee-account")]
+        public async Task<IActionResult> CreateForEmployee(
+            [FromBody] CreateUsersForEmployeeRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateUsersForEmployeeCommand(body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

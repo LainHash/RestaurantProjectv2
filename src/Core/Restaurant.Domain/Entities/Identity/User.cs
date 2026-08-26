@@ -24,6 +24,20 @@ namespace Restaurant.Domain.Entities.Identity
     {
         public User() { }
 
+        public User(string userName, string email, string passwordHash, int roleId, bool isActive)
+        {
+            UserName = userName;
+            Email = email;
+            PasswordHash = passwordHash;
+            RoleId = roleId;
+            IsActive = isActive;
+        }
+
+        public static User CreateForEmployee(string userName, string email, string passwordHash, int roleId)
+        {
+            return new User(userName, email, passwordHash, roleId, true);
+        }
+
         public User SetPasswordHash(string passwordHash)
         {
             PasswordHash = passwordHash;
