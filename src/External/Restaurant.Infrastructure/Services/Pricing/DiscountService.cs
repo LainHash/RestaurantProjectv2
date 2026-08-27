@@ -27,13 +27,22 @@ namespace Restaurant.Infrastructure.Services.Pricing
             _mapper = mapper;
         }
 
-        public async Task<Result<IEnumerable<DiscountResponse>>> GetAllAsync(GetAllDiscountsSpecification specification, CancellationToken cancellationToken = default)
+        public async Task<PageResult<IEnumerable<DiscountResponse>>> GetAllAsync(
+            GetAllDiscountsSpecification specification,
+            CancellationToken cancellationToken = default)
         {
+            var totalItems = await _discountRepository.CountAsync(specification, cancellationToken);
+
             var discounts = await _discountRepository.ToListAsync(specification, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<DiscountResponse>>(discounts);
-            return Result<IEnumerable<DiscountResponse>>
-                .Succeed(response, Success<Discount>.Retrieved);
+            return PageResult<IEnumerable<DiscountResponse>>
+                .Succeed(
+                response,
+                Success<Discount>.Retrieved,
+                totalItems,
+                specification.Skip,
+                specification.Take);
         }
     }
 }

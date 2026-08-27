@@ -6,7 +6,7 @@ namespace Restaurant.Application.Services.Pricing
 {
     public interface IDiscountService
     {
-        Task<Result<IEnumerable<DiscountResponse>>> GetAllAsync(
+        Task<PageResult<IEnumerable<DiscountResponse>>> GetAllAsync(
             GetAllDiscountsSpecification specification,
             CancellationToken cancellationToken = default);
     }
