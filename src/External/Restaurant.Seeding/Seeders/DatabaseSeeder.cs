@@ -53,6 +53,8 @@ namespace Restaurant.Seeding.Seeders
 
             await SeedAsync<EmployeeSeeder>(_context);
             await SeedAsync<CustomerSeeder>(_context);
+
+            await SeedAsync<DiscountSeeder>(_context);
         }
 
         private async Task SeedAsync<TSeeder>(RestaurantDbContext context) where TSeeder : IDataSeeder

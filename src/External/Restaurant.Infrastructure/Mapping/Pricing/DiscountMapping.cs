@@ -8,7 +8,8 @@ namespace Restaurant.Infrastructure.Mapping.Pricing
     {
         public DiscountMapping()
         {
-            CreateMap<Discount, DiscountResponse>();
+            CreateMap<Discount, DiscountResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
         }
     }
 }
