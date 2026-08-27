@@ -1,21 +1,57 @@
-﻿using Restaurant.Application.Services.Business;
+﻿using AutoMapper;
+using Restaurant.Application.Features.Guest.Wallets.Queries.GetByUserId;
+using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Guest;
+using Restaurant.Contract.DTOs.Guest.Wallets;
 using Restaurant.Domain.Entities.Guest;
+using Restaurant.Domain.Models.Messages;
+using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Guest;
+using Restaurant.Domain.Repositories.Identity;
+using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Guest
 {
     internal class WalletService : IWalletService
     {
         private readonly IWalletRepository _walletRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly ICustomerRepository _customerRepository;
+
+        private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public WalletService(
             IWalletRepository walletRepository,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IUserRepository userRepository,
+            ICustomerRepository customerRepository,
+            IMapper mapper)
         {
             _walletRepository = walletRepository;
             _unitOfWork = unitOfWork;
+            _userRepository = userRepository;
+            _customerRepository = customerRepository;
+            _mapper = mapper;
+        }
+
+        public async Task<Result<WalletResponse>> GetByUserIdAsync(
+            GetWalletByUserIdQuery query,
+            CancellationToken cancellationToken = default)
+        {
+            var customer = await _customerRepository
+                .FindByUserIdWithWalletAsync(query.UserId, cancellationToken);
+            if(customer is null)
+            {
+                return Result<WalletResponse>
+                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var wallet = await GetOrCreateAsync(customer.Id, () => new Wallet(customer.Id), cancellationToken);
+
+            var response = _mapper.Map<WalletResponse>(wallet);
+            return Result<WalletResponse>
+                .Succeed(response, Success<Wallet>.Retrieved);
         }
 
         private async Task<Wallet> InitializeAsync(
@@ -30,7 +66,7 @@ namespace Restaurant.Infrastructure.Services.Guest
             return wallet;
         }
 
-        public async Task<Wallet> GetOrCreateAsync(
+        private async Task<Wallet> GetOrCreateAsync(
             int customerId,
             Func<Wallet> factory,
             CancellationToken cancellationToken = default)

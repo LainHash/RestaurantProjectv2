@@ -60,7 +60,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             }
 
             return Result
-                .Succeed($"Create {index} employee account successfully.", HttpStatusCode.Created);
+                .Succeed($"Create {index - 1} employee account successfully.", HttpStatusCode.Created);
         }
     }
 }

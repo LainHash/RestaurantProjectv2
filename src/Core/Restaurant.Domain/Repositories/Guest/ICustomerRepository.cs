@@ -9,5 +9,7 @@ namespace Restaurant.Domain.Repositories.Guest
 
         Task<Customer?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<Customer?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+        Task<Customer?> FindByUserIdWithWalletAsync(Guid userId, CancellationToken cancellationToken = default);
     }
 }

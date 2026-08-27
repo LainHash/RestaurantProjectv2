@@ -8,7 +8,8 @@ namespace Restaurant.Infrastructure.Mapping.Guest
     {
         public WalletMapping()
         {
-            CreateMap<Wallet, WalletResponse>();
+            CreateMap<Wallet, WalletResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
         }
     }
 }

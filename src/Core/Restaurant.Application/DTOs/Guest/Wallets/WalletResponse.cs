@@ -2,6 +2,7 @@
 {
     public class WalletResponse
     {
-        public decimal Balance { get; private set; }
+        public Guid Id { get; set; }
+        public decimal Balance { get; set; }
     }
 }
