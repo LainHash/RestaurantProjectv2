@@ -1,10 +1,10 @@
 ﻿using Restaurant.Domain.Enums;
-using Restaurant.Domain.Models;
 
-namespace Restaurant.Domain.Entities.Pricing
+namespace Restaurant.Application.DTOs.Pricing.Discounts
 {
-    public class Discount : AuditableEntity
+    public class DiscountResponse
     {
+        public Guid Id { get;  set; }
         public string Name { get;  set; } = string.Empty;
 
         public DiscountType Type { get;  set; }
@@ -14,6 +14,5 @@ namespace Restaurant.Domain.Entities.Pricing
 
         public DateTime StartAt { get;  set; }
         public DateTime EndAt { get;  set; }
-        public bool IsActive { get;  set; }
     }
 }
