@@ -6,9 +6,7 @@ using Restaurant.Domain.Models.Results;
 
 namespace Restaurant.Application.Features.Personnel.Employees.Commands.Create
 {
-    public record CreateEmployeeCommand(
-        CreateEmployeeRequest CreateEmployeeRequest,
-        CreatePersonalProfileRequest CreatePersonalProfileRequest)
+    public record CreateEmployeeCommand(CreateEmployeeRequest Body)
         : IRequest<Result<EmployeeResponse>>
     {
     }

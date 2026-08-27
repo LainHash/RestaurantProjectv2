@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Restaurant.Application.DTOs.Personnel.Employees;
 using Restaurant.Contract.DTOs.Personnel.Employees;
 using Restaurant.Domain.Entities.Personnel;
 
@@ -16,6 +17,11 @@ namespace Restaurant.Infrastructure.Mapping.Personnel
                 .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.Code))
                 .ForMember(dest => dest.Account, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.PersonalProfile, opt => opt.MapFrom(src => src.User.PersonalProfile));
+
+            CreateMap<CreateEmployeeRequest, Employee>()
+                .ForMember(dest => dest.UserId, opt => opt.Ignore())
+                .ForMember(dest => dest.BranchId, opt => opt.Ignore())
+                .ForMember(dest => dest.PositionId, opt => opt.Ignore());
         }
     }
 }

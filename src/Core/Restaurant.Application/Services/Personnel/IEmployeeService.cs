@@ -18,6 +18,7 @@ namespace Restaurant.Application.Services.Personnel
 
         Task<Result<EmployeeResponse>> CreateAsync(
             CreateEmployeeCommand command,
+            CreateEmployeeSpecification specification,
             CancellationToken cancellationToken = default);
     }
 }

@@ -10,6 +10,11 @@ namespace Restaurant.Infrastructure.Repositories.Personnel
     {
         private readonly RestaurantDbContext _context = context;
 
+        public async Task<Position?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Positions.FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
+        }
+
         public async Task<Position?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
         {
             return await _context.Positions.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
