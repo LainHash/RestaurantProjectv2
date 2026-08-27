@@ -67,8 +67,6 @@ namespace Restaurant.Infrastructure.Services.Guest
                 return Result<CustomerResponse>
                     .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
             }
-            
-            await _walletService.GetOrCreateAsync(customer.Id, () => new Wallet(customer.Id), cancellationToken);
 
             var response = _mapper.Map<CustomerResponse>(customer);
             return Result<CustomerResponse>

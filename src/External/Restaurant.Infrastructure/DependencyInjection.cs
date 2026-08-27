@@ -12,6 +12,7 @@ using Restaurant.Application.Services.Guest;
 using Restaurant.Application.Services.Identity;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Personnel;
+using Restaurant.Application.Services.Pricing;
 using Restaurant.Application.Services.Production;
 using Restaurant.Application.Services.Storage;
 using Restaurant.Application.Services.Territory;
@@ -31,6 +32,7 @@ using Restaurant.Infrastructure.Services.Guest;
 using Restaurant.Infrastructure.Services.Identity;
 using Restaurant.Infrastructure.Services.Inventory;
 using Restaurant.Infrastructure.Services.Personnel;
+using Restaurant.Infrastructure.Services.Pricing;
 using Restaurant.Infrastructure.Services.Production;
 using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
@@ -119,6 +121,8 @@ namespace Restaurant.Infrastructure
             services.AddScoped<ICartService, CartService>();
 
             services.AddScoped<IEmployeeService, EmployeeService>();
+
+            services.AddScoped<IDiscountService, DiscountService>();
 
             // ── Authentication & Security ────────────────────────────────────
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
