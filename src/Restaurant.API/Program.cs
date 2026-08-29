@@ -65,9 +65,19 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("WebClient", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
-
+app.UseCors("WebClient");
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider.InitialiseDatabaseAsync();
