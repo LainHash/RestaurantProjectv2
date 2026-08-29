@@ -4,7 +4,7 @@ namespace Restaurant.Contract.DTOs.Commerce.Carts
 {
     public class CartResponse
     {
-        public string Id { get; set; } = null!;
+        public Guid Id { get; set; }
 
         public ICollection<CartItemResponse> CartItems { get; set; } = [];
     }
