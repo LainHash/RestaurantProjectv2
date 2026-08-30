@@ -1,4 +1,5 @@
 using Restaurant.Application.DTOs.Pricing.Discounts;
+using Restaurant.Application.Features.Pricing.Discounts.Commands.Claim;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Create;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Update;
 using Restaurant.Application.Features.Pricing.Discounts.Queries.GetAll;
@@ -29,6 +30,10 @@ namespace Restaurant.Application.Services.Pricing
 
         Task<Result> RestoreAsync(
             ISpecification<Discount> specification,
+            CancellationToken cancellationToken = default);
+
+        Task<Result> ClaimAsync(
+            ClaimDiscountCommand command,
             CancellationToken cancellationToken = default);
     }
 }

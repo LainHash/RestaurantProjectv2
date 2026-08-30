@@ -4,7 +4,7 @@ using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Pricing
 {
-    public class Discount : SoftDeletableEntity
+    public partial class Discount : SoftDeletableEntity
     {
         public string Name { get;  private set; } = string.Empty;
         public string DiscountCode { get; private set; } = Nanoid.Generate("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 12);
@@ -22,5 +22,16 @@ namespace Restaurant.Domain.Entities.Pricing
         public bool IsActive { get;  private set; }
 
         public ICollection<DiscountCustomer> DiscountCustomers { get; private set; } = [];
+    }
+
+    public partial class Discount
+    {
+        public Discount() { }
+
+        public Discount UpdateQuantity(int amount = 1)
+        {
+            RemainingQuantity += amount;
+            return this;
+        }
     }
 }

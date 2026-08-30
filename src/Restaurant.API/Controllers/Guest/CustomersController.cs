@@ -2,12 +2,15 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
+using Restaurant.Application.DTOs.Pricing.Discounts;
 using Restaurant.Application.Features.Guest.Customers.Queries.GetAll;
 using Restaurant.Application.Features.Guest.Customers.Queries.GetById;
 using Restaurant.Application.Features.Guest.Customers.Queries.GetByUserId;
 using Restaurant.Application.Features.Guest.Wallets.Queries.GetByUserId;
+using Restaurant.Application.Features.Pricing.Discounts.Commands.Claim;
 using Restaurant.Application.Features.Storage.Images.Commands.UpdateAvatar;
 using System.Security.Claims;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Restaurant.API.Controllers.Guest
 {
@@ -86,6 +89,23 @@ namespace Restaurant.API.Controllers.Guest
 
             var query = new GetWalletByUserIdQuery(userId);
             var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpPost("user/discounts/claim")]
+        public async Task<IActionResult> ClaimDiscount(
+            [FromBody] ClaimDiscountRequest body,
+            CancellationToken cancellationToken)
+        {
+            Guid userId = Guid.Empty;
+
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+            }
+
+            var command = new ClaimDiscountCommand(userId, body);
+            var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
     }
