@@ -12,6 +12,9 @@ namespace Restaurant.Domain.Entities.Pricing
         public decimal? MaximumDiscountAmount { get;  private set; }
         public decimal? MinimumOrderAmount { get;  private set; }
 
+        public int TotalQuantity { get; private set; }
+        public int RemainingQuantity { get; private set; }
+
         public DateTime StartAt { get;  private set; }
         public DateTime EndAt { get;  private set; }
         public bool IsActive { get;  private set; }

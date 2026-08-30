@@ -10,6 +10,12 @@ namespace Restaurant.Seeding.DataRecords.Pricing
         public decimal Value { get; set; }
         public decimal? MaximumDiscountAmount { get; set; }
         public decimal? MinimumOrderAmount { get; set; }
+
+        public int TotalQuantity { get; set; }
+        public int RemainingQuantity { get; set; }
+
         public bool IsActive { get; set; }
+
+
     }
 }
