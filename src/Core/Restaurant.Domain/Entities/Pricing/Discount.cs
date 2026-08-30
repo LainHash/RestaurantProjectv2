@@ -1,9 +1,9 @@
-﻿using Restaurant.Domain.Enums;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Pricing
 {
-    public class Discount : AuditableEntity
+    public class Discount : SoftDeletableEntity
     {
         public string Name { get;  private set; } = string.Empty;
 

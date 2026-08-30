@@ -2,7 +2,7 @@ using Restaurant.Domain.Enums;
 
 namespace Restaurant.Application.DTOs.Pricing.Discounts
 {
-    public class CreateDiscountRequest
+    public class UpdateDiscountRequest
     {
         public string Name { get; set; } = string.Empty;
 
