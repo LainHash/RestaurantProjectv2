@@ -6,6 +6,7 @@ namespace Restaurant.Application.DTOs.Pricing.Discounts
     {
         public Guid Id { get;  set; }
         public string Name { get;  set; } = string.Empty;
+        public string DiscountCode { get; set; } = string.Empty;
 
         public DiscountType Type { get;  set; }
         public decimal Value { get;  set; }

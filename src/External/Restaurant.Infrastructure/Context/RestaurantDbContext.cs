@@ -57,6 +57,7 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<CartItem> CartItems { get; set; } = null!;
 
         public DbSet<Discount> Discounts { get; set; } = null!;
+        public DbSet<DiscountCustomer> DiscountsCustomer { get; set; } = null!;
 
         // ── Model building ──────────────────────────────────────────────────
         protected override void OnModelCreating(ModelBuilder modelBuilder)

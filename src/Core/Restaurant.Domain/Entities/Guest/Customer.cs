@@ -1,6 +1,7 @@
 ﻿using NanoidDotNet;
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Identity;
+using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Models;
 
@@ -21,6 +22,7 @@ namespace Restaurant.Domain.Entities.Guest
         public Wallet? Wallet { get; private set; }
         public Wishlist? Wishlist { get; private set; } = null!;
         public Cart? Cart { get; private set; } = null!;
+        public ICollection<DiscountCustomer> DiscountCustomers { get; private set; } = [];
     }
 
     public partial class Customer
