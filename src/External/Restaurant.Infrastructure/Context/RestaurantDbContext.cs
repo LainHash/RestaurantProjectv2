@@ -7,6 +7,7 @@ using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Entities.Production;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models;
@@ -58,6 +59,9 @@ namespace Restaurant.Infrastructure.Context
 
         public DbSet<Discount> Discounts { get; set; } = null!;
         public DbSet<DiscountCustomer> DiscountsCustomer { get; set; } = null!;
+
+        public DbSet<Order> Orders { get; set; } = null!;
+        public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
 
         // ── Model building ──────────────────────────────────────────────────
         protected override void OnModelCreating(ModelBuilder modelBuilder)

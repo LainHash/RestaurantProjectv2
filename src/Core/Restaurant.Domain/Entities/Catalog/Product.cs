@@ -2,6 +2,7 @@
 using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Entities.Production;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
@@ -30,6 +31,7 @@ namespace Restaurant.Domain.Entities.Catalog
 
         public ICollection<WishlistItem> WishlistItems { get; private set; } = [];
         public ICollection<CartItem> CartItems { get; private set; } = [];
+        public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
     }
 
     public partial class Product

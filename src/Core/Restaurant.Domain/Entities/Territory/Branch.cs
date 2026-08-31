@@ -1,4 +1,5 @@
 ﻿using Restaurant.Domain.Entities.Inventory;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
@@ -24,5 +25,6 @@ namespace Restaurant.Domain.Entities.Territory
 
         public ICollection<ProductStock> ProductStocks { get; private set; } = [];
         public ICollection<IngredientStock> IngredientStocks { get; private set; } = [];
+        public ICollection<Order> Orders { get; private set; } = [];
     }
 }
