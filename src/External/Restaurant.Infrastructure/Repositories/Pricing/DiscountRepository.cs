@@ -14,5 +14,15 @@ namespace Restaurant.Infrastructure.Repositories.Pricing
         {
             return await _context.Discounts.FirstOrDefaultAsync(x => x.DiscountCode == code, cancellationToken);
         }
+
+        public async Task<int> ReserveRemainingQuantityAsync(int discountId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Database.ExecuteSqlInterpolatedAsync(
+                $@"UPDATE ""Discounts"" 
+                    SET ""RemainingQuantity"" = ""RemainingQuantity"" - 1
+                    WHERE ""Id"" = {discountId}
+                      AND ""RemainingQuantity"" > 0",
+                cancellationToken);
+        }
     }
 }

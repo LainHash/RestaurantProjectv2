@@ -23,10 +23,7 @@ namespace Restaurant.Infrastructure.Configurations.Pricing
                 .HasConversion<string>()
                 .IsRequired();
 
-            builder.HasIndex(x => x.CustomerId)
-                .IsUnique();
-
-            builder.HasIndex(x => x.DiscountId)
+            builder.HasIndex(x => new { x.CustomerId, x.DiscountId })
                 .IsUnique();
 
             builder.HasOne(x => x.Customer)

@@ -43,13 +43,13 @@ namespace Restaurant.Domain.Entities.Pricing
             Status = status;
         }
 
-        public static DiscountCustomer Claim(int customerId, int discountId)
+        public static DiscountCustomer Claim(int customerId, int discountId, DateTime expiredAt)
         {
             return new DiscountCustomer(
                 customerId,
                 discountId,
                 DateTime.UtcNow,
-                DateTime.UtcNow.AddDays(30),
+                expiredAt,
                 DiscountCustomerStatus.Available);
         }
     }

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.DTOs.Pricing.Discounts;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Claim;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Create;
@@ -148,41 +149,46 @@ namespace Restaurant.Infrastructure.Services.Pricing
             CancellationToken cancellationToken = default)
         {
             var customer = await _customerRepository.FindByUserIdAsync(command.UserId, cancellationToken);
-            if(customer is null)
+            if (customer is null)
             {
                 return Result
                     .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var discountCustomer = await _discountCustomerRepository.FindByCustomerIdAsync(customer.Id, cancellationToken);
-            if(discountCustomer is not null)
-            {
-                return Result
-                    .Fail("Already claimed this discount.", HttpStatusCode.Conflict);
-            }
-
             var discount = await _discountRepository.FindByCodeAsync(command.Body.DiscountCode, cancellationToken);
-            if(discount is null)
+            if (discount is null)
             {
                 return Result
                     .Fail(Error<Discount>.NotFound, HttpStatusCode.NotFound);
             }
 
-            if(discount.RemainingQuantity <= 0)
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+
+            try
             {
+                var reserved = await _discountRepository.ReserveRemainingQuantityAsync(discount.Id, cancellationToken);
+                if (reserved == 0)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    return Result
+                        .Fail("This discount is no longer available.", HttpStatusCode.Conflict);
+                }
+
+                var discountCustomer = DiscountCustomer.Claim(customer.Id, discount.Id, discount.EndAt);
+                _discountCustomerRepository.Add(discountCustomer);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+
                 return Result
-                    .Fail("This discount is no longer available.", HttpStatusCode.Conflict);
+                    .Succeed("Discount claimed successfully.");
             }
-
-            discountCustomer = DiscountCustomer.Claim(customer.Id, discount.Id);
-            _discountCustomerRepository.Add(discountCustomer);
-
-            discount.UpdateQuantity(-1);
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            return Result
-                .Succeed("Discount claimed successfully.");
+            catch (DbUpdateException)
+            {
+                await transaction.RollbackAsync(cancellationToken);
+                return Result
+                    .Fail("Already claimed this discount.", HttpStatusCode.Conflict);
+            }
         }
     }
 }
