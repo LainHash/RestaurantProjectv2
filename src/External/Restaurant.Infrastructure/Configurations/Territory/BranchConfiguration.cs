@@ -23,11 +23,11 @@ namespace Restaurant.Infrastructure.Configurations.Territory
                 .HasMaxLength(100)
                 .IsRequired();
 
-            builder.Property(x => x.Code)
+            builder.Property(x => x.BranchCode)
                 .HasMaxLength(20)
                 .IsRequired();
 
-            builder.HasIndex(x => x.Code)
+            builder.HasIndex(x => x.BranchCode)
                 .IsUnique();
 
             builder.Property(x => x.PhoneNumber)

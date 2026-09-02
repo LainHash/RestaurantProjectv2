@@ -8,7 +8,7 @@ namespace Restaurant.Domain.Entities.Territory
     public class Branch : SoftDeletableEntity
     {
         public string City { get; private set; } = null!;
-        public string Code { get; private set; } = null!;
+        public string BranchCode { get; private set; } = null!;
 
         public string PhoneNumber { get; private set; } = null!;
         public string Email { get; private set; } = null!;

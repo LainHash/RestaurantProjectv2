@@ -14,7 +14,7 @@ namespace Restaurant.Infrastructure.Mapping.Sale
                 .ForMember(dest => dest.EmployeeCode, opt => opt
                     .MapFrom(src => src.Employee.EmployeeCode))
                 .ForMember(dest => dest.BranchCode, opt => opt
-                    .MapFrom(src => src.Branch.Code))
+                    .MapFrom(src => src.Branch.BranchCode))
                 .ForMember(dest => dest.OrderDetails, opt => opt
                     .MapFrom(src => src.OrderDetails));
         }
