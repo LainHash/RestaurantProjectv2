@@ -14,11 +14,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\Shared\Restaurant.Contract\Restaurant.Contract.csproj" />
 		<ProjectReference Include="..\Restaurant.Domain\Restaurant.Domain.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 	  <Folder Include="Features\Auth\Commands\RefreshToken\" />
+	  <Folder Include="Features\Sale\" />
 	</ItemGroup>
 
 </Project>

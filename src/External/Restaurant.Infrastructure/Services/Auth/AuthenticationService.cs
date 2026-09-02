@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
-using ConvenienceStore.Contract.DTOs.Authentication;
 using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Register;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
+using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Models.Messages;

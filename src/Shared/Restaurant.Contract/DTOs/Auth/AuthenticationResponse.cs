@@ -1,6 +1,6 @@
 ﻿using Restaurant.Domain.Entities.Identity;
 
-namespace ConvenienceStore.Contract.DTOs.Authentication
+namespace Restaurant.Contract.DTOs.Auth
 {
     public class AuthenticationResponse
     {

@@ -1,6 +1,6 @@
-﻿using ConvenienceStore.Contract.DTOs.Authentication;
-using Restaurant.Application.Features.Auth.Commands.Login;
+﻿using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Register;
+using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Domain.Models.Results;
 
 namespace Restaurant.Application.Services.Auth

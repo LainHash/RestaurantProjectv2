@@ -1,4 +1,5 @@
 using NanoidDotNet;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
@@ -22,6 +23,7 @@ namespace Restaurant.Domain.Entities.Pricing
         public bool IsActive { get;  private set; }
 
         public ICollection<DiscountCustomer> DiscountCustomers { get; private set; } = [];
+        public ICollection<OrderDiscount> OrderDiscounts { get; private set; } = [];
     }
 
     public partial class Discount
