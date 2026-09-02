@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Restaurant.Application.DTOs.Pricing.Discounts;
 using Restaurant.Domain.Entities.Pricing;
 
@@ -10,6 +10,10 @@ namespace Restaurant.Infrastructure.Mapping.Pricing
         {
             CreateMap<Discount, DiscountResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<CreateDiscountRequest, Discount>();
+
+            CreateMap<UpdateDiscountRequest, Discount>();
         }
     }
 }

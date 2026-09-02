@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Enums;
+using Restaurant.Domain.Enums;
 
-namespace Restaurant.Seeding.DataRecords.Pricing
+namespace Restaurant.Application.DTOs.Pricing.Discounts
 {
-    internal class DiscountRecord
+    public class CreateDiscountRequest
     {
         public string Name { get; set; } = string.Empty;
 
@@ -12,10 +12,8 @@ namespace Restaurant.Seeding.DataRecords.Pricing
         public decimal? MinimumOrderAmount { get; set; }
 
         public int TotalQuantity { get; set; }
-        public int RemainingQuantity { get; set; }
 
-        public bool IsActive { get; set; }
-
-
+        public DateTime StartAt { get; set; }
+        public DateTime EndAt { get; set; }
     }
 }

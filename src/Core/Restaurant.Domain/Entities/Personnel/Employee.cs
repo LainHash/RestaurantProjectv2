@@ -1,5 +1,6 @@
 ﻿using NanoidDotNet;
 using Restaurant.Domain.Entities.Identity;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
@@ -27,6 +28,7 @@ namespace Restaurant.Domain.Entities.Personnel
 
         public int? AvatarImageId { get; private set; }
         public Image? AvatarImage { get; private set; } = null!;
+        public ICollection<Order> Orders { get; private set; } = [];
     }
 
     public partial class Employee
