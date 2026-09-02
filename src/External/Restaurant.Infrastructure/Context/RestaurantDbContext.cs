@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Restaurant.Application.Services.Auth;
+using Restaurant.Domain.Entities.Business;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Guest;
@@ -12,11 +15,11 @@ using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models;
 using System.Reflection;
+using System.Text.Json;
 
 namespace Restaurant.Infrastructure.Context
 {
-    public class RestaurantDbContext(DbContextOptions<RestaurantDbContext> options)
-        : DbContext(options)
+    public class RestaurantDbContext : DbContext
     {
         public DbSet<ProductCategory> ProductCategories { get; set; } = null!;
         public DbSet<IngredientCategory> IngredientCategories { get; set; } = null!;
@@ -63,6 +66,19 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
 
+        public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+
+        // ── IAuditContext injected via constructor ────────────────────────────
+        private readonly IAuditContext _auditContext;
+
+        public RestaurantDbContext(
+            DbContextOptions<RestaurantDbContext> options,
+            IAuditContext auditContext)
+            : base(options)
+        {
+            _auditContext = auditContext;
+        }
+
         // ── Model building ──────────────────────────────────────────────────
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -79,12 +95,26 @@ namespace Restaurant.Infrastructure.Context
             return base.SaveChanges();
         }
 
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             SetAuditFields();
-            return base.SaveChangesAsync(cancellationToken);
+
+            var auditEntries = CaptureAuditEntries();
+
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            // Sau khi save, flush audit logs (Id của entity Added giờ đã có giá trị)
+            if (auditEntries.Count > 0)
+            {
+                FinalizeAuditEntries(auditEntries);
+                AuditLogs.AddRange(auditEntries.Select(e => (AuditLog)e));
+                await base.SaveChangesAsync(cancellationToken);
+            }
+
+            return result;
         }
 
+        // ── Internal helpers ────────────────────────────────────────────────
         private void SetAuditFields()
         {
             var now = DateTime.UtcNow;
@@ -101,6 +131,123 @@ namespace Restaurant.Infrastructure.Context
                     entry.Entity.MarkUpdated(now);
                 }
             }
+        }
+
+        private List<AuditEntry> CaptureAuditEntries()
+        {
+            ChangeTracker.DetectChanges();
+
+            var auditEntries = new List<AuditEntry>();
+            var timestamp = DateTime.UtcNow;
+
+            var trackedStates = new[] { EntityState.Added, EntityState.Modified, EntityState.Deleted };
+
+            foreach (var entry in ChangeTracker.Entries())
+            {
+                if (entry.Entity is AuditLog) continue;
+                if (!trackedStates.Contains(entry.State)) continue;
+
+                var auditEntry = new AuditEntry(entry)
+                {
+                    UserId = _auditContext.UserId,
+                    IpAddress = _auditContext.IpAddress,
+                    EntityName = entry.Metadata.ClrType.Name,
+                    Timestamp = timestamp,
+                    Action = entry.State switch
+                    {
+                        EntityState.Added => "Created",
+                        EntityState.Modified => "Updated",
+                        EntityState.Deleted => "Deleted",
+                        _ => "Unknown"
+                    }
+                };
+
+                foreach (var prop in entry.Properties)
+                {
+                    if (prop.Metadata.IsShadowProperty()) continue;
+
+                    var propName = prop.Metadata.Name;
+
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            auditEntry.NewValues[propName] = prop.CurrentValue;
+                            if (prop.Metadata.IsPrimaryKey())
+                                auditEntry.IsTemporaryId = true;
+                            break;
+
+                        case EntityState.Deleted:
+                            auditEntry.OldValues[propName] = prop.OriginalValue;
+                            auditEntry.EntityId = GetEntityId(entry);
+                            break;
+
+                        case EntityState.Modified:
+                            if (prop.IsModified)
+                            {
+                                auditEntry.OldValues[propName] = prop.OriginalValue;
+                                auditEntry.NewValues[propName] = prop.CurrentValue;
+                            }
+                            auditEntry.EntityId = GetEntityId(entry);
+                            break;
+                    }
+                }
+
+                auditEntries.Add(auditEntry);
+            }
+
+            return auditEntries;
+        }
+
+        private static void FinalizeAuditEntries(List<AuditEntry> auditEntries)
+        {
+            foreach (var entry in auditEntries.Where(e => e.IsTemporaryId))
+            {
+                entry.EntityId = GetEntityId(entry.DbEntry);
+            }
+        }
+
+        private static string GetEntityId(EntityEntry entry)
+        {
+            var publicIdProp = entry.Properties
+                .FirstOrDefault(p => p.Metadata.Name == "PublicId");
+
+            if (publicIdProp?.CurrentValue is not null)
+                return publicIdProp.CurrentValue.ToString()!;
+
+            var pkProp = entry.Properties
+                .FirstOrDefault(p => p.Metadata.IsPrimaryKey());
+
+            return pkProp?.CurrentValue?.ToString() ?? string.Empty;
+        }
+
+        // ── Helper nested class ──────────────────────────────────────────────
+        private sealed class AuditEntry(EntityEntry dbEntry)
+        {
+            public EntityEntry DbEntry { get; } = dbEntry;
+            public int? UserId { get; set; }
+            public string? IpAddress { get; set; }
+            public string EntityName { get; set; } = string.Empty;
+            public string EntityId { get; set; } = string.Empty;
+            public string Action { get; set; } = string.Empty;
+            public DateTime Timestamp { get; set; }
+            public bool IsTemporaryId { get; set; }
+            public Dictionary<string, object?> OldValues { get; } = [];
+            public Dictionary<string, object?> NewValues { get; } = [];
+
+            public static implicit operator AuditLog(AuditEntry entry)
+                => AuditLog.Create(
+                    userId: entry.UserId,
+                    action: entry.Action,
+                    entityName: entry.EntityName,
+                    entityId: entry.EntityId,
+                    oldValues: entry.OldValues.Count > 0
+                        ? JsonSerializer.Serialize(entry.OldValues)
+                        : null,
+                    newValues: entry.NewValues.Count > 0
+                        ? JsonSerializer.Serialize(entry.NewValues)
+                        : null,
+                    ipAddress: entry.IpAddress,
+                    timestamp: entry.Timestamp);
         }
     }
 }

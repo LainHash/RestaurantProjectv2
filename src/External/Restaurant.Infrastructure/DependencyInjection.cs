@@ -14,14 +14,18 @@ using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Personnel;
 using Restaurant.Application.Services.Pricing;
 using Restaurant.Application.Services.Production;
+using Restaurant.Application.Services.Sale;
 using Restaurant.Application.Services.Storage;
 using Restaurant.Application.Services.Territory;
+using Restaurant.Contract.Settings.AuditLog;
 using Restaurant.Contract.Settings.Auth;
 using Restaurant.Contract.Settings.Email;
 using Restaurant.Contract.Settings.Storage;
 using Restaurant.Domain.Repositories;
+using Restaurant.Domain.Repositories.Business;
 using Restaurant.Infrastructure.Context;
 using Restaurant.Infrastructure.Repositories;
+using Restaurant.Infrastructure.Repositories.Business;
 using Restaurant.Infrastructure.Repositories.Catalog;
 using Restaurant.Infrastructure.Services.Auth;
 using Restaurant.Infrastructure.Services.Business;
@@ -34,6 +38,7 @@ using Restaurant.Infrastructure.Services.Inventory;
 using Restaurant.Infrastructure.Services.Personnel;
 using Restaurant.Infrastructure.Services.Pricing;
 using Restaurant.Infrastructure.Services.Production;
+using Restaurant.Infrastructure.Services.Sale;
 using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
 
@@ -82,6 +87,49 @@ namespace Restaurant.Infrastructure
                 }
             }
 
+            // ── Audit Log ────────────────────────────────────────────────────
+            services.Configure<AuditLogSettings>(
+                configuration.GetSection(AuditLogSettings.SectionName));
+            services.AddHttpContextAccessor();
+            services.AddScoped<IAuditContext, AuditContext>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
+            services.AddHostedService<AuditLogRetentionJob>();
+
+            // ── Authentication & Security ────────────────────────────────────
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+
+            services.AddScoped<IJwtProvider, JwtProvider>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
+            services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IOtpHasher, OtpHasher>();
+
+            var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
+            if (jwtSettings is not null)
+            {
+                services.AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            System.Text.Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    };
+                });
+            }
+
             // ── Services ─────────────────────────────────────────────────────
             services.AddScoped<IDataImporter, ExcelImporter>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -124,38 +172,7 @@ namespace Restaurant.Infrastructure
 
             services.AddScoped<IDiscountService, DiscountService>();
 
-            // ── Authentication & Security ────────────────────────────────────
-            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
-            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
-
-            services.AddScoped<IJwtProvider, JwtProvider>();
-            services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<IEmailService, EmailService>();
-            services.AddScoped<IOtpHasher, OtpHasher>();
-
-            var jwtSettings = configuration.GetSection("JwtSettings").Get<JwtSettings>();
-            if (jwtSettings is not null)
-            {
-                services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            System.Text.Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-                    };
-                });
-            }
+            services.AddScoped<IOrderService, OrderService>();
 
             return services;
         }
