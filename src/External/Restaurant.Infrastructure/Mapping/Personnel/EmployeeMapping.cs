@@ -14,7 +14,7 @@ namespace Restaurant.Infrastructure.Mapping.Personnel
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.User.Role.Name))
                 .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.AvatarImage!.Url))
                 .ForMember(dest => dest.PositionCode, opt => opt.MapFrom(src => src.Position.PositionCode))
-                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.Code))
+                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.BranchCode))
                 .ForMember(dest => dest.Account, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.PersonalProfile, opt => opt.MapFrom(src => src.User.PersonalProfile));
 

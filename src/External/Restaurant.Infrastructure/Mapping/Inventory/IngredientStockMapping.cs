@@ -11,7 +11,7 @@ namespace Restaurant.Infrastructure.Mapping.Inventory
         {
             CreateMap<IngredientStock, IngredientStockResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
-                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.Code))
+                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.BranchCode))
                 .ForMember(dest => dest.IngredientName, opt => opt.MapFrom(src => src.Ingredient.Name))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.QuantityOnHand.ToStockStatus()));
         }

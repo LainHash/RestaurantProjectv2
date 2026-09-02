@@ -7,5 +7,8 @@
     <Project Path="src/External/Restaurant.Infrastructure/Restaurant.Infrastructure.csproj" />
     <Project Path="src/External/Restaurant.Seeding/Restaurant.Seeding.csproj" />
   </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="src/Shared/Restaurant.Contract/Restaurant.Contract.csproj" Id="93f967e9-7533-40db-947b-028d9e34f8fa" />
+  </Folder>
   <Project Path="src/Restaurant.API/Restaurant.API.csproj" />
 </Solution>

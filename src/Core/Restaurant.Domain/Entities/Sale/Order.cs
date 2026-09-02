@@ -29,5 +29,6 @@ namespace Restaurant.Domain.Entities.Sale
         public Employee Employee { get; private set; } = null!;
         public Branch Branch { get; private set; } = null!;
         public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
+        public ICollection<OrderDiscount> OrderDiscounts { get; private set; } = [];
     }
 }

@@ -34,10 +34,10 @@ namespace Restaurant.Seeding.Seeders.Personnel
                 StringComparer.OrdinalIgnoreCase);
 
             var branches = await context.Branches
-                .Select(x => new { x.Id, x.Code })
+                .Select(x => new { x.Id, x.BranchCode })
                 .ToListAsync();
             var branchDictionary = branches.ToDictionary(
-                x => x.Code,
+                x => x.BranchCode,
                 StringComparer.OrdinalIgnoreCase);
 
             var records =

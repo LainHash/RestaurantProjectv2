@@ -1,5 +1,4 @@
-﻿using ConvenienceStore.Contract.DTOs.Authentication;
-using MediatR;
+﻿using MediatR;
 using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Domain.Models.Results;
 
