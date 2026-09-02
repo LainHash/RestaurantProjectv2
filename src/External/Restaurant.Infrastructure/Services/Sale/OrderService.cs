@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
+using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Contract.DTOs.Sale.Orders;
@@ -7,6 +8,7 @@ using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Sale;
+using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Sale
 {
@@ -40,5 +42,19 @@ namespace Restaurant.Infrastructure.Services.Sale
                 .Succeed(response, Success<Order>.Retrieved, totalItems, specification.Skip, specification.Take);
         }
 
+        public async Task<Result<OrderResponse>> GetByIdAsync(GetOrderByIdSpecification specification, CancellationToken cancellationToken = default)
+        {
+            var order = await _orderRepository.FindAsync(specification, cancellationToken);
+            if (order is null)
+            {
+                return Result<OrderResponse>
+                    .Fail(Error<Order>.NotFound, HttpStatusCode.NotFound);
+
+            }
+
+            var response = _mapper.Map<OrderResponse>(order);
+            return Result<OrderResponse>
+                .Succeed(response, Success<Order>.Retrieved);
+        }
     }
 }
