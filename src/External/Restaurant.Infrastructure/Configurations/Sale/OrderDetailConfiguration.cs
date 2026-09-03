@@ -33,7 +33,7 @@ namespace Restaurant.Infrastructure.Configurations.Sale
             builder.Property(x => x.Quantity)
                 .IsRequired();
 
-            builder.Property(x => x.TotalAmount)
+            builder.Property(x => x.LineTotal)
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();
 

@@ -8,9 +8,7 @@ namespace Restaurant.Infrastructure.Mapping.Sale
     {
         public OrderDetailMapping()
         {
-            CreateMap<OrderDetail, OrderDetailResponse>()
-                .ForMember(dest => dest.ProductName, opt => opt
-                    .MapFrom(src => src.Product.Name));
+            CreateMap<OrderDetail, OrderDetailResponse>();
         }
     }
 }
