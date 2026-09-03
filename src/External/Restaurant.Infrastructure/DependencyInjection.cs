@@ -147,6 +147,7 @@ namespace Restaurant.Infrastructure
 
             services.AddScoped<IProductStockService, ProductStockService>();
             services.AddScoped<IIngredientStockService, IngredientStockService>();
+            services.AddScoped<IInventoryDeductionService, InventoryDeductionService>();
 
             services.AddScoped<IImageService, ImageService>();
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Infrastructure.Repositories;
@@ -37,14 +37,19 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
                 .Include(x => x.ProductPrice)
                 .Include(x => x.ProductStocks
                     .Where(s => s.BranchId == branchId))
-                .Where(x =>
-                    productIds.Contains(x.PublicId) &&
-                    (
-                        (x.InventoryType == InventoryType.StockTracked &&
-                         x.ProductStocks.Any(s => s.BranchId == branchId))
-                        ||
-                        x.InventoryType == InventoryType.MadeToOrder
-                    ))
+                .Include(x => x.Recipes)
+                    .ThenInclude(r => r.RecipeIngredients)
+                        .ThenInclude(ri => ri.Unit)
+                .Include(x => x.Recipes)
+                    .ThenInclude(r => r.RecipeIngredients)
+                        .ThenInclude(ri => ri.Ingredient)
+                            .ThenInclude(i => i.BaseUnit)
+                .Include(x => x.Recipes)
+                    .ThenInclude(r => r.RecipeIngredients)
+                        .ThenInclude(ri => ri.Ingredient)
+                            .ThenInclude(i => i.IngredientStocks
+                                .Where(s => s.BranchId == branchId))
+                .Where(x => productIds.Contains(x.PublicId))
                 .ToListAsync(cancellationToken);
         }
     }

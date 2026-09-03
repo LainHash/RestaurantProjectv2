@@ -1,9 +1,10 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Sale.Orders.Commands;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
 using Restaurant.Application.Services.Business;
+using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Contract.DTOs.Sale.Orders;
 using Restaurant.Domain.Entities.Catalog;
@@ -11,6 +12,7 @@ using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Territory;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Catalog;
@@ -30,6 +32,7 @@ namespace Restaurant.Infrastructure.Services.Sale
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IInventoryDeductionService _inventoryDeductionService;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -44,6 +47,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             IBranchRepository branchRepository,
             IProductRepository productRepository,
             IOrderDetailRepository orderDetailRepository,
+            IInventoryDeductionService inventoryDeductionService,
             ILogger<OrderService> logger)
         {
             _orderRepository = orderRepository;
@@ -54,6 +58,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             _branchRepository = branchRepository;
             _productRepository = productRepository;
             _orderDetailRepository = orderDetailRepository;
+            _inventoryDeductionService = inventoryDeductionService;
             _logger = logger;
         }
 
@@ -144,6 +149,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                         cancellationToken);
 
                 var productMap = products.ToDictionary(x => x.PublicId);
+                var orderItems = new List<(Product Product, int Quantity)>();
 
                 foreach (var item in command.Body.CreateOrderDetails)
                 {
@@ -153,6 +159,8 @@ namespace Restaurant.Infrastructure.Services.Sale
                             .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
                     }
 
+                    orderItems.Add((product, item.Quantity));
+
                     var orderDetail = new OrderDetail(item.Quantity, item.Note)
                         .SetProduct(product.Id, product.Name, product.ProductPrice.UnitPrice)
                         .CalculateLineTotal();
@@ -160,12 +168,20 @@ namespace Restaurant.Infrastructure.Services.Sale
                     order.AddOrderDetail(orderDetail);
                 }
 
+                var deductionResult = await _inventoryDeductionService
+                    .DeductInventoryForOrderAsync(branch.Id, orderItems, cancellationToken);
+
+                if (!deductionResult.IsSucceed)
+                {
+                    return Result<OrderResponse>
+                        .Fail(deductionResult.Message, (HttpStatusCode)deductionResult.StatusCode);
+                }
+
                 order.CalculateTotalAmount();
 
                 _orderRepository.Add(order);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-
                 await transaction.CommitAsync(cancellationToken);
 
                 specification.ApplyCriteria(order.Id);
