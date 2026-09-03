@@ -12,7 +12,6 @@ namespace Restaurant.Domain.Entities.Sale
         public decimal UnitPrice { get; private set; }
 
         public int Quantity { get; private set; }
-        public decimal DiscountAmount { get; private set; }
         public decimal TotalAmount { get; private set; }
 
         public string? Note { get; private set; }
