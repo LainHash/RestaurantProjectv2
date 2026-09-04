@@ -18,6 +18,7 @@ namespace Restaurant.Domain.Entities.Sale
 
         public Order Order { get; private set; } = null!;
         public Product Product { get; private set; } = null!;
+        public OrderPreparation OrderPreparation { get; private set; } = null!;
     }
 
     public partial class OrderDetail
@@ -30,6 +31,7 @@ namespace Restaurant.Domain.Entities.Sale
         {
             Quantity = quantity;
             Note = note;
+            OrderPreparation = new OrderPreparation();
         }
 
         public OrderDetail SetProduct(
