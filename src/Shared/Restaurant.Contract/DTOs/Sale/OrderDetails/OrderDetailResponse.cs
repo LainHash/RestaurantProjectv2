@@ -1,4 +1,6 @@
-﻿namespace Restaurant.Contract.DTOs.Sale.OrderDetails
+﻿using Restaurant.Domain.Enums;
+
+namespace Restaurant.Contract.DTOs.Sale.OrderDetails
 {
     public class OrderDetailResponse
     {
@@ -9,5 +11,7 @@
         public decimal LineTotal { get; set; }
 
         public string? Note { get; set; }
+
+        public PreparationStatus Status { get; set; }
     }
 }
