@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Specifications;
 
-namespace Restaurant.Application.Features.Sale.OrderPreparations.Commands.Preparing
+namespace Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancelled
 {
-    public class PreparingOrderSpecification
+    public class CancelledOrderSpecification
         : BaseSpecification<OrderPreparation>
     {
-        public PreparingOrderSpecification(PreparingOrderCommand command)
+        public CancelledOrderSpecification(CancelledOrderCommand command)
         {
             AddCriteria(x => x.OrderDetail.PublicId == command.OrderDetailId);
 
