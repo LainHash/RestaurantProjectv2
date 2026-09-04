@@ -3,7 +3,7 @@ using Restaurant.Application.Services.Sale;
 using Restaurant.Contract.DTOs.Sale.Orders;
 using Restaurant.Domain.Models.Results;
 
-namespace Restaurant.Application.Features.Sale.Orders.Commands
+namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
 {
     internal class CreateOrderCommandHandler(IOrderService orderService)
                 : IRequestHandler<CreateOrderCommand, Result<OrderResponse>>

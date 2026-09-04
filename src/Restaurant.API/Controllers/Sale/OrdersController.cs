@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
-using Restaurant.Application.Features.Sale.Orders.Commands;
+using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
 using Restaurant.Contract.DTOs.Sale.Orders;

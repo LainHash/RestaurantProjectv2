@@ -1,6 +1,6 @@
 using FluentValidation;
 
-namespace Restaurant.Application.Features.Sale.Orders.Commands
+namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
 {
     public class CreateOrderCommandValidator
         : AbstractValidator<CreateOrderCommand>

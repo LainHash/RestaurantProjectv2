@@ -1,6 +1,6 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
-using Restaurant.Application.Features.Sale.Orders.Commands;
+using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
 using Restaurant.Application.Services.Business;

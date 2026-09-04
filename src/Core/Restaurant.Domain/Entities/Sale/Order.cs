@@ -44,6 +44,7 @@ namespace Restaurant.Domain.Entities.Sale
             CustomerId = customerId;
             EmployeeId = employeeId;
             BranchId = branchId;
+            Status = OrderStatus.Pending;
         }
 
         public Order(
@@ -66,13 +67,32 @@ namespace Restaurant.Domain.Entities.Sale
             string? note)
         {
             var order = new Order(customerId, employeeId, branchId, type, note);
-            order.Pending();
             return order;
         }
 
-        public void Pending()
+        public void Preparing()
         {
-            Status = OrderStatus.Pending;
+            Status = OrderStatus.Preparing;
+        }
+
+        public void Ready()
+        {
+            Status = OrderStatus.Ready;
+        }
+
+        public void Delivering()
+        {
+            Status = OrderStatus.Delivering;
+        }
+
+        public void Completed()
+        {
+            Status = OrderStatus.Completed;
+        }
+
+        public void Cancelled()
+        {
+            Status = OrderStatus.Cancelled;
         }
 
         public void CalculateTotalAmount()

@@ -1,7 +1,7 @@
 ﻿using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Specifications;
 
-namespace Restaurant.Application.Features.Sale.Orders.Commands
+namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
 {
     public class CreateOrderSpecification
         : BaseSpecification<Order>

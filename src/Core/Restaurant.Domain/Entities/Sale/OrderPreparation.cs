@@ -19,5 +19,27 @@ namespace Restaurant.Domain.Entities.Sale
         {
             Status = PreparationStatus.Pending;
         }
+
+        public void Preparing()
+        {
+            Status = PreparationStatus.Preparing;
+            StartedAt = DateTime.UtcNow;
+        }
+
+        public void Ready()
+        {
+            Status = PreparationStatus.Ready;
+        }
+
+        public void Served()
+        {
+            Status = PreparationStatus.Served;
+            CompletedAt = DateTime.UtcNow;
+        }
+
+        public void Cancelled()
+        {
+            Status = PreparationStatus.Cancelled;
+        }
     }
 }

@@ -174,6 +174,7 @@ namespace Restaurant.Infrastructure
             services.AddScoped<IDiscountService, DiscountService>();
 
             services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderPreparationService, OrderPreparationService>();
 
             return services;
         }
