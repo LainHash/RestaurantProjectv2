@@ -47,6 +47,7 @@ namespace Restaurant.Domain.Entities.Billing
             : this(order.Subtotal, order.DiscountAmount, order.TaxAmount, order.TotalAmount)
         {
             OrderId = order.Id;
+            InvoiceDetails = [.. order.OrderDetails.Select(x => new InvoiceDetail(x))];
         }
     }
 }

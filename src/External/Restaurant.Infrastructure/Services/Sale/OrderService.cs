@@ -7,6 +7,7 @@ using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Contract.DTOs.Sale.Orders;
+using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
@@ -15,6 +16,7 @@ using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
+using Restaurant.Domain.Repositories.Billing;
 using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Domain.Repositories.Guest;
 using Restaurant.Domain.Repositories.Personnel;
@@ -28,6 +30,7 @@ namespace Restaurant.Infrastructure.Services.Sale
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IInvoiceRepository _invoiceRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IBranchRepository _branchRepository;
@@ -48,7 +51,8 @@ namespace Restaurant.Infrastructure.Services.Sale
             IProductRepository productRepository,
             IOrderDetailRepository orderDetailRepository,
             IInventoryDeductionService inventoryDeductionService,
-            ILogger<OrderService> logger)
+            ILogger<OrderService> logger,
+            IInvoiceRepository invoiceRepository)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -60,6 +64,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             _orderDetailRepository = orderDetailRepository;
             _inventoryDeductionService = inventoryDeductionService;
             _logger = logger;
+            _invoiceRepository = invoiceRepository;
         }
 
         public async Task<PageResult<IEnumerable<OrderResponse>>> GetAllAsync(
@@ -182,6 +187,13 @@ namespace Restaurant.Infrastructure.Services.Sale
                 _orderRepository.Add(order);
 
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                var invoice = new Invoice(order);
+
+                _invoiceRepository.Add(invoice);
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
                 await transaction.CommitAsync(cancellationToken);
 
                 specification.ApplyCriteria(order.Id);
