@@ -38,6 +38,10 @@ namespace Restaurant.Infrastructure.Configurations.Sale
                 .HasConversion<string>()
                 .HasColumnType("text");
 
+            builder.Property(x => x.Subtotal)
+                .HasColumnType("decimal(18,2)")
+                .IsRequired();
+
             builder.Property(x => x.DiscountAmount)
                 .HasColumnType("decimal(18,2)")
                 .IsRequired();

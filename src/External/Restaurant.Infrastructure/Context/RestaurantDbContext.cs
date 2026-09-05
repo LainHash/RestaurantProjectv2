@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Restaurant.Application.Services.Auth;
+using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Business;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Commerce;
@@ -66,6 +67,11 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public DbSet<OrderPreparation> OrderPreparation { get; set; } = null!;
+
+        public DbSet<Invoice> Invoices { get; set; } = null!;
+        public DbSet<InvoiceDetail> InvoiceDetails { get; set; } = null!;
+        public DbSet<Payment> Payments { get; set; } = null!;
+        public DbSet<PaymentTransaction> PaymentTransactions { get; set; } = null!;
 
         public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 

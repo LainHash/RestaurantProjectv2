@@ -162,7 +162,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                     orderItems.Add((product, item.Quantity));
 
                     var orderDetail = new OrderDetail(item.Quantity, item.Note)
-                        .SetProduct(product.Id, product.Name, product.ProductPrice.UnitPrice)
+                        .SetProduct(product)
                         .CalculateLineTotal();
 
                     order.AddOrderDetail(orderDetail);
