@@ -1,6 +1,7 @@
 using AutoMapper;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetAll;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetById;
+using Restaurant.Application.Features.Billing.Invoices.Queries.GetByOrderId;
 using Restaurant.Application.Services.Billing;
 using Restaurant.Contract.DTOs.Billing.Invoices;
 using Restaurant.Domain.Entities.Billing;
@@ -11,12 +12,19 @@ using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Billing
 {
-    internal class InvoiceService(
-        IInvoiceRepository invoiceRepository,
-        IMapper mapper) : IInvoiceService
+    internal class InvoiceService : IInvoiceService
     {
-        private readonly IInvoiceRepository _invoiceRepository = invoiceRepository;
-        private readonly IMapper _mapper = mapper;
+        private readonly IInvoiceRepository _invoiceRepository;
+
+        private readonly IMapper _mapper;
+
+        public InvoiceService(
+            IInvoiceRepository invoiceRepository,
+            IMapper mapper)
+        {
+            _invoiceRepository = invoiceRepository;
+            _mapper = mapper;
+        }
 
         public async Task<PageResult<IEnumerable<InvoiceResponse>>> GetAllAsync(
             GetAllInvoicesSpecification specification,
@@ -33,6 +41,22 @@ namespace Restaurant.Infrastructure.Services.Billing
 
         public async Task<Result<InvoiceResponse>> GetByIdAsync(
             GetInvoiceByIdSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var invoice = await _invoiceRepository.FindAsync(specification, cancellationToken);
+            if (invoice is null)
+            {
+                return Result<InvoiceResponse>
+                    .Fail(Error<Invoice>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<InvoiceResponse>(invoice);
+            return Result<InvoiceResponse>
+                .Succeed(response, Success<Invoice>.Retrieved);
+        }
+
+        public async Task<Result<InvoiceResponse>> GetByOrderIdAsync(
+            GetInvoiceByOrderIdSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var invoice = await _invoiceRepository.FindAsync(specification, cancellationToken);
