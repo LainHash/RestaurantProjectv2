@@ -47,11 +47,6 @@ namespace Restaurant.Infrastructure.Configurations.Billing
                 .HasConversion<string>()
                 .HasColumnType("text");
 
-            builder.Property(x => x.IssuedAt)
-                .IsRequired();
-
-            builder.Property(x => x.PaidAt);
-
             builder.HasOne(x => x.Order)
                 .WithOne(x => x.Invoice)
                 .HasForeignKey<Invoice>(x => x.OrderId)
