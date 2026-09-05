@@ -1,10 +1,10 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancelled;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Preparing;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancel;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Served;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Serve;
 
 namespace Restaurant.API.Controllers.Sale
 {
@@ -19,7 +19,7 @@ namespace Restaurant.API.Controllers.Sale
             [FromRoute] Guid id,
             CancellationToken cancellationToken)
         {
-            var command = new PreparingOrderCommand(id);
+            var command = new PrepareOrderCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
@@ -39,7 +39,7 @@ namespace Restaurant.API.Controllers.Sale
             [FromRoute] Guid id,
             CancellationToken cancellationToken)
         {
-            var command = new ServedOrderCommand(id);
+            var command = new ServeOrderCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
@@ -49,7 +49,7 @@ namespace Restaurant.API.Controllers.Sale
             [FromRoute] Guid id,
             CancellationToken cancellationToken)
         {
-            var command = new CancelledOrderCommand(id);
+            var command = new CancelOrderCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

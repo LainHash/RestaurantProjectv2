@@ -75,9 +75,9 @@ namespace Restaurant.Domain.Entities.Sale
             Status = OrderStatus.Preparing;
         }
 
-        public void Ready()
+        public void Served()
         {
-            Status = OrderStatus.Ready;
+            Status = OrderStatus.Served;
         }
 
         public void Delivering()

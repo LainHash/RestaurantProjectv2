@@ -1,8 +1,8 @@
 using AutoMapper;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancelled;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Preparing;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancel;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
-using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Served;
+using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Serve;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Domain.Entities.Sale;
@@ -17,22 +17,29 @@ namespace Restaurant.Infrastructure.Services.Sale
     internal class OrderPreparationService : IOrderPreparationService
     {
         private readonly IOrderPreparationRepository _orderPreparationRepository;
+        private readonly IOrderDetailRepository _orderDetailRepository;
+        private readonly IOrderRepository _orderRepository;
+
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
 
         public OrderPreparationService(
             IOrderPreparationRepository orderPreparationRepository,
             IMapper mapper,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IOrderDetailRepository orderDetailRepository,
+            IOrderRepository orderRepository)
         {
             _orderPreparationRepository = orderPreparationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
+            _orderDetailRepository = orderDetailRepository;
+            _orderRepository = orderRepository;
         }
 
-        public async Task<Result> PreparingOrderAsync(
-            PreparingOrderCommand command,
-            PreparingOrderSpecification specification,
+        public async Task<Result> PrepareOrderAsync(
+            PrepareOrderCommand command,
+            PrepareOrderSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var orderPreparation = await _orderPreparationRepository.FindAsync(specification, cancellationToken);
@@ -40,6 +47,12 @@ namespace Restaurant.Infrastructure.Services.Sale
             {
                 return Result
                     .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            if(orderPreparation.Status == PreparationStatus.Cancelled)
+            {
+                return Result
+                    .Fail("Cancelled order detail cannot be prepare.", HttpStatusCode.NotFound);
             }
 
             var order = orderPreparation.OrderDetail.Order;
@@ -64,7 +77,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed("Preparation started successfully.");
+                .Succeed("Order preparation started successfully.");
         }
 
         public async Task<Result> ReadyOrderAsync(
@@ -100,9 +113,9 @@ namespace Restaurant.Infrastructure.Services.Sale
                 .Succeed("Order preparation marked as ready successfully.");
         }
 
-        public async Task<Result> ServedOrderAsync(
-            ServedOrderCommand command,
-            ServedOrderSpecification specification,
+        public async Task<Result> ServeOrderAsync(
+            ServeOrderCommand command,
+            ServeOrderSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var orderPreparation = await _orderPreparationRepository.FindAsync(specification, cancellationToken);
@@ -112,8 +125,8 @@ namespace Restaurant.Infrastructure.Services.Sale
                     .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var order = orderPreparation.OrderDetail.Order;
-            if (order.Status != OrderStatus.Preparing && order.Status != OrderStatus.Ready)
+            var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
+            if (order!.Status != OrderStatus.Preparing && order.Status != OrderStatus.Served)
             {
                 return Result
                     .Fail("Order must be in Preparing status.", HttpStatusCode.Conflict);
@@ -130,7 +143,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             var allPreparations = order.OrderDetails.Select(od => od.OrderPreparation).ToList();
             if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
-                order.Ready();
+                order.Served();
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -139,9 +152,9 @@ namespace Restaurant.Infrastructure.Services.Sale
                 .Succeed("Order preparation marked as served successfully.");
         }
 
-        public async Task<Result> CancelledOrderAsync(
-            CancelledOrderCommand command,
-            CancelledOrderSpecification specification,
+        public async Task<Result> CancelOrderAsync(
+            CancelOrderCommand command,
+            CancelOrderSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var orderPreparation = await _orderPreparationRepository.FindAsync(specification, cancellationToken);
@@ -165,8 +178,8 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             orderPreparation.Cancelled();
 
-            var order = orderPreparation.OrderDetail.Order;
-            var allPreparations = order.OrderDetails.Select(od => od.OrderPreparation).ToList();
+            var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
+            var allPreparations = order!.OrderDetails.Select(od => od.OrderPreparation).ToList();
 
             if (allPreparations.All(p => p.Status == PreparationStatus.Cancelled))
             {
@@ -174,7 +187,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             }
             else if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
-                order.Ready();
+                order.Served();
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

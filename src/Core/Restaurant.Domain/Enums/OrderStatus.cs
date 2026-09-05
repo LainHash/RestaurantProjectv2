@@ -8,7 +8,7 @@ namespace Restaurant.Domain.Enums
         Pending,
         Confirmed,
         Preparing,
-        Ready,
+        Served,
         Delivering,
         Completed,
         Cancelled

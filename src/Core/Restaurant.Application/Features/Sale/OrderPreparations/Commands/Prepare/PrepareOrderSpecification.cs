@@ -2,12 +2,12 @@ using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Specifications;
 
-namespace Restaurant.Application.Features.Sale.OrderPreparations.Commands.Served
+namespace Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare
 {
-    public class ServedOrderSpecification
+    public class PrepareOrderSpecification
         : BaseSpecification<OrderPreparation>
     {
-        public ServedOrderSpecification(ServedOrderCommand command)
+        public PrepareOrderSpecification(PrepareOrderCommand command)
         {
             AddCriteria(x => x.OrderDetail.PublicId == command.OrderDetailId);
 

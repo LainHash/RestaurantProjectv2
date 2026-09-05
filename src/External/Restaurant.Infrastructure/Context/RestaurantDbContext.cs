@@ -65,6 +65,7 @@ namespace Restaurant.Infrastructure.Context
 
         public DbSet<Order> Orders { get; set; } = null!;
         public DbSet<OrderDetail> OrderDetails { get; set; } = null!;
+        public DbSet<OrderPreparation> OrderPreparation { get; set; } = null!;
 
         public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 

@@ -20,9 +20,6 @@
 
 	<ItemGroup>
 	  <Folder Include="Features\Auth\Commands\RefreshToken\" />
-	  <Folder Include="Features\Sale\OrderPreparations\Commands\Cancelled\" />
-	  <Folder Include="Features\Sale\OrderPreparations\Commands\Undo\" />
-	  <Folder Include="Features\Sale\OrderPreparations\Commands\Served\" />
 	  <Folder Include="Features\Sale\OrderPreparations\Commands\Ready\" />
 	</ItemGroup>
 
