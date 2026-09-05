@@ -7,7 +7,7 @@ using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Sale
 {
-    public class Order : SoftDeletableEntity
+    public partial class Order : SoftDeletableEntity
     {
         public string OrderCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
@@ -30,5 +30,80 @@ namespace Restaurant.Domain.Entities.Sale
         public Branch Branch { get; private set; } = null!;
         public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
         public ICollection<OrderDiscount> OrderDiscounts { get; private set; } = [];
+    }
+
+    public partial class Order
+    {
+        public Order() { }
+
+        public Order(
+            int? customerId,
+            int employeeId,
+            int branchId)
+        {
+            CustomerId = customerId;
+            EmployeeId = employeeId;
+            BranchId = branchId;
+            Status = OrderStatus.Pending;
+        }
+
+        public Order(
+            int? customerId,
+            int employeeId,
+            int branchId,
+            OrderType type,
+            string? note)
+            : this(customerId, employeeId, branchId)
+        {
+            Type = type;
+            Note = note;
+        }
+
+        public static Order Create(
+            int? customerId,
+            int employeeId,
+            int branchId,
+            OrderType type,
+            string? note)
+        {
+            var order = new Order(customerId, employeeId, branchId, type, note);
+            return order;
+        }
+
+        public void Preparing()
+        {
+            Status = OrderStatus.Preparing;
+        }
+
+        public void Served()
+        {
+            Status = OrderStatus.Served;
+        }
+
+        public void Delivering()
+        {
+            Status = OrderStatus.Delivering;
+        }
+
+        public void Completed()
+        {
+            Status = OrderStatus.Completed;
+        }
+
+        public void Cancelled()
+        {
+            Status = OrderStatus.Cancelled;
+        }
+
+        public void CalculateTotalAmount()
+        {
+            TotalAmount = OrderDetails.Sum(x => x.LineTotal) - DiscountAmount + TaxAmount + DeliveryFee;
+        }
+
+        public void AddOrderDetail(OrderDetail orderDetail)
+        {
+            OrderDetails.Add(orderDetail);
+        }
+
     }
 }

@@ -3,7 +3,7 @@ using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Sale
 {
-    public class OrderDetail : SoftDeletableEntity
+    public partial class OrderDetail : SoftDeletableEntity
     {
         public int OrderId { get; private set; }
         public int ProductId { get; private set; }
@@ -12,12 +12,43 @@ namespace Restaurant.Domain.Entities.Sale
         public decimal UnitPrice { get; private set; }
 
         public int Quantity { get; private set; }
-        public decimal DiscountAmount { get; private set; }
-        public decimal TotalAmount { get; private set; }
+        public decimal LineTotal { get; private set; }
 
         public string? Note { get; private set; }
 
         public Order Order { get; private set; } = null!;
         public Product Product { get; private set; } = null!;
+        public OrderPreparation OrderPreparation { get; private set; } = null!;
+    }
+
+    public partial class OrderDetail
+    {
+        public OrderDetail() { }
+
+        public OrderDetail(
+            int quantity,
+            string? note)
+        {
+            Quantity = quantity;
+            Note = note;
+            OrderPreparation = new OrderPreparation();
+        }
+
+        public OrderDetail SetProduct(
+            int productId,
+            string productName,
+            decimal unitPrice)
+        {
+            ProductId = productId;
+            ProductName = productName;
+            UnitPrice = unitPrice;
+            return this;
+        }
+
+        public OrderDetail CalculateLineTotal()
+        {
+            LineTotal = UnitPrice * Quantity;
+            return this;
+        }
     }
 }

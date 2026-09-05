@@ -14,14 +14,18 @@ using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Personnel;
 using Restaurant.Application.Services.Pricing;
 using Restaurant.Application.Services.Production;
+using Restaurant.Application.Services.Sale;
 using Restaurant.Application.Services.Storage;
 using Restaurant.Application.Services.Territory;
+using Restaurant.Contract.Settings.AuditLog;
 using Restaurant.Contract.Settings.Auth;
 using Restaurant.Contract.Settings.Email;
 using Restaurant.Contract.Settings.Storage;
 using Restaurant.Domain.Repositories;
+using Restaurant.Domain.Repositories.Business;
 using Restaurant.Infrastructure.Context;
 using Restaurant.Infrastructure.Repositories;
+using Restaurant.Infrastructure.Repositories.Business;
 using Restaurant.Infrastructure.Repositories.Catalog;
 using Restaurant.Infrastructure.Services.Auth;
 using Restaurant.Infrastructure.Services.Business;
@@ -34,6 +38,7 @@ using Restaurant.Infrastructure.Services.Inventory;
 using Restaurant.Infrastructure.Services.Personnel;
 using Restaurant.Infrastructure.Services.Pricing;
 using Restaurant.Infrastructure.Services.Production;
+using Restaurant.Infrastructure.Services.Sale;
 using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
 
@@ -82,47 +87,15 @@ namespace Restaurant.Infrastructure
                 }
             }
 
-            // ── Services ─────────────────────────────────────────────────────
-            services.AddScoped<IDataImporter, ExcelImporter>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            services.AddScoped<IAuthenticationService, AuthenticationService>();
-
-            services.AddScoped<IProductCategoryService, ProductCategoryService>();
-            services.AddScoped<IIngredientCategoryService, IngredientCategoryService>();
-            services.AddScoped<IBrandService, BrandService>();
-
-            services.AddScoped<IBranchService, BranchService>();
-
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IIngredientService, IngredientService>();
-
-            services.AddScoped<IProductStockService, ProductStockService>();
-            services.AddScoped<IIngredientStockService, IngredientStockService>();
-
-            services.AddScoped<IImageService, ImageService>();
-
-            services.AddScoped<IRecipeService, RecipeService>();
-
-            services.AddScoped<IRoleService, RoleService>();
-            services.AddScoped<IUserService, UserService>();
-
-            services.AddScoped<IOtpVerificationService, OtpVerificationService>();
-            services.AddScoped<IPersonalProfileService, PersonalProfileService>();
-
-            services.AddScoped<ICustomerService, CustomerService>();
-
-            services.AddScoped<IWalletService, WalletService>();
-
-            services.AddScoped<IDepartmentService, DepartmentService>();
-            services.AddScoped<IPositionService, PositionService>();
-
-            services.AddScoped<IWishlistService, WishlistService>();
-            services.AddScoped<ICartService, CartService>();
-
-            services.AddScoped<IEmployeeService, EmployeeService>();
-
-            services.AddScoped<IDiscountService, DiscountService>();
+            // ── Audit Log ────────────────────────────────────────────────────
+            services.Configure<AuditLogSettings>(
+                configuration.GetSection(AuditLogSettings.SectionName));
+            services.AddHttpContextAccessor();
+            services.AddScoped<IAuditContext, AuditContext>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+            services.AddScoped<IAuditLogService, AuditLogService>();
+            services.AddHostedService<AuditLogRetentionJob>();
 
             // ── Authentication & Security ────────────────────────────────────
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
@@ -156,6 +129,52 @@ namespace Restaurant.Infrastructure
                     };
                 });
             }
+
+            // ── Services ─────────────────────────────────────────────────────
+            services.AddScoped<IDataImporter, ExcelImporter>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            services.AddScoped<IProductCategoryService, ProductCategoryService>();
+            services.AddScoped<IIngredientCategoryService, IngredientCategoryService>();
+            services.AddScoped<IBrandService, BrandService>();
+
+            services.AddScoped<IBranchService, BranchService>();
+
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IIngredientService, IngredientService>();
+
+            services.AddScoped<IProductStockService, ProductStockService>();
+            services.AddScoped<IIngredientStockService, IngredientStockService>();
+            services.AddScoped<IInventoryDeductionService, InventoryDeductionService>();
+
+            services.AddScoped<IImageService, ImageService>();
+
+            services.AddScoped<IRecipeService, RecipeService>();
+
+            services.AddScoped<IRoleService, RoleService>();
+            services.AddScoped<IUserService, UserService>();
+
+            services.AddScoped<IOtpVerificationService, OtpVerificationService>();
+            services.AddScoped<IPersonalProfileService, PersonalProfileService>();
+
+            services.AddScoped<ICustomerService, CustomerService>();
+
+            services.AddScoped<IWalletService, WalletService>();
+
+            services.AddScoped<IDepartmentService, DepartmentService>();
+            services.AddScoped<IPositionService, PositionService>();
+
+            services.AddScoped<IWishlistService, WishlistService>();
+            services.AddScoped<ICartService, CartService>();
+
+            services.AddScoped<IEmployeeService, EmployeeService>();
+
+            services.AddScoped<IDiscountService, DiscountService>();
+
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IOrderPreparationService, OrderPreparationService>();
 
             return services;
         }

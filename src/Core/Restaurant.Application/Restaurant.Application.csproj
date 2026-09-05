@@ -20,7 +20,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Features\Auth\Commands\RefreshToken\" />
-	  <Folder Include="Features\Sale\Orders\Queries\GetById\" />
+	  <Folder Include="Features\Sale\OrderPreparations\Commands\Ready\" />
 	</ItemGroup>
 
 </Project>

@@ -365,3 +365,4 @@ FodyWeavers.xsd
 .env
 src/External/Restaurant.Infrastructure/Migrations
 *.xlsx#
+.dotnet
