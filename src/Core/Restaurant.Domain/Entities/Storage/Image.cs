@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Guest;
+using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Models;
 
@@ -15,6 +15,8 @@ namespace Restaurant.Domain.Entities.Storage
         public string ContentType { get; private set; } = null!;
 
         public ProductImage ProductImage { get; private set; } = null!;
+        public ProductCategoryImage ProductCategoryImage { get; private set; } = null!;
+        public BrandImage BrandImage { get; private set; } = null!;
         public Customer Customer { get; private set; } = null!;
         public Employee Employee { get; private set; } = null!;
     }

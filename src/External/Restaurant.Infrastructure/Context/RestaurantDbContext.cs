@@ -36,6 +36,8 @@ namespace Restaurant.Infrastructure.Context
 
         public DbSet<Image> Images { get; set; } = null!;
         public DbSet<ProductImage> ProductImages { get; set; } = null!;
+        public DbSet<ProductCategoryImage> ProductCategoryImages { get; set; } = null!;
+        public DbSet<BrandImage> BrandImages { get; set; } = null!;
 
         public DbSet<Ingredient> Ingredients { get; set; } = null!;
         public DbSet<IngredientPrice> IngredientPrices { get; set; } = null!;
