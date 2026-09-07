@@ -13,6 +13,20 @@ namespace Restaurant.Infrastructure.Mapping.Storage
                 .ForMember(dest => dest.AltText, opt => opt.MapFrom(src => src.Image.AltText))
                 .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Image.Url));
 
+            CreateMap<BrandImage, ImageResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Image.PublicId))
+                .ForMember(dest => dest.AltText, opt => opt.MapFrom(src => src.Image.AltText))
+                .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Image.Url))
+                .ForMember(dest => dest.DisplayOrder, opt => opt.Ignore())
+                .ForMember(dest => dest.IsPrimary, opt => opt.Ignore());
+
+            CreateMap<ProductCategoryImage, ImageResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Image.PublicId))
+                .ForMember(dest => dest.AltText, opt => opt.MapFrom(src => src.Image.AltText))
+                .ForMember(dest => dest.Url, opt => opt.MapFrom(src => src.Image.Url))
+                .ForMember(dest => dest.DisplayOrder, opt => opt.Ignore())
+                .ForMember(dest => dest.IsPrimary, opt => opt.Ignore());
+
             CreateMap<ProductImage, UploadImageResponse>();
         }
     }
