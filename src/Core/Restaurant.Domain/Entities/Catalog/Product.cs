@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Commerce;
+﻿using Restaurant.Domain.Entities.Billing;
+using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Entities.Production;
@@ -32,6 +33,7 @@ namespace Restaurant.Domain.Entities.Catalog
         public ICollection<WishlistItem> WishlistItems { get; private set; } = [];
         public ICollection<CartItem> CartItems { get; private set; } = [];
         public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
+        public ICollection<InvoiceDetail> InvoiceDetails { get; private set; } = [];
     }
 
     public partial class Product

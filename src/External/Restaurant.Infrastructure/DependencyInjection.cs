@@ -14,6 +14,7 @@ using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Personnel;
 using Restaurant.Application.Services.Pricing;
 using Restaurant.Application.Services.Production;
+using Restaurant.Application.Services.Billing;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Application.Services.Storage;
 using Restaurant.Application.Services.Territory;
@@ -38,6 +39,7 @@ using Restaurant.Infrastructure.Services.Inventory;
 using Restaurant.Infrastructure.Services.Personnel;
 using Restaurant.Infrastructure.Services.Pricing;
 using Restaurant.Infrastructure.Services.Production;
+using Restaurant.Infrastructure.Services.Billing;
 using Restaurant.Infrastructure.Services.Sale;
 using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
@@ -175,6 +177,7 @@ namespace Restaurant.Infrastructure
 
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderPreparationService, OrderPreparationService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
 
             return services;
         }

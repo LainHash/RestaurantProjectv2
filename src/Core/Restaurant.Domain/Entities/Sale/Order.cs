@@ -1,4 +1,5 @@
 ﻿using NanoidDotNet;
+using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Territory;
@@ -18,6 +19,7 @@ namespace Restaurant.Domain.Entities.Sale
         public OrderStatus Status { get; private set; }
         public OrderType Type { get; private set; }
 
+        public decimal Subtotal { get; private set; }
         public decimal DiscountAmount { get; private set; }
         public decimal TaxAmount { get; private set; }
         public decimal DeliveryFee { get; private set; }
@@ -28,6 +30,7 @@ namespace Restaurant.Domain.Entities.Sale
         public Customer Customer { get; private set; } = null!;
         public Employee Employee { get; private set; } = null!;
         public Branch Branch { get; private set; } = null!;
+        public Invoice Invoice { get; private set; } = null!;
         public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
         public ICollection<OrderDiscount> OrderDiscounts { get; private set; } = [];
     }
@@ -95,14 +98,20 @@ namespace Restaurant.Domain.Entities.Sale
             Status = OrderStatus.Cancelled;
         }
 
+        public void CalculateSubtotal()
+        {
+            Subtotal = OrderDetails.Sum(x => x.LineTotal);
+        }
+
         public void CalculateTotalAmount()
         {
-            TotalAmount = OrderDetails.Sum(x => x.LineTotal) - DiscountAmount + TaxAmount + DeliveryFee;
+            TotalAmount = Subtotal - DiscountAmount + TaxAmount + DeliveryFee;
         }
 
         public void AddOrderDetail(OrderDetail orderDetail)
         {
             OrderDetails.Add(orderDetail);
+            CalculateSubtotal();
         }
 
     }

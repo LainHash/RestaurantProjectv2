@@ -34,14 +34,11 @@ namespace Restaurant.Domain.Entities.Sale
             OrderPreparation = new OrderPreparation();
         }
 
-        public OrderDetail SetProduct(
-            int productId,
-            string productName,
-            decimal unitPrice)
+        public OrderDetail SetProduct(Product product)
         {
-            ProductId = productId;
-            ProductName = productName;
-            UnitPrice = unitPrice;
+            ProductId = product.Id;
+            ProductName = product.Name;
+            UnitPrice = product.ProductPrice.UnitPrice;
             return this;
         }
 

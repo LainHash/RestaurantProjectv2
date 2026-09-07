@@ -5,6 +5,7 @@ namespace Restaurant.Contract.DTOs.Sale.Orders
 {
     public class OrderResponse
     {
+        public Guid Id { get; set; }
         public string OrderCode { get; set; } = null!;
 
         public string CustomerCode { get; set; } = null!;
