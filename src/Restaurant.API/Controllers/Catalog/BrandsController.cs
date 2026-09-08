@@ -8,7 +8,6 @@ using Restaurant.Application.Features.Catalog.Brands.Commands.Restore;
 using Restaurant.Application.Features.Catalog.Brands.Commands.Update;
 using Restaurant.Application.Features.Catalog.Brands.Queries.GetAll;
 using Restaurant.Application.Features.Catalog.Brands.Queries.GetById;
-using Restaurant.Application.Features.Catalog.Brands.Queries.GetByName;
 using Restaurant.Contract.DTOs.Catalog.Brands;
 
 namespace Restaurant.API.Controllers.Catalog
@@ -36,17 +35,6 @@ namespace Restaurant.API.Controllers.Catalog
             CancellationToken cancellationToken)
         {
             var query = new GetBrandByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("by-name/{name}")]
-        public async Task<IActionResult> GetByName(
-            [FromRoute] string name,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetBrandByNameQuery(name);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
