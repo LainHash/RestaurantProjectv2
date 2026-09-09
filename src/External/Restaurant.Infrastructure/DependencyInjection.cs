@@ -143,6 +143,8 @@ namespace Restaurant.Infrastructure
             services.AddScoped<IBrandService, BrandService>();
 
             services.AddScoped<IBranchService, BranchService>();
+            services.AddScoped<IAreaService, AreaService>();
+            services.AddScoped<IRestaurantTableService, RestaurantTableService>();
 
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IIngredientService, IngredientService>();
