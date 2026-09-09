@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Models;
+﻿using Restaurant.Domain.Entities.Storage;
+using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Catalog
 {
@@ -9,5 +10,6 @@ namespace Restaurant.Domain.Entities.Catalog
 
         public ICollection<Product> Products { get; private set; } = [];
         public ICollection<Ingredient> Ingredients { get; private set; } = [];
+        public ICollection<BrandImage> BrandImages { get; private set;} = [];
     }
 }

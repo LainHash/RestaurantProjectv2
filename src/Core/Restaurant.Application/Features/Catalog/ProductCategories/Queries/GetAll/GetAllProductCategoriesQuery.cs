@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Restaurant.Contract.DTOs.Catalog.Categories;
+using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 using Restaurant.Domain.Models;
 using Restaurant.Domain.Models.Results;
 

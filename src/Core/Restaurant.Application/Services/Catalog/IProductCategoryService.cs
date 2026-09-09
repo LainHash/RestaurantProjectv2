@@ -1,6 +1,6 @@
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Create;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Update;
-using Restaurant.Contract.DTOs.Catalog.Categories;
+using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Specifications;

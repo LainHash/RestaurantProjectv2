@@ -1,7 +1,6 @@
 using AutoMapper;
 using Restaurant.Contract.DTOs.Territory.Branches;
 using Restaurant.Domain.Entities.Territory;
-using Restaurant.Domain.Enums;
 
 namespace Restaurant.Infrastructure.Mapping.Territory
 {

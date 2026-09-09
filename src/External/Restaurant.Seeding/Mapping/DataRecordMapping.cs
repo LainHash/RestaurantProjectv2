@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Identity;
@@ -68,6 +68,8 @@ namespace Restaurant.Seeding.Mapping
 
             CreateMap<ImageRecord, Image>();
             CreateMap<ProductImageRecord, ProductImage>();
+            CreateMap<ProductCategoryImageRecord, ProductCategoryImage>();
+            CreateMap<BrandImageRecord, BrandImage>();
 
             CreateMap<BranchRecord, Branch>()
                 .ForMember(dest => dest.Status, opt => opt

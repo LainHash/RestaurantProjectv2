@@ -12,6 +12,9 @@ namespace Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetA
         {
             EnableSoftDeleteFilter();
 
+            AddIncludeAggregator(x => x.Include(b => b.ProductCategoryImages)
+                                        .ThenInclude(bi => bi.Image));
+
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
                 Criteria = p =>
