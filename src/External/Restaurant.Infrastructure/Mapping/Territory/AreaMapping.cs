@@ -1,14 +1,14 @@
-using AutoMapper;
-using Restaurant.Contract.DTOs.Territory.Branches;
+﻿using AutoMapper;
+using Restaurant.Contract.DTOs.Territory.Areas;
 using Restaurant.Domain.Entities.Territory;
 
 namespace Restaurant.Infrastructure.Mapping.Territory
 {
-    internal class BranchMapping : Profile
+    internal class AreaMapping : Profile
     {
-        public BranchMapping()
+        public AreaMapping()
         {
-            CreateMap<Branch, BranchResponse>()
+            CreateMap<Area, AreaResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
         }
     }
