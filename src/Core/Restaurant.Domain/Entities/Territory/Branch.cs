@@ -26,5 +26,6 @@ namespace Restaurant.Domain.Entities.Territory
         public ICollection<ProductStock> ProductStocks { get; private set; } = [];
         public ICollection<IngredientStock> IngredientStocks { get; private set; } = [];
         public ICollection<Order> Orders { get; private set; } = [];
+        public ICollection<Area> Areas { get; private set; } = [];
     }
 }

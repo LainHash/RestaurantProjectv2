@@ -3,11 +3,12 @@
 namespace Restaurant.Domain.Enums
 {
     [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum DiscountCustomerStatus
+    public enum TableShape
     {
-        Available = 1,
-        Used = 2,
-        Expired = 3,
-        Revoked = 4
+        Square,
+        Rectangle,
+        Round,
+        Long,
+        Other
     }
 }
