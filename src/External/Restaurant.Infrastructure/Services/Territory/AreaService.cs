@@ -2,6 +2,7 @@ using AutoMapper;
 using Restaurant.Application.Features.Territory.Areas.Commands.Create;
 using Restaurant.Application.Features.Territory.Areas.Commands.Update;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetAll;
+using Restaurant.Application.Features.Territory.Areas.Queries.GetAllByBranchId;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Territory;
@@ -40,8 +41,8 @@ namespace Restaurant.Infrastructure.Services.Territory
         {
             var totalItems = await _areaRepository.CountAsync(specification, cancellationToken);
             var areas = await _areaRepository.ToListAsync(specification, cancellationToken);
-            var response = _mapper.Map<IEnumerable<AreaResponse>>(areas);
 
+            var response = _mapper.Map<IEnumerable<AreaResponse>>(areas);
             return PageResult<IEnumerable<AreaResponse>>
                 .Succeed(response, Success<Area>.Retrieved, totalItems, specification.Skip, specification.Take);
         }
@@ -137,12 +138,14 @@ namespace Restaurant.Infrastructure.Services.Territory
             var area = await _areaRepository.FindAsync(specification, cancellationToken);
             if (area is null)
             {
-                return Result.Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                return Result
+                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
             }
 
             if (area.IsDeleted)
             {
-                return Result.Fail(Error<Area>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                return Result
+                    .Fail(Error<Area>.AlreadyDeleted, HttpStatusCode.BadRequest);
             }
 
             area.SoftDelete();
@@ -158,18 +161,31 @@ namespace Restaurant.Infrastructure.Services.Territory
             var area = await _areaRepository.FindAsync(specification, cancellationToken);
             if (area is null)
             {
-                return Result.Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                return Result
+                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
             }
 
             if (!area.IsDeleted)
             {
-                return Result.Fail(Error<Area>.NotYetDeleted, HttpStatusCode.BadRequest);
+                return Result
+                    .Fail(Error<Area>.NotYetDeleted, HttpStatusCode.BadRequest);
             }
 
             area.Restore();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Succeed(Success<Area>.Restored);
+        }
+
+        public async Task<Result<IEnumerable<AreaResponse>>> GetByBranchIdAsync(
+            GetAllAreasByBranchIdSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var areas = await _areaRepository.ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<AreaResponse>>(areas);
+            return Result<IEnumerable<AreaResponse>>
+                .Succeed(response, Success<Area>.Retrieved);
         }
     }
 }

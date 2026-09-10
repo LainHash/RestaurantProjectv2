@@ -139,7 +139,7 @@ namespace Restaurant.Infrastructure.Services.Territory
             var restaurantTables = await _restaurantTableRepository.ToListAsync(specification, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<RestaurantTableResponse>>(restaurantTables);
-            return PageResult<IEnumerable<RestaurantTableResponse>>
+            return Result<IEnumerable<RestaurantTableResponse>>
                 .Succeed(response, Success<RestaurantTable>.Retrieved);
         }
     }

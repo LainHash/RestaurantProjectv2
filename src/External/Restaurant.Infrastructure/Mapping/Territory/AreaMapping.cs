@@ -9,8 +9,7 @@ namespace Restaurant.Infrastructure.Mapping.Territory
         public AreaMapping()
         {
             CreateMap<Area, AreaResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
-                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch != null ? src.Branch.BranchCode : string.Empty));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
 
             CreateMap<CreateAreaRequest, Area>();
 
