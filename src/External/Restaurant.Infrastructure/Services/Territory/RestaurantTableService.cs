@@ -74,6 +74,12 @@ namespace Restaurant.Infrastructure.Services.Territory
                     .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
             }
 
+            if (await _restaurantTableRepository.IsExistingTableNumberAsync(command.Body.TableNumber, cancellationToken))
+            {
+                return Result<RestaurantTableResponse>
+                    .Fail("A table with this table number already exists.", HttpStatusCode.Conflict);
+            }
+
             var restaurantTable = _mapper.Map<RestaurantTable>(command.Body)
                 .SetArea(area.Id);
 
