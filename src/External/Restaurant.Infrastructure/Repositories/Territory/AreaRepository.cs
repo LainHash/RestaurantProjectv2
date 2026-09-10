@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Territory;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Repositories.Territory;
 using Restaurant.Infrastructure.Context;
 
@@ -8,5 +9,15 @@ namespace Restaurant.Infrastructure.Repositories.Territory
         : Repository<Area>(context), IAreaRepository
     {
         private readonly RestaurantDbContext _context = context;
+
+        public async Task<Area?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Areas.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
+
+        public async Task<Area?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+        {
+            return await _context.Areas.FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
+        }
     }
 }
