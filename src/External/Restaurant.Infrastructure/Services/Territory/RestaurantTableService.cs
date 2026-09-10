@@ -2,6 +2,7 @@
 using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create;
 using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Update;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
+using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAllByAreaId;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Territory;
@@ -129,6 +130,17 @@ namespace Restaurant.Infrastructure.Services.Territory
             var response = _mapper.Map<RestaurantTableResponse>(restaurantTable);
             return Result<RestaurantTableResponse>
                 .Succeed(response, Success<RestaurantTable>.Updated);
+        }
+
+        public async Task<Result<IEnumerable<RestaurantTableResponse>>> GetAllByAreaIdAsync(
+            GetAllRestaurantTableByAreaIdSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var restaurantTables = await _restaurantTableRepository.ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<RestaurantTableResponse>>(restaurantTables);
+            return Result<IEnumerable<RestaurantTableResponse>>
+                .Succeed(response, Success<RestaurantTable>.Retrieved);
         }
     }
 }

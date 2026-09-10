@@ -1,8 +1,8 @@
-﻿using Restaurant.Domain.Models;
+using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Territory
 {
-    public class Area : SoftDeletableEntity
+    public partial class Area : SoftDeletableEntity
     {
         public int BranchId { get; private set; }
 
@@ -13,5 +13,16 @@ namespace Restaurant.Domain.Entities.Territory
 
         public Branch Branch { get; private set; } = null!;
         public ICollection<RestaurantTable> RestaurantTables { get; private set; } = [];
+    }
+
+    public partial class Area
+    {
+        public Area() { }
+
+        public Area SetBranch(int branchId)
+        {
+            BranchId = branchId;
+            return this;
+        }
     }
 }

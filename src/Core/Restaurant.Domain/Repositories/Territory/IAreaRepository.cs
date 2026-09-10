@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Territory;
+using Restaurant.Domain.Entities.Territory;
 
 namespace Restaurant.Domain.Repositories.Territory
 {
@@ -6,5 +6,6 @@ namespace Restaurant.Domain.Repositories.Territory
     {
         Task<Area?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
         Task<Area?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<bool> IsExistingNameAsync(int branchId, string name, CancellationToken cancellationToken = default);
     }
 }
