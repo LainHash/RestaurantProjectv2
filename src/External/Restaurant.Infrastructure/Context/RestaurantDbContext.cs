@@ -29,6 +29,8 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<Unit> Units { get; set; } = null!;
 
         public DbSet<Branch> Branches { get; set; } = null!;
+        public DbSet<Area> Areas { get; set; } = null!;
+        public DbSet<RestaurantTable> RestaurantTables { get; set; } = null!;
 
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<ProductPrice> ProductPrices { get; set; } = null!;

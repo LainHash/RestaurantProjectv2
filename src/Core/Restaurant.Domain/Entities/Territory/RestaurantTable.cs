@@ -3,7 +3,7 @@ using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Territory
 {
-    public class RestaurantTable : SoftDeletableEntity
+    public partial class RestaurantTable : SoftDeletableEntity
     {
         public int AreaId { get; private set; }
 
@@ -23,5 +23,16 @@ namespace Restaurant.Domain.Entities.Territory
         public bool IsActive { get; private set; }
 
         public Area Area { get; private set; } = null!;
+    }
+
+    public partial class RestaurantTable
+    {
+        public RestaurantTable() { }
+
+        public RestaurantTable SetArea(int areaId)
+        {
+            AreaId = areaId;
+            return this;
+        }
     }
 }

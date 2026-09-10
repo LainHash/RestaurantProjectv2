@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
+using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Territory;
 using Restaurant.Contract.DTOs.Territory.RestaurantTables;
 using Restaurant.Domain.Entities.Territory;
@@ -14,15 +16,21 @@ namespace Restaurant.Infrastructure.Services.Territory
     internal class RestaurantTableService : IRestaurantTableService
     {
         private readonly IRestaurantTableRepository _restaurantTableRepository;
+        private readonly IAreaRepository _areaRepository;
 
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public RestaurantTableService(
             IRestaurantTableRepository restaurantTableRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IAreaRepository areaRepository,
+            IUnitOfWork unitOfWork)
         {
             _restaurantTableRepository = restaurantTableRepository;
             _mapper = mapper;
+            _areaRepository = areaRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PageResult<IEnumerable<RestaurantTableResponse>>> GetAllAsync(
@@ -52,6 +60,33 @@ namespace Restaurant.Infrastructure.Services.Territory
             var response = _mapper.Map<RestaurantTableResponse>(restaurantTable);
             return Result<RestaurantTableResponse>
                 .Succeed(response, Success<RestaurantTable>.Retrieved);
+        }
+
+        public async Task<Result<RestaurantTableResponse>> CreateAsync(
+            CreateRestaurantTableCommand command,
+            CreateRestaurantTableSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var area = await _areaRepository.FindByIdAsync(command.Body.AreaId, cancellationToken);
+            if(area is null)
+            {
+                return Result<RestaurantTableResponse>
+                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var restaurantTable = _mapper.Map<RestaurantTable>(command.Body)
+                .SetArea(area.Id);
+
+            _restaurantTableRepository.Add(restaurantTable);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            specification.ApplyCriteria(restaurantTable.Id);
+            var createdRestaurantTable = await _restaurantTableRepository.FindAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<RestaurantTableResponse>(createdRestaurantTable);
+            return Result<RestaurantTableResponse>
+                .Succeed(response, Success<RestaurantTable>.Created, HttpStatusCode.Created);
         }
     }
 }
