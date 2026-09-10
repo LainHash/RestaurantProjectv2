@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
+using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
 
 namespace Restaurant.API.Controllers.Territory
 {
@@ -16,6 +17,16 @@ namespace Restaurant.API.Controllers.Territory
             [FromQuery] GetAllRestaurantTablesQuery query,
             CancellationToken cancellationToken)
         {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetRestaurantTableByIdQuery(id);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
