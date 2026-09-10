@@ -2,10 +2,11 @@ namespace Restaurant.Seeding.DataRecords.Storage
 {
     internal class ProductImageRecord
     {
+        public Guid PublicId { get; set; }
         public int DisplayOrder { get; set; }
         public bool IsPrimary { get; set; }
 
-        public string ProductName { get; set; } = string.Empty;
-        public string AltText { get; set; } = string.Empty;
+        public Guid ProductId { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

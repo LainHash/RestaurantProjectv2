@@ -2,7 +2,8 @@ namespace Restaurant.Seeding.DataRecords.Storage
 {
     internal class ProductCategoryImageRecord
     {
-        public string CategoryName { get; set; } = string.Empty;
-        public string AltText { get; set; } = string.Empty;
+        public Guid PublicId { get; set; }
+        public Guid CategoryId { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

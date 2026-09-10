@@ -20,29 +20,27 @@ namespace Restaurant.Seeding.Seeders.Storage
                 return;
 
             var products = await context.Products
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var productDictionary = products.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var images = await context.Images
-                .Select(x => new { x.Id, x.AltText })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var imageDictionary = images.ToDictionary(
-                x => x.AltText,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<ProductImageRecord>("ProductImages");
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductName.ToLower(), out var product))
-                    throw new Exception($"Product '{record.ProductName}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductId, out var product))
+                    throw new Exception($"Product '{record.ProductId}' not found.");
 
-                if (!imageDictionary.TryGetValue(record.AltText.ToLower(), out var image))
-                    throw new Exception($"Image '{record.AltText}' not found.");
+                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
+                    throw new Exception($"Image '{record.ImageId}' not found.");
 
                 var productImage = _mapper.Map<ProductImage>(record)
                     .SetProduct(product.Id)

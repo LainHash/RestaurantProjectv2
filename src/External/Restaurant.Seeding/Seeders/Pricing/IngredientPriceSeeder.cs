@@ -20,20 +20,19 @@ namespace Restaurant.Seeding.Seeders.Pricing
                 return;
 
             var ingredients = await context.Ingredients
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
 
             var ingredientsDictionary = ingredients.ToDictionary(
-                x => x.Name.ToLower(),
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<IngredientPriceRecord>("IngredientPrices");
 
             foreach (var record in records)
             {
-                if (!ingredientsDictionary.TryGetValue(record.IngredientName, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientName}' not found.");
+                if (!ingredientsDictionary.TryGetValue(record.IngredientId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
 
                 var price = _mapper.Map<IngredientPrice>(record)
                     .SetIngredient(ingredient.Id);

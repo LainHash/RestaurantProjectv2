@@ -2,6 +2,7 @@
 {
     public class CustomerRecord
     {
-        public string UserName { get; set; } = null!;
+        public Guid PublicId { get; set; }
+        public Guid UserId { get; set; }
     }
 }

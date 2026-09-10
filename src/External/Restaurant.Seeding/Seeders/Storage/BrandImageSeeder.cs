@@ -20,29 +20,27 @@ namespace Restaurant.Seeding.Seeders.Storage
                 return;
 
             var brands = await context.Brands
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var brandDictionary = brands.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var images = await context.Images
-                .Select(x => new { x.Id, x.AltText })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var imageDictionary = images.ToDictionary(
-                x => x.AltText,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<BrandImageRecord>("BrandImages");
 
             foreach (var record in records)
             {
-                if (!brandDictionary.TryGetValue(record.BrandName.Trim(), out var brand))
-                    throw new Exception($"Brand '{record.BrandName}' not found.");
+                if (!brandDictionary.TryGetValue(record.BrandId, out var brand))
+                    throw new Exception($"Brand '{record.BrandId}' not found.");
 
-                if (!imageDictionary.TryGetValue(record.AltText.Trim(), out var image))
-                    throw new Exception($"Image '{record.AltText}' not found.");
+                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
+                    throw new Exception($"Image '{record.ImageId}' not found.");
 
                 var brandImage = _mapper.Map<BrandImage>(record)
                     .SetBrand(brand.Id)

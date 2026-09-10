@@ -2,7 +2,8 @@ namespace Restaurant.Seeding.DataRecords.Personnel
 {
     internal class PositionRecord
     {
-        public string DepartmentCode { get; set; } = null!;
+        public Guid PublicId { get; set; }
+        public Guid DepartmentId { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public string PositionCode { get; set; } = null!;

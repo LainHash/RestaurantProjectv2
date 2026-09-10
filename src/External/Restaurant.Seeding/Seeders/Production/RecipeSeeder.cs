@@ -20,19 +20,18 @@ namespace Restaurant.Seeding.Seeders.Production
                 return;
 
             var products = await context.Products
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var productDictionary = products.ToDictionary(
-                x => x.Name.ToLower(),
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<RecipeRecord>("Recipes");
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductName, out var product))
-                    throw new Exception($"Product '{record.ProductName}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductId, out var product))
+                    throw new Exception($"Product '{record.ProductId}' not found.");
 
                 var recipe = _mapper.Map<Recipe>(record)
                     .SetProduct(product.Id);

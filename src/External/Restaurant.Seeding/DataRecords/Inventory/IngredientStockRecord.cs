@@ -2,9 +2,10 @@ namespace Restaurant.Seeding.DataRecords.Inventory
 {
     internal class IngredientStockRecord
     {
+        public Guid PublicId { get; set; }
         public decimal QuantityOnHand { get; set; }
 
-        public string IngredientName { get; set; } = null!;
-        public string BranchCode { get; set; } = null!;
+        public Guid IngredientId { get; set; }
+        public Guid BranchId { get; set; }
     }
 }

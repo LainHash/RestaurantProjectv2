@@ -2,7 +2,8 @@ namespace Restaurant.Seeding.DataRecords.Production
 {
     internal class RecipeRecord
     {
-        public string ProductName { get; set; } = string.Empty;
+        public Guid PublicId { get; set; }
+        public Guid ProductId { get; set; }
         public string? Instructions { get; set; }
     }
 }

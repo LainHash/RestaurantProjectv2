@@ -2,6 +2,7 @@ namespace Restaurant.Seeding.DataRecords.Inventory
 {
     internal class UnitRecord
     {
+        public Guid PublicId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Symbol { get; set; } = string.Empty;
 
