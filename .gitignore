@@ -367,4 +367,4 @@ src/External/Restaurant.Infrastructure/Migrations
 *.xlsx#
 .dotnet
 .temp.txt
-src/ExternalRestaurant.Seeding/Data
+src/External/Restaurant.Seeding/Data/*

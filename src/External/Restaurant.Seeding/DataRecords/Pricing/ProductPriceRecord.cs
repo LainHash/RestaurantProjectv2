@@ -4,6 +4,7 @@ namespace Restaurant.Seeding.DataRecords.Pricing
     {
         public Guid PublicId { get; set; }
         public decimal UnitPrice { get; set; }
+        public string Currency { get; set; } = null!;
 
         public Guid ProductId { get; set; }
     }

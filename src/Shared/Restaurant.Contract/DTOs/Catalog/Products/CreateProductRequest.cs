@@ -13,5 +13,6 @@ namespace Restaurant.Contract.DTOs.Catalog.Products
         public Guid UnitId { get; set; }
 
         public decimal UnitPrice { get; set; }
+        public string Currency { get; set; } = string.Empty;
     }
 }

@@ -6,8 +6,10 @@ namespace Restaurant.Domain.Entities.Pricing
     public partial class ProductPrice : SoftDeletableEntity
     {
         public decimal UnitPrice { get; private set; }
+        public string Currency { get; private set; } = null!;
 
         public int ProductId { get; private set; }
+
 
         public Product Product { get; private set; } = null!;
     }

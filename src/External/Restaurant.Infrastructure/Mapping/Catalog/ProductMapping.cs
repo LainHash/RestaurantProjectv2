@@ -12,6 +12,7 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
             CreateMap<Product, ProductResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
                 .ForMember(dest => dest.UnitPrice, opt => opt.MapFrom(src => src.ProductPrice.UnitPrice))
+                .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => src.ProductPrice.Currency))
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand!.Name))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.ProductCategory.Name))
                 .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Unit.Symbol))
@@ -19,10 +20,12 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
                                                                     .First(x => x.ProductId == src.Id && x.IsPrimary)));
 
             CreateMap<CreateProductRequest, Product>()
-                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
+                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
 
             CreateMap<UpdateProductRequest, Product>()
-                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice));
+                .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
+                .ForMember(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
         }
     }
 }
