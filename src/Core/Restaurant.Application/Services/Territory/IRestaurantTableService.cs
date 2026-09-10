@@ -1,4 +1,5 @@
 ﻿using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create;
+using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Update;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
 using Restaurant.Contract.DTOs.Territory.RestaurantTables;
@@ -19,6 +20,11 @@ namespace Restaurant.Application.Services.Territory
         Task<Result<RestaurantTableResponse>> CreateAsync(
             CreateRestaurantTableCommand command,
             CreateRestaurantTableSpecification specification,
+            CancellationToken cancellationToken = default);
+
+        Task<Result<RestaurantTableResponse>> UpdateAsync(
+            UpdateRestaurantTableCommand command,
+            UpdateRestaurantTableSpecification specification,
             CancellationToken cancellationToken = default);
     }
 }

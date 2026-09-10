@@ -12,6 +12,8 @@ namespace Restaurant.Infrastructure.Mapping.Territory
                     .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
 
             CreateMap<CreateRestaurantTableRequest, RestaurantTable>();
+
+            CreateMap<UpdateRestaurantTableRequest, RestaurantTable>();
         }
     }
 }

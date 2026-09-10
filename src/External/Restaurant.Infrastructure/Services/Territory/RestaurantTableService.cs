@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create;
+using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Update;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
 using Restaurant.Application.Services.Business;
@@ -93,6 +94,41 @@ namespace Restaurant.Infrastructure.Services.Territory
             var response = _mapper.Map<RestaurantTableResponse>(createdRestaurantTable);
             return Result<RestaurantTableResponse>
                 .Succeed(response, Success<RestaurantTable>.Created, HttpStatusCode.Created);
+        }
+
+        public async Task<Result<RestaurantTableResponse>> UpdateAsync(
+            UpdateRestaurantTableCommand command,
+            UpdateRestaurantTableSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var area = await _areaRepository.FindByIdAsync(command.Body.AreaId, cancellationToken);
+            if (area is null)
+            {
+                return Result<RestaurantTableResponse>
+                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            if (await _restaurantTableRepository.IsExistingTableNumberAsync(command.Body.TableNumber, cancellationToken))
+            {
+                return Result<RestaurantTableResponse>
+                    .Fail("A table with this table number already exists.", HttpStatusCode.Conflict);
+            }
+
+            var restaurantTable = await _restaurantTableRepository.FindAsync(specification, cancellationToken);
+            if (restaurantTable is null)
+            {
+                return Result<RestaurantTableResponse>
+                    .Fail(Error<RestaurantTable>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            _mapper.Map(command.Body, restaurantTable);
+            restaurantTable.SetArea(area.Id);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var response = _mapper.Map<RestaurantTableResponse>(restaurantTable);
+            return Result<RestaurantTableResponse>
+                .Succeed(response, Success<RestaurantTable>.Updated);
         }
     }
 }

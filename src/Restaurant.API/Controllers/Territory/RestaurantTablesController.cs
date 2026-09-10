@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create;
+using Restaurant.Application.Features.Territory.RestaurantTables.Commands.Update;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAll;
 using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetById;
 using Restaurant.Contract.DTOs.Territory.RestaurantTables;
@@ -40,6 +41,17 @@ namespace Restaurant.API.Controllers.Territory
             CancellationToken cancellationToken)
         {
             var command = new CreateRestaurantTableCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id,
+            [FromBody] UpdateRestaurantTableRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateRestaurantTableCommand(id, body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
