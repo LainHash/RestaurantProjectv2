@@ -20,26 +20,22 @@ namespace Restaurant.Seeding.Seeders.Production
                 return;
 
             var ingredients = await context.Ingredients
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var ingredientsDictionary = ingredients.ToDictionary(
-                x => x.Name.ToLower(),
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var recipes = await context.Recipes
-                .Include(x => x.Product)
-                .Select(x => new { x.Id, x.Product.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var recipeDictionary = recipes.ToDictionary(
-                x => x.Name.ToLower(),
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var units = await context.Units
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var unitDictionary = units.ToDictionary(
-                x => x.Name.ToLower(),
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
 
             var records =
@@ -47,14 +43,14 @@ namespace Restaurant.Seeding.Seeders.Production
 
             foreach (var record in records)
             {
-                if (!ingredientsDictionary.TryGetValue(record.IngredientName, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientName}' not found.");
+                if (!ingredientsDictionary.TryGetValue(record.IngredientId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
 
-                if (!recipeDictionary.TryGetValue(record.ProductName, out var recipe))
-                    throw new Exception($"Recipe '{record.ProductName}' not found.");
+                if (!recipeDictionary.TryGetValue(record.RecipeId, out var recipe))
+                    throw new Exception($"Recipe '{record.RecipeId}' not found.");
 
-                if (!unitDictionary.TryGetValue(record.UnitName.ToLower(), out var unit))
-                    throw new Exception($"Unit '{record.UnitName}' not found.");
+                if (!unitDictionary.TryGetValue(record.UnitId, out var unit))
+                    throw new Exception($"Unit '{record.UnitId}' not found.");
 
                 var recipeIngredient = _mapper.Map<RecipeIngredient>(record)
                     .SetIngredient(ingredient.Id)

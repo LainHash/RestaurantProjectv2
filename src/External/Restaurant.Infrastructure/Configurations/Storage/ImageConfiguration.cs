@@ -25,10 +25,6 @@ namespace Restaurant.Infrastructure.Configurations.Storage
             builder.Property(x => x.StoragePath)
                 .IsRequired()
                 .HasMaxLength(500);
-
-            builder.Property(x => x.ContentType)
-                .IsRequired()
-                .HasMaxLength(100);
         }
     }
 }

@@ -2,6 +2,7 @@ namespace Restaurant.Seeding.DataRecords.Storage
 {
     internal class ImageRecord
     {
+        public Guid PublicId { get; set; }
         public string AltText { get; set; } = null!;
 
         public string Url { get; set; } = null!;

@@ -2,9 +2,10 @@
 {
     internal class EmployeeRecord
     {
-        public string UserName { get; set; } = null!;
-        public string PositionName { get; set; } = null!;
-        public string BranchCode { get; set; } = null!;
+        public Guid PublicId { get; set; }
+        public Guid UserId { get; set; }
+        public Guid PositionId { get; set; }
+        public Guid BranchId { get; set; }
         public DateTime HireDate { get; set; }
         public DateTime? TerminationDate { get; set; }
         public string Status { get; set; } = null!;

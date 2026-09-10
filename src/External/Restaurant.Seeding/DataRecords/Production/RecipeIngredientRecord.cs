@@ -2,9 +2,10 @@ namespace Restaurant.Seeding.DataRecords.Production
 {
     internal class RecipeIngredientRecord
     {
-        public string ProductName { get; set; } = string.Empty;
-        public string IngredientName { get; set; } = string.Empty;
+        public Guid PublicId { get; set; }
+        public Guid RecipeId { get; set; }
+        public Guid IngredientId { get; set; }
         public decimal Quantity { get; set; }
-        public string UnitName { get; set; } = string.Empty;
+        public Guid UnitId { get; set; }
     }
 }

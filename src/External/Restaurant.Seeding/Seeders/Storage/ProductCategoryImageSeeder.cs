@@ -20,29 +20,27 @@ namespace Restaurant.Seeding.Seeders.Storage
                 return;
 
             var categories = await context.ProductCategories
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var categoryDictionary = categories.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var images = await context.Images
-                .Select(x => new { x.Id, x.AltText })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var imageDictionary = images.ToDictionary(
-                x => x.AltText,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<ProductCategoryImageRecord>("ProductCategoryImages");
 
             foreach (var record in records)
             {
-                if (!categoryDictionary.TryGetValue(record.CategoryName.Trim(), out var category))
-                    throw new Exception($"Category '{record.CategoryName}' not found.");
+                if (!categoryDictionary.TryGetValue(record.CategoryId, out var category))
+                    throw new Exception($"Category '{record.CategoryId}' not found.");
 
-                if (!imageDictionary.TryGetValue(record.AltText.Trim(), out var image))
-                    throw new Exception($"Image '{record.AltText}' not found.");
+                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
+                    throw new Exception($"Image '{record.ImageId}' not found.");
 
                 var categoryImage = _mapper.Map<ProductCategoryImage>(record)
                     .SetProductCategory(category.Id)

@@ -2,7 +2,8 @@ namespace Restaurant.Seeding.DataRecords.Storage
 {
     internal class BrandImageRecord
     {
-        public string BrandName { get; set; } = string.Empty;
-        public string AltText { get; set; } = string.Empty;
+        public Guid PublicId { get; set; }
+        public Guid BrandId { get; set; }
+        public Guid ImageId { get; set; }
     }
 }

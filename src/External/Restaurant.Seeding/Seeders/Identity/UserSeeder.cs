@@ -20,19 +20,18 @@ namespace Restaurant.Seeding.Seeders.Identity
                 return;
 
             var roles = await context.Roles
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var rolesDictionary = roles.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<UserRecord>("Users");
 
             foreach (var record in records)
             {
-                if (!rolesDictionary.TryGetValue(record.RoleName.ToLower(), out var role))
-                    throw new Exception($"Role '{record.RoleName}' not found.");
+                if (!rolesDictionary.TryGetValue(record.RoleId, out var role))
+                    throw new Exception($"Role '{record.RoleId}' not found.");
 
                 var user = _mapper.Map<User>(record)
                     .SetRole(role.Id);

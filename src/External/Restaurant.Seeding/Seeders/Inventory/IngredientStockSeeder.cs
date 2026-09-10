@@ -20,31 +20,29 @@ namespace Restaurant.Seeding.Seeders.Inventory
                 return;
 
             var ingredients = await context.Ingredients
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
 
             var ingredientDictionary = ingredients.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var branches = await context.Branches
-                .Select(x => new { x.Id, x.BranchCode })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
 
             var branchDictionary = branches.ToDictionary(
-                x => x.BranchCode,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<IngredientStockRecord>("IngredientStocks");
 
             foreach (var record in records)
             {
-                if (!ingredientDictionary.TryGetValue(record.IngredientName, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientName}' not found.");
+                if (!ingredientDictionary.TryGetValue(record.IngredientId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
 
-                if (!branchDictionary.TryGetValue(record.BranchCode, out var branch))
-                    throw new Exception($"Branch '{record.BranchCode}' not found.");
+                if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
+                    throw new Exception($"Branch '{record.BranchId}' not found.");
 
                 var ingredientStock = _mapper.Map<IngredientStock>(record)
                     .SetIngredient(ingredient.Id)

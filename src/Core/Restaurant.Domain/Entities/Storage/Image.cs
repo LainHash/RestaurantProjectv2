@@ -11,9 +11,6 @@ namespace Restaurant.Domain.Entities.Storage
         public string Url { get; private set; } = null!;
         public string StoragePath { get; private set; } = null!;
 
-        public decimal FileSize { get; private set; }
-        public string ContentType { get; private set; } = null!;
-
         public ProductImage ProductImage { get; private set; } = null!;
         public ProductCategoryImage ProductCategoryImage { get; private set; } = null!;
         public BrandImage BrandImage { get; private set; } = null!;
@@ -28,13 +25,11 @@ namespace Restaurant.Domain.Entities.Storage
 
         }
 
-        public Image(string altText, string url, string storagePath, long fileSize, string contentType)
+        public Image(string altText, string url, string storagePath)
         {
             AltText = altText;
             Url = url;
             StoragePath = storagePath;
-            FileSize = fileSize;
-            ContentType = contentType;
         }
 
         public Image SetAltText(string altText)
@@ -43,9 +38,9 @@ namespace Restaurant.Domain.Entities.Storage
             return this;
         }
 
-        public static Image Create(string altText, string url, string storagePath, long fileSize, string contentType)
+        public static Image Create(string altText, string url, string storagePath)
         {
-            return new Image(altText, url, storagePath, fileSize, contentType);
+            return new Image(altText, url, storagePath);
         }
     }
 }

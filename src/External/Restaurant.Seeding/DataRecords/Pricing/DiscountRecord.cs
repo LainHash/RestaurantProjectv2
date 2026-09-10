@@ -4,6 +4,7 @@ namespace Restaurant.Seeding.DataRecords.Pricing
 {
     internal class DiscountRecord
     {
+        public Guid PublicId { get; set; }
         public string Name { get; set; } = string.Empty;
 
         public DiscountType Type { get; set; }

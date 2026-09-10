@@ -11,5 +11,6 @@ namespace Restaurant.Contract.DTOs.Catalog.Ingredients
 
         public string Unit { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
+        public string Currency { get; set; } = string.Empty;
     }
 }

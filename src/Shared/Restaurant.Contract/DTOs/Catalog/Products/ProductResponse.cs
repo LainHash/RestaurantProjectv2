@@ -15,6 +15,7 @@ namespace Restaurant.Contract.DTOs.Catalog.Products
 
         public string Unit { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
+        public string Currency { get; set; } = string.Empty;
 
         public ImageResponse PrimaryImage { get; set; } = null!;
     }

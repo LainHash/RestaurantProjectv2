@@ -22,19 +22,18 @@ namespace Restaurant.Seeding.Seeders.Identity
                 return;
 
             var users = await context.Users
-                .Select(x => new { x.Id, x.UserName })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var usersDictionary = users.ToDictionary(
-                x => x.UserName,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<PersonalProfileRecord>("PersonalProfiles");
 
             foreach (var record in records)
             {
-                if (!usersDictionary.TryGetValue(record.UserName.ToLower(), out var user))
-                    throw new Exception($"User '{record.UserName}' not found.");
+                if (!usersDictionary.TryGetValue(record.UserId, out var user))
+                    throw new Exception($"User '{record.UserId}' not found.");
 
                 var personalProfile = _mapper.Map<PersonalProfile>(record)
                     .SetUser(user.Id);

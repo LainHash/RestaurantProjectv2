@@ -20,39 +20,36 @@ namespace Restaurant.Seeding.Seeders.Personnel
                 return;
 
             var users = await context.Users
-                .Select(x => new { x.Id, x.UserName })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var usersDictionary = users.ToDictionary(
-                x => x.UserName,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var positions = await context.Positions
-                .Select(x => new { x.Id, x.Name })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var positionsDictionary = positions.ToDictionary(
-                x => x.Name,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var branches = await context.Branches
-                .Select(x => new { x.Id, x.BranchCode })
+                .Select(x => new { x.Id, x.PublicId })
                 .ToListAsync();
             var branchDictionary = branches.ToDictionary(
-                x => x.BranchCode,
-                StringComparer.OrdinalIgnoreCase);
+                x => x.PublicId);
 
             var records =
                 _importer.Read<EmployeeRecord>("Employees");
 
             foreach (var record in records)
             {
-                if (!usersDictionary.TryGetValue(record.UserName.ToLower(), out var user))
-                    throw new Exception($"User '{record.UserName}' not found.");
+                if (!usersDictionary.TryGetValue(record.UserId, out var user))
+                    throw new Exception($"User '{record.UserId}' not found.");
 
-                if (!positionsDictionary.TryGetValue(record.PositionName.ToLower(), out var position))
-                    throw new Exception($"Position '{record.PositionName}' not found.");
+                if (!positionsDictionary.TryGetValue(record.PositionId, out var position))
+                    throw new Exception($"Position '{record.PositionId}' not found.");
 
-                if (!branchDictionary.TryGetValue(record.BranchCode, out var branch))
-                    throw new Exception($"Branch '{record.BranchCode}' not found.");
+                if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
+                    throw new Exception($"Branch '{record.BranchId}' not found.");
 
                 var employee = _mapper.Map<Employee>(record)
                     .SetUser(user.Id)
