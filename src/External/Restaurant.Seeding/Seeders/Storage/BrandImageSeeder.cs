@@ -36,11 +36,11 @@ namespace Restaurant.Seeding.Seeders.Storage
 
             foreach (var record in records)
             {
-                if (!brandDictionary.TryGetValue(record.BrandId, out var brand))
-                    throw new Exception($"Brand '{record.BrandId}' not found.");
+                if (!brandDictionary.TryGetValue(record.BrandPublicId, out var brand))
+                    throw new Exception($"Brand '{record.BrandPublicId}' not found.");
 
-                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
-                    throw new Exception($"Image '{record.ImageId}' not found.");
+                if (!imageDictionary.TryGetValue(record.ImagePublicId, out var image))
+                    throw new Exception($"Image '{record.ImagePublicId}' not found.");
 
                 var brandImage = new BrandImage()
                     .SetBrand(brand.Id)

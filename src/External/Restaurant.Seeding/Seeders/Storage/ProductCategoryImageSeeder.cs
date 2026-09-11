@@ -19,32 +19,16 @@ namespace Restaurant.Seeding.Seeders.Storage
             if (await context.ProductCategoryImages.AnyAsync())
                 return;
 
-            var categories = await context.ProductCategories
-                .Select(x => new { x.Id, x.PublicId })
+            var products = await context.Products
+                .Include(x => x.ProductImages)
+                .Include(x => x.ProductCategory)
                 .ToListAsync();
-            var categoryDictionary = categories.ToDictionary(
-                x => x.PublicId);
 
-            var images = await context.Images
-                .Select(x => new { x.Id, x.PublicId })
-                .ToListAsync();
-            var imageDictionary = images.ToDictionary(
-                x => x.PublicId);
-
-            var records =
-                _importer.Read<ProductCategoryImageRecord>("ProductCategoryImages");
-
-            foreach (var record in records)
+            foreach (var product in products)
             {
-                if (!categoryDictionary.TryGetValue(record.CategoryId, out var category))
-                    throw new Exception($"Category '{record.CategoryId}' not found.");
-
-                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
-                    throw new Exception($"Image '{record.ImageId}' not found.");
-
-                var categoryImage = _mapper.Map<ProductCategoryImage>(record)
-                    .SetProductCategory(category.Id)
-                    .SetImage(image.Id);
+                var categoryImage = new ProductCategoryImage()
+                    .SetProductCategory(product.CategoryId)
+                    .SetImage(product.ProductImages.First().ImageId);
 
                 context.ProductCategoryImages.Add(categoryImage);
             }
