@@ -25,6 +25,11 @@ namespace Restaurant.Domain.Entities.Inventory
             BranchId = branchId;
         }
 
+        public ProductStock(decimal quantityOnHand)
+        {
+            QuantityOnHand = quantityOnHand;
+        }
+
         public ProductStock SetProduct(int productId)
         {
             ProductId = productId;

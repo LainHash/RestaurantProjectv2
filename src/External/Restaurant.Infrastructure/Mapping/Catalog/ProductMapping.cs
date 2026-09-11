@@ -21,11 +21,11 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
 
             CreateMap<CreateProductRequest, Product>()
                 .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
-                .ForMember(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
+                .ForPath(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
 
             CreateMap<UpdateProductRequest, Product>()
                 .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
-                .ForMember(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
+                .ForPath(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));
         }
     }
 }

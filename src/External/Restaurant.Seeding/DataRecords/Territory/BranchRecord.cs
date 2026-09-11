@@ -4,7 +4,7 @@ namespace Restaurant.Seeding.DataRecords.Territory
     {
         public Guid PublicId { get; set; }
         public string City { get; set; } = null!;
-        public string Code { get; set; } = null!;
+        public string BranchCode { get; set; } = null!;
 
         public string PhoneNumber { get; set; } = null!;
         public string Email { get; set; } = null!;

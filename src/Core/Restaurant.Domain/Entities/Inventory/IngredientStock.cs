@@ -17,6 +17,13 @@ namespace Restaurant.Domain.Entities.Inventory
 
     public partial class IngredientStock
     {
+        public IngredientStock() { }
+
+        public IngredientStock(decimal quantityOnHand)
+        {
+            QuantityOnHand = quantityOnHand;
+        }
+
         public IngredientStock SetIngredient(int ingredientId)
         {
             IngredientId = ingredientId;

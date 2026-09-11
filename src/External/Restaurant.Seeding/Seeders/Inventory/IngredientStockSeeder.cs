@@ -44,7 +44,7 @@ namespace Restaurant.Seeding.Seeders.Inventory
                 if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
                     throw new Exception($"Branch '{record.BranchId}' not found.");
 
-                var ingredientStock = _mapper.Map<IngredientStock>(record)
+                var ingredientStock = new IngredientStock(record.QuantityOnHand)
                     .SetIngredient(ingredient.Id)
                     .SetBranch(branch.Id);
 

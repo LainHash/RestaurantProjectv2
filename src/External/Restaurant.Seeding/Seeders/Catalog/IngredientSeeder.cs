@@ -43,15 +43,15 @@ namespace Restaurant.Seeding.Seeders.Catalog
 
             foreach (var record in records)
             {
-                if (!categoriesDictionary.TryGetValue(record.CategoryId, out var category))
-                    throw new Exception($"Category '{record.CategoryId}' not found.");
+                if (!categoriesDictionary.TryGetValue(record.IngredientCategoryPublicId, out var category))
+                    throw new Exception($"Category '{record.IngredientCategoryPublicId}' not found.");
 
-                if (!unitsDictionary.TryGetValue(record.UnitId, out var unit))
-                    throw new Exception($"Unit '{record.UnitId}' not found.");
+                if (!unitsDictionary.TryGetValue(record.UnitPublicId, out var unit))
+                    throw new Exception($"Unit '{record.UnitPublicId}' not found.");
 
 
-                if (!brandsDictionary.TryGetValue(record.BrandId, out var brand))
-                    throw new Exception($"Unit '{record.BrandId}' not found.");
+                if (!brandsDictionary.TryGetValue(record.BrandPublicId, out var brand))
+                    throw new Exception($"Unit '{record.BrandPublicId}' not found.");
 
                 var ingredient = _mapper.Map<Ingredient>(record)
                     .SetCategory(category.Id)

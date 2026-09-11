@@ -8,8 +8,8 @@ namespace Restaurant.Seeding.DataRecords.Catalog
 
         public string InventoryType { get; set; } = null!;
 
-        public Guid BrandId { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid BrandPublicId { get; set; }
+        public Guid ProductCategoryPublicId { get; set; }
+        public Guid UnitPublicId { get; set; }
     }
 }

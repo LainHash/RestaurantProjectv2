@@ -6,6 +6,6 @@ namespace Restaurant.Seeding.DataRecords.Pricing
         public decimal UnitPrice { get; set; }
         public string Currency { get; set; } = null!;
 
-        public Guid IngredientId{ get; set; }
+        public Guid IngredientPublicId { get; set; }
     }
 }

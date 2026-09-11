@@ -42,7 +42,7 @@ namespace Restaurant.Seeding.Seeders.Storage
                 if (!imageDictionary.TryGetValue(record.ImageId, out var image))
                     throw new Exception($"Image '{record.ImageId}' not found.");
 
-                var productImage = _mapper.Map<ProductImage>(record)
+                var productImage = new ProductImage(record.IsPrimary, record.DisplayOrder)
                     .SetProduct(product.Id)
                     .SetImage(image.Id);
 
