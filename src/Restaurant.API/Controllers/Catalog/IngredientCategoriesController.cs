@@ -8,7 +8,6 @@ using Restaurant.Application.Features.Catalog.IngredientCategories.Commands.Rest
 using Restaurant.Application.Features.Catalog.IngredientCategories.Commands.Update;
 using Restaurant.Application.Features.Catalog.IngredientCategories.Queries.GetAll;
 using Restaurant.Application.Features.Catalog.IngredientCategories.Queries.GetById;
-using Restaurant.Application.Features.Catalog.IngredientCategories.Queries.GetByName;
 using Restaurant.Contract.DTOs.Catalog.IngredientCategories;
 
 namespace Restaurant.API.Controllers.Catalog
@@ -36,17 +35,6 @@ namespace Restaurant.API.Controllers.Catalog
             CancellationToken cancellationToken)
         {
             var query = new GetIngredientCategoryByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("by-name/{name}")]
-        public async Task<IActionResult> GetByName(
-            [FromRoute] string name,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetIngredientCategoryByNameQuery(name);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }

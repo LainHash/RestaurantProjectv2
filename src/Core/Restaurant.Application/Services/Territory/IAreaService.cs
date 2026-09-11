@@ -1,7 +1,6 @@
 using Restaurant.Application.Features.Territory.Areas.Commands.Create;
 using Restaurant.Application.Features.Territory.Areas.Commands.Update;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetAll;
-using Restaurant.Application.Features.Territory.Areas.Queries.GetAllByBranchId;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetById;
 using Restaurant.Contract.DTOs.Territory.Areas;
 using Restaurant.Domain.Entities.Territory;
@@ -14,10 +13,6 @@ namespace Restaurant.Application.Services.Territory
     {
         Task<PageResult<IEnumerable<AreaResponse>>> GetAllAsync(
             GetAllAreasSpecification specification,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<IEnumerable<AreaResponse>>> GetByBranchIdAsync(
-            GetAllAreasByBranchIdSpecification specification,
             CancellationToken cancellationToken = default);
 
         Task<Result<AreaResponse>> GetByIdAsync(

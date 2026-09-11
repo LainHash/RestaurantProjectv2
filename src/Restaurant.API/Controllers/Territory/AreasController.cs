@@ -8,7 +8,6 @@ using Restaurant.Application.Features.Territory.Areas.Commands.Restore;
 using Restaurant.Application.Features.Territory.Areas.Commands.Update;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetAll;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetById;
-using Restaurant.Application.Features.Territory.RestaurantTables.Queries.GetAllByAreaId;
 using Restaurant.Contract.DTOs.Territory.Areas;
 
 namespace Restaurant.API.Controllers.Territory
@@ -34,16 +33,6 @@ namespace Restaurant.API.Controllers.Territory
             CancellationToken cancellationToken)
         {
             var query = new GetAreaByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [HttpGet("{id}/tables")]
-        public async Task<IActionResult> GetAllTables(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetAllRestaurantTableByAreaIdQuery(id);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
