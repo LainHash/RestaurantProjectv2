@@ -368,3 +368,4 @@ src/External/Restaurant.Infrastructure/Migrations
 .dotnet
 .temp.txt
 src/External/Restaurant.Seeding/Data/*
+*.xlsx.bak
