@@ -30,8 +30,8 @@ namespace Restaurant.Seeding.Seeders.Personnel
 
             foreach (var record in records)
             {
-                if (!departmentsDictionary.TryGetValue(record.DepartmentId, out var department))
-                    throw new Exception($"Category '{record.DepartmentId}' not found.");
+                if (!departmentsDictionary.TryGetValue(record.DepartmentPublicId, out var department))
+                    throw new Exception($"Category '{record.DepartmentPublicId}' not found.");
 
                 var position = _mapper.Map<Position>(record)
                     .SetDepartment(department.Id);

@@ -46,20 +46,20 @@ namespace Restaurant.Seeding.Seeders
             await SeedAsync<ProductCategoryImageSeeder>(_context);
             await SeedAsync<BrandImageSeeder>(_context);
 
-            //await SeedAsync<RecipeSeeder>(_context);
-            //await SeedAsync<RecipeIngredientSeeder>(_context);
+            await SeedAsync<RecipeSeeder>(_context);
+            await SeedAsync<RecipeIngredientSeeder>(_context);
 
-            //await SeedAsync<RoleSeeder>(_context);
-            //await SeedAsync<UserSeeder>(_context);
-            //await SeedAsync<PersonalProfileSeeder>(_context);
+            await SeedAsync<RoleSeeder>(_context);
+            await SeedAsync<UserSeeder>(_context);
+            await SeedAsync<PersonalProfileSeeder>(_context);
 
-            //await SeedAsync<DepartmentSeeder>(_context);
-            //await SeedAsync<PositionSeeder>(_context);
+            await SeedAsync<DepartmentSeeder>(_context);
+            await SeedAsync<PositionSeeder>(_context);
 
-            //await SeedAsync<EmployeeSeeder>(_context);
-            //await SeedAsync<CustomerSeeder>(_context);
+            await SeedAsync<EmployeeSeeder>(_context);
+            await SeedAsync<CustomerSeeder>(_context);
 
-            //await SeedAsync<DiscountSeeder>(_context);
+            await SeedAsync<DiscountSeeder>(_context);
         }
 
         private async Task SeedAsync<TSeeder>(RestaurantDbContext context) where TSeeder : IDataSeeder

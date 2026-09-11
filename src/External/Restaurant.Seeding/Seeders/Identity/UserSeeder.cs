@@ -30,8 +30,8 @@ namespace Restaurant.Seeding.Seeders.Identity
 
             foreach (var record in records)
             {
-                if (!rolesDictionary.TryGetValue(record.RoleId, out var role))
-                    throw new Exception($"Role '{record.RoleId}' not found.");
+                if (!rolesDictionary.TryGetValue(record.RolePublicId, out var role))
+                    throw new Exception($"Role '{record.RolePublicId}' not found.");
 
                 var user = _mapper.Map<User>(record)
                     .SetRole(role.Id);

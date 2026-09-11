@@ -43,14 +43,14 @@ namespace Restaurant.Seeding.Seeders.Production
 
             foreach (var record in records)
             {
-                if (!ingredientsDictionary.TryGetValue(record.IngredientId, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
+                if (!ingredientsDictionary.TryGetValue(record.IngredientPublicId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientPublicId}' not found.");
 
-                if (!recipeDictionary.TryGetValue(record.RecipeId, out var recipe))
-                    throw new Exception($"Recipe '{record.RecipeId}' not found.");
+                if (!recipeDictionary.TryGetValue(record.RecipePublicId, out var recipe))
+                    throw new Exception($"Recipe '{record.RecipePublicId}' not found.");
 
-                if (!unitDictionary.TryGetValue(record.UnitId, out var unit))
-                    throw new Exception($"Unit '{record.UnitId}' not found.");
+                if (!unitDictionary.TryGetValue(record.UnitPublicId, out var unit))
+                    throw new Exception($"Unit '{record.UnitPublicId}' not found.");
 
                 var recipeIngredient = _mapper.Map<RecipeIngredient>(record)
                     .SetIngredient(ingredient.Id)
