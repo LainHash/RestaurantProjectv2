@@ -7,6 +7,6 @@ namespace Restaurant.Seeding.DataRecords.Identity
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
         public bool IsActive { get; set; }
-        public Guid RoleId { get; set; }
+        public Guid RolePublicId { get; set; }
     }
 }

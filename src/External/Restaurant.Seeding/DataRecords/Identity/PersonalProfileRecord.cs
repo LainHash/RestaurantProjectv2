@@ -3,7 +3,7 @@
     internal class PersonalProfileRecord
     {
         public Guid PublicId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid UserPublicId { get; set; }
 
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;

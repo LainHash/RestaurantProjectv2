@@ -49,9 +49,9 @@ namespace Restaurant.Seeding.Seeders
             await SeedAsync<RecipeSeeder>(_context);
             await SeedAsync<RecipeIngredientSeeder>(_context);
 
-            //await SeedAsync<RoleSeeder>(_context);
-            //await SeedAsync<UserSeeder>(_context);
-            //await SeedAsync<PersonalProfileSeeder>(_context);
+            await SeedAsync<RoleSeeder>(_context);
+            await SeedAsync<UserSeeder>(_context);
+            await SeedAsync<PersonalProfileSeeder>(_context);
 
             //await SeedAsync<DepartmentSeeder>(_context);
             //await SeedAsync<PositionSeeder>(_context);
