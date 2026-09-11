@@ -32,8 +32,8 @@ namespace Restaurant.Seeding.Seeders.Guest
 
             foreach (var record in records)
             {
-                if (!usersDictionary.TryGetValue(record.UserId, out var user))
-                    throw new Exception($"User '{record.UserId}' not found.");
+                if (!usersDictionary.TryGetValue(record.UserPublicId, out var user))
+                    throw new Exception($"User '{record.UserPublicId}' not found.");
 
                 var customer = _mapper.Map<Customer>(record)
                     .SetUser(user.Id);

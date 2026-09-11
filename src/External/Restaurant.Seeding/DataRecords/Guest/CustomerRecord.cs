@@ -3,6 +3,6 @@
     public class CustomerRecord
     {
         public Guid PublicId { get; set; }
-        public Guid UserId { get; set; }
+        public Guid UserPublicId { get; set; }
     }
 }

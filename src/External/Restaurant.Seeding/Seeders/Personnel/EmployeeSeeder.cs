@@ -42,14 +42,14 @@ namespace Restaurant.Seeding.Seeders.Personnel
 
             foreach (var record in records)
             {
-                if (!usersDictionary.TryGetValue(record.UserId, out var user))
-                    throw new Exception($"User '{record.UserId}' not found.");
+                if (!usersDictionary.TryGetValue(record.UserPublicId, out var user))
+                    throw new Exception($"User '{record.UserPublicId}' not found.");
 
-                if (!positionsDictionary.TryGetValue(record.PositionId, out var position))
-                    throw new Exception($"Position '{record.PositionId}' not found.");
+                if (!positionsDictionary.TryGetValue(record.PositionPublicId, out var position))
+                    throw new Exception($"Position '{record.PositionPublicId}' not found.");
 
-                if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
-                    throw new Exception($"Branch '{record.BranchId}' not found.");
+                if (!branchDictionary.TryGetValue(record.BranchPublicId, out var branch))
+                    throw new Exception($"Branch '{record.BranchPublicId}' not found.");
 
                 var employee = _mapper.Map<Employee>(record)
                     .SetUser(user.Id)
