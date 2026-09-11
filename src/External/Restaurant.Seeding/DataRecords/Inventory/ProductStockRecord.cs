@@ -5,7 +5,7 @@ namespace Restaurant.Seeding.DataRecords.Inventory
         public Guid PublicId { get; set; }
         public decimal QuantityOnHand { get; set; }
 
-        public Guid ProductId { get; set; }
-        public Guid BranchId { get; set; }
+        public Guid ProductPublicId { get; set; }
+        public Guid BranchPublicId { get; set; }
     }
 }

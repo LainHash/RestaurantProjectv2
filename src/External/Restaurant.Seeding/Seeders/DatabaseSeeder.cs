@@ -24,19 +24,23 @@ namespace Restaurant.Seeding.Seeders
         {
             await SeedAsync<ProductCategorySeeder>(_context);
             await SeedAsync<IngredientCategorySeeder>(_context);
-            await SeedAsync<BrandSeeder>(_context);
 
+            await SeedAsync<BrandSeeder>(_context);
             await SeedAsync<UnitSeeder>(_context);
+
 
             await SeedAsync<ProductSeeder>(_context);
             await SeedAsync<ProductPriceSeeder>(_context);
-            //await SeedAsync<ProductStockSeeder>(_context);
 
             await SeedAsync<IngredientSeeder>(_context);
             await SeedAsync<IngredientPriceSeeder>(_context);
-            //await SeedAsync<IngredientStockSeeder>(_context);
 
-            //await SeedAsync<BranchSeeder>(_context);
+            await SeedAsync<BranchSeeder>(_context);
+
+            await SeedAsync<ProductStockSeeder>(_context);
+            await SeedAsync<IngredientStockSeeder>(_context);
+
+
 
             //await SeedAsync<ImageSeeder>(_context);
             //await SeedAsync<ProductImageSeeder>(_context);

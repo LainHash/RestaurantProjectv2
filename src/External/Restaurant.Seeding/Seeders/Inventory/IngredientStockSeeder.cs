@@ -38,11 +38,11 @@ namespace Restaurant.Seeding.Seeders.Inventory
 
             foreach (var record in records)
             {
-                if (!ingredientDictionary.TryGetValue(record.IngredientId, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
+                if (!ingredientDictionary.TryGetValue(record.IngredientPublicId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientPublicId}' not found.");
 
-                if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
-                    throw new Exception($"Branch '{record.BranchId}' not found.");
+                if (!branchDictionary.TryGetValue(record.BranchPublicId, out var branch))
+                    throw new Exception($"Branch '{record.BranchPublicId}' not found.");
 
                 var ingredientStock = new IngredientStock(record.QuantityOnHand)
                     .SetIngredient(ingredient.Id)
