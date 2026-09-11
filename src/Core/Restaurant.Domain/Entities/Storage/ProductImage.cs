@@ -19,6 +19,12 @@ namespace Restaurant.Domain.Entities.Storage
     {
         public ProductImage() { }
 
+        public ProductImage(bool isPrimary, int displayOrder)
+        {
+            IsPrimary = isPrimary;
+            DisplayOrder = displayOrder;
+        }
+
         public ProductImage(int productId, int imageId, bool isPrimary, int displayOrder)
         {
             ProductId = productId;

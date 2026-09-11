@@ -31,8 +31,8 @@ namespace Restaurant.Seeding.Seeders.Pricing
 
             foreach (var record in records)
             {
-                if (!ingredientsDictionary.TryGetValue(record.IngredientId, out var ingredient))
-                    throw new Exception($"Ingredient '{record.IngredientId}' not found.");
+                if (!ingredientsDictionary.TryGetValue(record.IngredientPublicId, out var ingredient))
+                    throw new Exception($"Ingredient '{record.IngredientPublicId}' not found.");
 
                 var price = _mapper.Map<IngredientPrice>(record)
                     .SetIngredient(ingredient.Id);

@@ -17,12 +17,19 @@ namespace Restaurant.Domain.Entities.Pricing
     public partial class ProductPrice
     {
         public ProductPrice() { }
+
+        public ProductPrice(decimal unitPrice, string currency)
+        {
+            UnitPrice = unitPrice;
+            Currency = currency;
+        }
+
         public ProductPrice(decimal unitPrice, int productId)
         {
             UnitPrice = unitPrice;
             ProductId = productId;
         }
-        
+
         public ProductPrice SetProduct(int productId)
         {
             ProductId = productId;

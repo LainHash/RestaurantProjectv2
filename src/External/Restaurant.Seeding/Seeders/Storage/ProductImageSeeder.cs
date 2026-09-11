@@ -36,13 +36,13 @@ namespace Restaurant.Seeding.Seeders.Storage
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductId, out var product))
-                    throw new Exception($"Product '{record.ProductId}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductPublicId, out var product))
+                    throw new Exception($"Product '{record.ProductPublicId}' not found.");
 
-                if (!imageDictionary.TryGetValue(record.ImageId, out var image))
-                    throw new Exception($"Image '{record.ImageId}' not found.");
+                if (!imageDictionary.TryGetValue(record.ImagePublicId, out var image))
+                    throw new Exception($"Image '{record.ImagePublicId}' not found.");
 
-                var productImage = _mapper.Map<ProductImage>(record)
+                var productImage = new ProductImage(record.IsPrimary, record.DisplayOrder)
                     .SetProduct(product.Id)
                     .SetImage(image.Id);
 

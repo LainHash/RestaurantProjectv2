@@ -31,10 +31,10 @@ namespace Restaurant.Seeding.Seeders.Pricing
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductId, out var product))
-                    throw new Exception($"Product '{record.ProductId}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductPublicId, out var product))
+                    throw new Exception($"Product '{record.ProductPublicId}' not found.");
 
-                var price = _mapper.Map<ProductPrice>(record)
+                var price = new ProductPrice(record.UnitPrice, record.Currency)
                     .SetProduct(product.Id);
 
                 context.ProductPrices.Add(price);

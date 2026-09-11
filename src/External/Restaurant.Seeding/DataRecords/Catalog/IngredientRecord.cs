@@ -6,8 +6,8 @@ namespace Restaurant.Seeding.DataRecords.Catalog
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
 
-        public Guid BrandId { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid BrandPublicId { get; set; }
+        public Guid IngredientCategoryPublicId { get; set; }
+        public Guid UnitPublicId { get; set; }
     }
 }

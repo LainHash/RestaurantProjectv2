@@ -36,13 +36,13 @@ namespace Restaurant.Seeding.Seeders.Inventory
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductId, out var product))
-                    throw new Exception($"Product '{record.ProductId}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductPublicId, out var product))
+                    throw new Exception($"Product '{record.ProductPublicId}' not found.");
 
-                if (!branchDictionary.TryGetValue(record.BranchId, out var branch))
-                    throw new Exception($"Branch '{record.BranchId}' not found.");
+                if (!branchDictionary.TryGetValue(record.BranchPublicId, out var branch))
+                    throw new Exception($"Branch '{record.BranchPublicId}' not found.");
 
-                var productStock = _mapper.Map<ProductStock>(record)
+                var productStock = new ProductStock(record.QuantityOnHand)
                     .SetProduct(product.Id)
                     .SetBranch(branch.Id);
 
