@@ -30,8 +30,8 @@ namespace Restaurant.Seeding.Seeders.Production
 
             foreach (var record in records)
             {
-                if (!productDictionary.TryGetValue(record.ProductId, out var product))
-                    throw new Exception($"Product '{record.ProductId}' not found.");
+                if (!productDictionary.TryGetValue(record.ProductPublicId, out var product))
+                    throw new Exception($"Product '{record.ProductPublicId}' not found.");
 
                 var recipe = _mapper.Map<Recipe>(record)
                     .SetProduct(product.Id);

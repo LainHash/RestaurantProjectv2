@@ -46,8 +46,8 @@ namespace Restaurant.Seeding.Seeders
             await SeedAsync<ProductCategoryImageSeeder>(_context);
             await SeedAsync<BrandImageSeeder>(_context);
 
-            //await SeedAsync<RecipeSeeder>(_context);
-            //await SeedAsync<RecipeIngredientSeeder>(_context);
+            await SeedAsync<RecipeSeeder>(_context);
+            await SeedAsync<RecipeIngredientSeeder>(_context);
 
             //await SeedAsync<RoleSeeder>(_context);
             //await SeedAsync<UserSeeder>(_context);
