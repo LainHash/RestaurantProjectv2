@@ -14,5 +14,6 @@ namespace Restaurant.Application.Services.Auth
         Task<Result> RegisterAsync(
             RegisterCommand command,
             CancellationToken cancellationToken = default);
+
     }
 }
