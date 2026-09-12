@@ -144,7 +144,8 @@ namespace Restaurant.Infrastructure.Services.Identity
                     .Fail("Account is already active.", HttpStatusCode.Conflict);
             }
 
-            var otpVerification = await _otpVerificationRepository.FindActiveAsync(user.Id, OtpPurpose.EmailVerification, cancellationToken);
+            var otpVerification = await _otpVerificationRepository
+                .FindActiveAsync(user.Id, OtpPurpose.EmailVerification, cancellationToken);
             if (otpVerification is not null)
             {
                 otpVerification.Invalidate();
@@ -160,7 +161,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             var newOtpVerification = new OtpVerification(
                 user.Id,
                 _otpHasher.HashOtp(verificationCode),
-                OtpPurpose.EmailVerification);
+                command.Body.Purpose);
             _otpVerificationRepository.Add(newOtpVerification);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
