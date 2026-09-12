@@ -52,6 +52,7 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<OtpVerification> OtpVerifications { get; set; } = null!;
         public DbSet<PersonalProfile> PersonalProfiles { get; set; } = null!;
+        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; } = null!;
         public DbSet<Customer> Customers { get; set; } = null!;
 
         public DbSet<Wallet> Wallets { get; set; } = null!;

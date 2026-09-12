@@ -3,18 +3,22 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Auth.Commands.Login;
+using Restaurant.Application.Features.Auth.Commands.Logout;
+using Restaurant.Application.Features.Auth.Commands.RefreshToken;
 using Restaurant.Application.Features.Auth.Commands.Register;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
+using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Auth;
 
 namespace Restaurant.API.Controllers.Auth
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthenticationController(IMediator mediator) : ControllerBase
+    public class AuthenticationController(IMediator mediator, ICurrentUserService currentUserService) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
+        private readonly ICurrentUserService _currentUserService = currentUserService;
 
         [AllowAnonymous]
         [HttpPost("login")]
@@ -56,6 +60,43 @@ namespace Restaurant.API.Controllers.Auth
             CancellationToken cancellationToken)
         {
             var command = new ResendVerificationCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshToken(
+            [FromBody] RefreshTokenRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new RefreshTokenCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout(
+            [FromBody] RefreshTokenRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new LogoutCommand(body.RefreshToken);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize]
+        [HttpPost("logout-all")]
+        public async Task<IActionResult> LogoutAll(CancellationToken cancellationToken)
+        {
+            var userId = _currentUserService.PublicId;
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            var command = new LogoutAllCommand(userId.Value);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

@@ -1,11 +1,15 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Restaurant.Application.Features.Auth.Commands.Login;
+using Restaurant.Application.Features.Auth.Commands.Logout;
+using Restaurant.Application.Features.Auth.Commands.RefreshToken;
 using Restaurant.Application.Features.Auth.Commands.Register;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
 using Restaurant.Contract.DTOs.Auth;
+using Restaurant.Contract.Settings.Auth;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Models.Messages;
@@ -21,6 +25,7 @@ namespace Restaurant.Infrastructure.Services.Auth
         private readonly IUserRepository _userRepository;
         private readonly IRoleRepository _roleRepository;
         private readonly ICustomerRepository _customerRepository;
+        private readonly IUserRefreshTokenRepository _refreshTokenRepository;
 
         private readonly IPasswordHasher _passwordHasher;
         private readonly IOtpVerificationService _otpVerificationService;
@@ -28,6 +33,7 @@ namespace Restaurant.Infrastructure.Services.Auth
         private readonly IJwtProvider _jwtProvider;
         private readonly IMapper _mapper;
         private readonly ILogger<AuthenticationService> _logger;
+        private readonly JwtSettings _jwtSettings;
 
         public AuthenticationService(
             IUserRepository userRepository,
@@ -38,7 +44,9 @@ namespace Restaurant.Infrastructure.Services.Auth
             IMapper mapper,
             ILogger<AuthenticationService> logger,
             ICustomerRepository customerRepository,
-            IOtpVerificationService otpVerificationService)
+            IOtpVerificationService otpVerificationService,
+            IUserRefreshTokenRepository refreshTokenRepository,
+            IOptions<JwtSettings> jwtSettings)
         {
             _userRepository = userRepository;
             _roleRepository = roleRepository;
@@ -49,6 +57,8 @@ namespace Restaurant.Infrastructure.Services.Auth
             _logger = logger;
             _customerRepository = customerRepository;
             _otpVerificationService = otpVerificationService;
+            _refreshTokenRepository = refreshTokenRepository;
+            _jwtSettings = jwtSettings.Value;
         }
 
         public async Task<Result<AuthenticationResponse>> LoginAsync(
@@ -71,9 +81,19 @@ namespace Restaurant.Infrastructure.Services.Auth
             var role = await _roleRepository.FindByIdAsync(user.RoleId, cancellationToken);
             var roleName = role?.Name ?? "Customer";
 
-            var token = _jwtProvider.GenerateToken(user.PublicId, user.UserName, user.Email, roleName);
+            var accessToken = _jwtProvider.GenerateToken(user.PublicId, user.UserName, user.Email, roleName);
+            var rawRefreshToken = _jwtProvider.GenerateRefreshToken();
+            var tokenHash = _jwtProvider.HashToken(rawRefreshToken);
 
-            var response = new AuthenticationResponse(user, token);
+            var refreshToken = new UserRefreshToken(
+                user.Id,
+                tokenHash,
+                DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays));
+
+            _refreshTokenRepository.Add(refreshToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var response = new AuthenticationResponse(user, accessToken, rawRefreshToken);
             return Result<AuthenticationResponse>
                 .Succeed(response, "Login successfully.");
         }
@@ -124,6 +144,84 @@ namespace Restaurant.Infrastructure.Services.Auth
                 return Result
                     .Fail("Register request failed.", HttpStatusCode.InternalServerError);
             }
+        }
+
+        public async Task<Result<AuthenticationResponse>> RefreshTokenAsync(
+            RefreshTokenCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var tokenHash = _jwtProvider.HashToken(command.Body.RefreshToken);
+            var storedToken = await _refreshTokenRepository.FindActiveByTokenHashAsync(tokenHash, cancellationToken);
+
+            if (storedToken is null || !storedToken.IsActive)
+            {
+                return Result<AuthenticationResponse>
+                    .Fail("Invalid or expired refresh token.", HttpStatusCode.Unauthorized);
+            }
+
+            var user = await _userRepository.FindByIdWithRoleAsync(storedToken.User.PublicId, cancellationToken);
+            if (user is null || !user.IsActive)
+            {
+                return Result<AuthenticationResponse>
+                    .Fail("User not found or account is inactive.", HttpStatusCode.Unauthorized);
+            }
+
+            var role = await _roleRepository.FindByIdAsync(user.RoleId, cancellationToken);
+            var roleName = role?.Name ?? "Customer";
+
+            // Rotate: revoke old token, issue new pair
+            storedToken.Revoke();
+
+            var newAccessToken = _jwtProvider.GenerateToken(user.PublicId, user.UserName, user.Email, roleName);
+            var newRawRefreshToken = _jwtProvider.GenerateRefreshToken();
+            var newTokenHash = _jwtProvider.HashToken(newRawRefreshToken);
+
+            var newRefreshToken = new UserRefreshToken(
+                storedToken.UserId,
+                newTokenHash,
+                DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpiryDays));
+
+            _refreshTokenRepository.Add(newRefreshToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var response = new AuthenticationResponse(user, newAccessToken, newRawRefreshToken);
+            return Result<AuthenticationResponse>
+                .Succeed(response, "Token refreshed successfully.");
+        }
+
+        public async Task<Result> LogoutAsync(
+            LogoutCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var tokenHash = _jwtProvider.HashToken(command.RefreshToken);
+            var storedToken = await _refreshTokenRepository.FindActiveByTokenHashAsync(tokenHash, cancellationToken);
+
+            if (storedToken is null)
+            {
+                // Idempotent — already revoked or doesn't exist
+                return Result.Succeed("Logged out successfully.");
+            }
+
+            storedToken.Revoke();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Succeed("Logged out successfully.");
+        }
+
+        public async Task<Result> LogoutAllAsync(
+            LogoutAllCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindByIdAsync(command.UserId, cancellationToken);
+            if (user is null)
+            {
+                return Result.Fail("User not found.", HttpStatusCode.NotFound);
+            }
+
+            await _refreshTokenRepository.RevokeAllByUserIdAsync(user.Id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Succeed("All sessions logged out successfully.");
         }
     }
 }

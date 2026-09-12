@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Guest;
+using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Models;
 
@@ -15,6 +15,7 @@ namespace Restaurant.Domain.Entities.Identity
 
         public Role Role { get; private set; } = null!;
         public ICollection<OtpVerification> OtpVerifications { get; private set; } = [];
+        public ICollection<UserRefreshToken> RefreshTokens { get; private set; } = [];
         public Customer? Customer { get; private set; } = null!;
         public Employee? Employee { get; private set; } = null!;
         public PersonalProfile? PersonalProfile { get; private set; } = null!;

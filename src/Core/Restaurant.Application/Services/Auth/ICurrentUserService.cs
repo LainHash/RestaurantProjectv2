@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Application.Services.Auth
+namespace Restaurant.Application.Services.Auth
 {
     /// <summary>
     /// Cung cấp thông tin về người dùng đang thực hiện request hiện tại.
@@ -7,6 +7,9 @@
     {
         /// <summary>UserId (internal int PK) của người dùng; null nếu chưa xác thực.</summary>
         int? UserId { get; }
+
+        /// <summary>PublicId (Guid) của người dùng lấy từ JWT claim 'sub'; null nếu chưa xác thực.</summary>
+        Guid? PublicId { get; }
 
         /// <summary>IP address của client; null nếu không xác định được.</summary>
         string? IpAddress { get; }
