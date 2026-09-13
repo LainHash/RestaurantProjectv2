@@ -126,6 +126,8 @@ namespace Restaurant.Infrastructure.Services.Auth
                     .SetRole(customerRole.Id);
                 _userRepository.Add(user);
 
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
                 await _otpVerificationService.InitializeAsync(user, cancellationToken);
 
                 var customer = new Customer(user.Id);
