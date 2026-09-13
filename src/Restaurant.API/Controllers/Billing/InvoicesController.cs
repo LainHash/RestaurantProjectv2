@@ -12,23 +12,23 @@ namespace Restaurant.API.Controllers.Billing
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll(
-            [FromQuery] GetAllInvoicesQuery query,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll(
+        //    [FromQuery] GetAllInvoicesQuery query,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetInvoiceByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetById(
+        //    [FromRoute] Guid id,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var query = new GetInvoiceByIdQuery(id);
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
     }
 }

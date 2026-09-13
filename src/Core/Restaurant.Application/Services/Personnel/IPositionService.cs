@@ -3,7 +3,6 @@ using Restaurant.Application.Features.Personnel.Positions.Commands.Update;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAll;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAllByDeparmentId;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetById;
-using Restaurant.Application.Features.Personnel.Positions.Queries.GetByName;
 using Restaurant.Contract.DTOs.Personnel.Positions;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Models.Results;
@@ -23,10 +22,6 @@ namespace Restaurant.Application.Services.Personnel
 
         Task<Result<PositionResponse>> GetByIdAsync(
             GetPositionByIdSpecification specification,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<PositionResponse>> GetByNameAsync(
-            GetPositionByNameSpecification specification,
             CancellationToken cancellationToken = default);
 
         Task<Result<PositionResponse>> CreateAsync(

@@ -11,7 +11,7 @@ namespace Restaurant.Application.Features.Catalog.Products.Queries.GetById
         public GetProductByIdSpecification(GetProductByIdQuery query)
         {
             EnableSoftDeleteFilter();
-            
+
             Criteria = p => p.PublicId == query.Id;
 
             AddInclude(p => p.ProductCategory);
@@ -19,7 +19,11 @@ namespace Restaurant.Application.Features.Catalog.Products.Queries.GetById
             AddInclude(p => p.Brand!);
             AddInclude(p => p.ProductPrice);
             AddIncludeAggregator(x => x.Include(p => p.ProductImages)
-                                        .ThenInclude((ProductImage pi) => pi.Image));
+                                        .ThenInclude(pi => pi.Image));
+            AddIncludeAggregator(x => x.Include(p => p.Recipes)
+                                        .ThenInclude(r => r.RecipeIngredients)
+                                        .ThenInclude(ri => ri.Ingredient)
+                                        .ThenInclude(i => i.BaseUnit));
         }
     }
 }

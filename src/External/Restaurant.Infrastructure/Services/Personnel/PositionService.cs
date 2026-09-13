@@ -4,7 +4,6 @@ using Restaurant.Application.Features.Personnel.Positions.Commands.Update;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAll;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAllByDeparmentId;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetById;
-using Restaurant.Application.Features.Personnel.Positions.Queries.GetByName;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Personnel;
 using Restaurant.Contract.DTOs.Personnel.Positions;
@@ -70,22 +69,6 @@ namespace Restaurant.Infrastructure.Services.Personnel
         {
             var position = await _positionRepository.FindAsync(specification, cancellationToken);
             if(position is null)
-            {
-                return Result<PositionResponse>
-                    .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var response = _mapper.Map<PositionResponse>(position);
-            return Result<PositionResponse>
-                .Succeed(response, Success<Position>.Retrieved);
-        }
-
-        public async Task<Result<PositionResponse>> GetByNameAsync(
-            GetPositionByNameSpecification specification,
-            CancellationToken cancellationToken = default)
-        {
-            var position = await _positionRepository.FindAsync(specification, cancellationToken);
-            if (position is null)
             {
                 return Result<PositionResponse>
                     .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);

@@ -21,92 +21,92 @@ namespace Restaurant.API.Controllers.Guest
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll(
-            [FromQuery] GetAllCustomersQuery query,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll(
+        //    [FromQuery] GetAllCustomersQuery query,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetCustomerByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-
-        [HttpGet("user")]
-        public async Task<IActionResult> GetOne(CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
-
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
-
-            var query = new GetCustomerByUserIdQuery(userId);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [HttpPost("user/images")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadAvatar(
-            IFormFile file,
-            CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
-
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
-
-            await using var stream = file.OpenReadStream();
-
-            var command = new UploadAvatarCommand(userId, stream, file.FileName);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetOne(
+        //    [FromRoute] Guid id,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var query = new GetCustomerByIdQuery(id);
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
 
-        [HttpGet("user/wallet")]
-        public async Task<IActionResult> GetByUser(CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
+        //[HttpGet("user")]
+        //public async Task<IActionResult> GetOne(CancellationToken cancellationToken)
+        //{
+        //    Guid userId = Guid.Empty;
 
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
+        //    if (User.Identity?.IsAuthenticated == true)
+        //    {
+        //        Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+        //    }
 
-            var query = new GetWalletByUserIdQuery(userId);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //    var query = new GetCustomerByUserIdQuery(userId);
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [HttpPost("user/discounts/claim")]
-        public async Task<IActionResult> ClaimDiscount(
-            [FromBody] ClaimDiscountRequest body,
-            CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
+        //[HttpPost("user/images")]
+        //[Consumes("multipart/form-data")]
+        //public async Task<IActionResult> UploadAvatar(
+        //    IFormFile file,
+        //    CancellationToken cancellationToken)
+        //{
+        //    Guid userId = Guid.Empty;
 
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
+        //    if (User.Identity?.IsAuthenticated == true)
+        //    {
+        //        Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+        //    }
 
-            var command = new ClaimDiscountCommand(userId, body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //    await using var stream = file.OpenReadStream();
+
+        //    var command = new UploadAvatarCommand(userId, stream, file.FileName);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
+
+
+        //[HttpGet("user/wallet")]
+        //public async Task<IActionResult> GetByUser(CancellationToken cancellationToken)
+        //{
+        //    Guid userId = Guid.Empty;
+
+        //    if (User.Identity?.IsAuthenticated == true)
+        //    {
+        //        Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+        //    }
+
+        //    var query = new GetWalletByUserIdQuery(userId);
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
+
+        //[HttpPost("user/discounts/claim")]
+        //public async Task<IActionResult> ClaimDiscount(
+        //    [FromBody] ClaimDiscountRequest body,
+        //    CancellationToken cancellationToken)
+        //{
+        //    Guid userId = Guid.Empty;
+
+        //    if (User.Identity?.IsAuthenticated == true)
+        //    {
+        //        Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+        //    }
+
+        //    var command = new ClaimDiscountCommand(userId, body);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
     }
 }

@@ -13,10 +13,6 @@ namespace Restaurant.API.Controllers.Business
     {
         private readonly IMediator _mediator = mediator;
 
-        /// <summary>
-        /// Lấy danh sách audit log.
-        /// Hỗ trợ lọc theo entity, user, action và khoảng thời gian.
-        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] GetAllAuditLogsQuery query,
