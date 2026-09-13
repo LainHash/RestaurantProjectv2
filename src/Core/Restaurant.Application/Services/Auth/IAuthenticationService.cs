@@ -1,3 +1,4 @@
+using Restaurant.Application.Features.Auth.Commands.ChangePassword;
 using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Logout;
 using Restaurant.Application.Features.Auth.Commands.RefreshToken;
@@ -32,6 +33,10 @@ namespace Restaurant.Application.Services.Auth
 
         Task<Result> ResetPasswordAsync(
             ResetPasswordCommand command,
+            CancellationToken cancellationToken = default);
+
+        Task<Result> ChangePasswordAsync(
+            ChangePasswordCommand command,
             CancellationToken cancellationToken = default);
     }
 }

@@ -52,24 +52,6 @@ namespace Restaurant.API.Controllers.Identity
         }
 
         [Authorize]
-        [HttpPost("update-profile")]
-        public async Task<IActionResult> UpdateProfile(
-            [FromBody] UpdatePersonalProfileRequest body,
-            CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
-
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
-
-            var command = new UpdatePersonalProfileCommand(userId, body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [Authorize]
         [HttpPost("create-employee-accounts")]
         public async Task<IActionResult> CreateForEmployee(
             [FromBody] CreateUsersForEmployeeRequest body,

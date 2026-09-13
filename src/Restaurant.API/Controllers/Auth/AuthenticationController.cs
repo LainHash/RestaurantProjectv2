@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
+using Restaurant.Application.Features.Auth.Commands.ChangePassword;
 using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Logout;
 using Restaurant.Application.Features.Auth.Commands.RefreshToken;
@@ -11,10 +12,12 @@ using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ForgotP
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyPasswordResetOtp;
+using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
 using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.OtpVerifications;
+using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -111,35 +114,24 @@ namespace Restaurant.API.Controllers.Auth
             return this.ToActionResult(result);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword(
+            [FromBody] ForgotPasswordRequest body,
             CancellationToken cancellationToken)
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(email))
-            {
-                return Unauthorized();
-            }
-
-            var command = new ForgotPasswordCommand(email);
+            var command = new ForgotPasswordCommand(body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
 
-        [Authorize]
+        [AllowAnonymous]
         [HttpPost("verify-reset-otp")]
         public async Task<IActionResult> VerifyResetOtp(
             [FromBody] VerifyPasswordResetOtpRequest body,
             CancellationToken cancellationToken)
         {
-            var email = User.FindFirst(ClaimTypes.Email)?.Value;
-            if (string.IsNullOrEmpty(email))
-            {
-                return Unauthorized();
-            }
-
-            var command = new VerifyPasswordResetOtpCommand(email, body);
+            var command = new VerifyPasswordResetOtpCommand(body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
@@ -156,18 +148,51 @@ namespace Restaurant.API.Controllers.Auth
         }
 
         [Authorize]
+        [HttpPost("me/change-password")]
+        public async Task<IActionResult> ChangePassword(
+            [FromBody] ChangePasswordRequest body,
+            CancellationToken cancellationToken)
+        {
+            var userId = _currentUserService.PublicId;
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            var command = new ChangePasswordCommand(userId.Value, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize]
+        [HttpPut("me/profile")]
+        public async Task<IActionResult> UpdateProfile(
+            [FromBody] UpdatePersonalProfileRequest body,
+            CancellationToken cancellationToken)
+        {
+            var userId = _currentUserService.PublicId;
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
+
+            var command = new UpdatePersonalProfileCommand(userId.Value, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetCurrentUser(
             CancellationToken cancellationToken)
         {
-            Guid userId = Guid.Empty;
-
-            if (User.Identity?.IsAuthenticated == true)
+            var userId = _currentUserService.PublicId;
+            if (userId is null)
             {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+                return Unauthorized();
             }
 
-            var query = new GetUserByIdQuery(userId);
+            var query = new GetUserByIdQuery(userId.Value);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }

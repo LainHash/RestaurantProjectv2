@@ -4,7 +4,7 @@ using Restaurant.Domain.Models.Results;
 
 namespace Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyPasswordResetOtp
 {
-    public record VerifyPasswordResetOtpCommand(string Email, VerifyPasswordResetOtpRequest Body)
+    public record VerifyPasswordResetOtpCommand(VerifyPasswordResetOtpRequest Body)
         : IRequest<Result<VerifyPasswordResetOtpResponse>>
     {
     }
