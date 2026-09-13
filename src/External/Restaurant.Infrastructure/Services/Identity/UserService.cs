@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
-using Restaurant.Application.Features.Identity.Users.Commands.ResetPassword;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
@@ -61,13 +60,6 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             return Result
                 .Succeed($"{index - 1} employee account created successfully.", HttpStatusCode.Created);
-        }
-
-        public Task<Result> ResetPasswordAsync(
-            ResetPasswordCommand command,
-            CancellationToken cancellationToken = default)
-        {
-            throw new NotImplementedException();
         }
     }
 }

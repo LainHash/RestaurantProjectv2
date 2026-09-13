@@ -6,8 +6,11 @@ using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Logout;
 using Restaurant.Application.Features.Auth.Commands.RefreshToken;
 using Restaurant.Application.Features.Auth.Commands.Register;
+using Restaurant.Application.Features.Auth.Commands.ResetPassword;
+using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ForgotPassword;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
+using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyPasswordResetOtp;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.OtpVerifications;
@@ -98,6 +101,39 @@ namespace Restaurant.API.Controllers.Auth
             }
 
             var command = new LogoutAllCommand(userId.Value);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword(
+            [FromBody] ForgotPasswordRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new ForgotPasswordCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("verify-reset-otp")]
+        public async Task<IActionResult> VerifyResetOtp(
+            [FromBody] VerifyPasswordResetOtpRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new VerifyPasswordResetOtpCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword(
+            [FromBody] ResetPasswordRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new ResetPasswordCommand(body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

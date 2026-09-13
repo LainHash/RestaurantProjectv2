@@ -1,10 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ForgotPassword;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
+using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyPasswordResetOtp;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Email;
 using Restaurant.Application.Services.Identity;
+using Restaurant.Contract.DTOs.Identity.OtpVerifications;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
@@ -24,8 +27,8 @@ namespace Restaurant.Infrastructure.Services.Identity
         private readonly IOtpHasher _otpHasher;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger<OtpVerificationService> _logger;
-
         private readonly IEmailService _emailService;
+        private readonly IJwtProvider _jwtProvider;
 
         public OtpVerificationService(
             IUserRepository userRepository,
@@ -33,6 +36,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             IOtpHasher otpHasher,
             IUnitOfWork unitOfWork,
             IEmailService emailService,
+            IJwtProvider jwtProvider,
             ILogger<OtpVerificationService> logger)
         {
             _userRepository = userRepository;
@@ -40,6 +44,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             _otpHasher = otpHasher;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
+            _jwtProvider = jwtProvider;
             _logger = logger;
         }
 
@@ -177,6 +182,103 @@ namespace Restaurant.Infrastructure.Services.Identity
         {
             var random = new Random();
             return random.Next(100000, 999999).ToString();
+        }
+
+        public async Task<Result> SendPasswordResetOtpAsync(
+            ForgotPasswordCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
+
+            // Always return success to prevent email enumeration
+            if (user is null || !user.IsActive)
+            {
+                return Result.Succeed("If the email is registered and active, you will receive a reset code.");
+            }
+
+            // Invalidate any existing active OTP for this purpose
+            var existingOtp = await _otpVerificationRepository
+                .FindActiveAsync(user.Id, OtpPurpose.PasswordReset, cancellationToken);
+            if (existingOtp is not null)
+            {
+                existingOtp.Invalidate();
+            }
+
+            var verificationCode = GenerateCode();
+            var newOtp = new OtpVerification(
+                user.Id,
+                _otpHasher.HashOtp(verificationCode),
+                OtpPurpose.PasswordReset);
+            _otpVerificationRepository.Add(newOtp);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            try
+            {
+                var message = new EmailMessage(user.UserName, verificationCode);
+                await _emailService.SendEmailAsync(user.Email, message, cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Send password reset email failed. UserId: {UserId}", user.Id);
+            }
+
+            return Result.Succeed("If the email is registered and active, you will receive a reset code.");
+        }
+
+        public async Task<Result<VerifyPasswordResetOtpResponse>> VerifyPasswordResetOtpAsync(
+            VerifyPasswordResetOtpCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
+            if (user is null)
+            {
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var verification = await _otpVerificationRepository
+                .FindActiveAsync(user.Id, OtpPurpose.PasswordReset, cancellationToken);
+
+            if (verification is null)
+            {
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail("OTP not found or has expired. Please request a new one.", HttpStatusCode.NotFound);
+            }
+
+            if (verification.UsedAt is not null)
+            {
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail("OTP has already been used.", HttpStatusCode.Conflict);
+            }
+
+            if (verification.ExpiresAt <= DateTime.UtcNow)
+            {
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail("OTP has expired. Please request a new one.");
+            }
+
+            if (verification.FailedAttempts >= MaxFailedAttempts)
+            {
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail("Too many failed attempts. Please request a new OTP.");
+            }
+
+            if (!_otpHasher.VerifyOtp(command.Body.Code, verification.CodeHash))
+            {
+                verification.IncrementFailedAttempt();
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result<VerifyPasswordResetOtpResponse>
+                    .Fail("Invalid OTP code.");
+            }
+
+            verification.MarkAsUsed();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var resetToken = _jwtProvider.GeneratePasswordResetToken(user.Id);
+            return Result<VerifyPasswordResetOtpResponse>
+                .Succeed(new VerifyPasswordResetOtpResponse { ResetToken = resetToken },
+                         "OTP verified. Use the reset token to set your new password.");
         }
     }
 }

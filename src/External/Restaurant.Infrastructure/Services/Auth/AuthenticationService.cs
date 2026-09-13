@@ -5,6 +5,7 @@ using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Logout;
 using Restaurant.Application.Features.Auth.Commands.RefreshToken;
 using Restaurant.Application.Features.Auth.Commands.Register;
+using Restaurant.Application.Features.Auth.Commands.ResetPassword;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
@@ -222,6 +223,31 @@ namespace Restaurant.Infrastructure.Services.Auth
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Succeed("All sessions logged out successfully.");
+        }
+
+        public async Task<Result> ResetPasswordAsync(
+            ResetPasswordCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            if (!_jwtProvider.TryValidatePasswordResetToken(command.Body.ResetToken, out var userId))
+            {
+                return Result.Fail("Invalid or expired reset token.", HttpStatusCode.Unauthorized);
+            }
+
+            var user = await _userRepository.FindByIdAsync(userId, cancellationToken);
+            if (user is null)
+            {
+                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var newPasswordHash = _passwordHasher.HashPassword(command.Body.NewPassword);
+            user.SetPasswordHash(newPasswordHash);
+
+            // Revoke all active sessions to force re-login on all devices
+            await _refreshTokenRepository.RevokeAllByUserIdAsync(user.Id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Succeed("Password reset successfully. Please login with your new password.");
         }
     }
 }

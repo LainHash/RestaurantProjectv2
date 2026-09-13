@@ -55,5 +55,66 @@ namespace Restaurant.Infrastructure.Services.Auth
             var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(rawToken));
             return Convert.ToHexString(bytes).ToLowerInvariant();
         }
+
+        public string GeneratePasswordResetToken(int userId)
+        {
+            var claims = new[]
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+                new Claim("purpose", "password_reset")
+            };
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                _jwtSettings.Issuer,
+                _jwtSettings.Audience,
+                claims,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddMinutes(10),
+                signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public bool TryValidatePasswordResetToken(string token, out int userId)
+        {
+            userId = 0;
+            try
+            {
+                var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = securityKey,
+                    ValidateIssuer = true,
+                    ValidIssuer = _jwtSettings.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = _jwtSettings.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+
+                var handler = new JwtSecurityTokenHandler();
+                var principal = handler.ValidateToken(token, validationParameters, out _);
+
+                // Ensure this token was issued specifically for password reset
+                var purposeClaim = principal.FindFirst("purpose")?.Value;
+                if (purposeClaim != "password_reset")
+                    return false;
+
+                var subClaim = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                if (!int.TryParse(subClaim, out userId))
+                    return false;
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }
