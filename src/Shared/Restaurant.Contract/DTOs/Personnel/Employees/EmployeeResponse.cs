@@ -21,7 +21,7 @@ namespace Restaurant.Contract.DTOs.Personnel.Employees
 
         public EmployeeStatus Status { get; set; }
 
-        public AccountResponse Account { get; set; } = null!;
+        public UserResponse Account { get; set; } = null!;
         public PersonalProfileResponse PersonalProfile { get; set; } = null!;
     }
 }

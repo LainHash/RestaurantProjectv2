@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
+using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
+using Restaurant.Contract.DTOs.Identity.Users;
 using Restaurant.Domain.Entities.Identity;
+using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Identity;
 using System.Net;
@@ -32,6 +35,22 @@ namespace Restaurant.Infrastructure.Services.Identity
             _passwordHasher = passwordHasher;
             _roleRepository = roleRepository;
             _unitOfWork = unitOfWork;
+        }
+
+        public async Task<Result<UserDetailResponse>> GetByIdAsync(
+            GetUserByIdSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindAsync(specification, cancellationToken);
+            if(user is null)
+            {
+                return Result<UserDetailResponse>
+                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<UserDetailResponse>(user);
+            return Result<UserDetailResponse>
+                .Succeed(response, Success<User>.Retrieved);
         }
 
         public async Task<Result> CreateForEmployeeAsync(

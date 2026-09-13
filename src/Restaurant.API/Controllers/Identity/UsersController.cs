@@ -3,12 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.DTOs.Identity.Users;
-using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
-using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.CompleteProfile;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
-using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using System.Security.Claims;
 

@@ -11,8 +11,14 @@ namespace Restaurant.Infrastructure.Mapping.Identity
         {
             CreateMap<RegisterRequest, User>();
 
-            CreateMap<User, AccountResponse>()
+            CreateMap<User, UserResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
                 .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name));
+
+            CreateMap<User, UserDetailResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.RoleName, opt => opt.MapFrom(src => src.Role.Name))
+                .ForMember(dest => dest.PersonalProfile, opt => opt.MapFrom(src => src.PersonalProfile));
         }
     }
 }
