@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Storage.Images.Commands.UpdateAvatar;
 using Restaurant.Application.Features.Storage.Images.Commands.Upload;
 using Restaurant.Application.Features.Storage.Images.Queries.GetAll;
-using Restaurant.Application.Features.Storage.Images.Queries.GetAllByProductId;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Storage;
 using Restaurant.Contract.DTOs.Storage.Images;
@@ -66,19 +65,6 @@ namespace Restaurant.Infrastructure.Services.Storage
 
         public async Task<PageResult<IEnumerable<ImageResponse>>> GetAllAsync(
             GetAllImagesSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var images = await _imageRepository.ToListAsync(specification, cancellationToken);
-
-            var totalItems = await _imageRepository.CountAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<ImageResponse>>(images);
-            return PageResult<IEnumerable<ImageResponse>>
-                .Succeed(response, Success<Image>.Retrieved, totalItems, specification.Skip, specification.Take);
-        }
-
-        public async Task<PageResult<IEnumerable<ImageResponse>>> GetAllByProductIdAsync(
-            GetAllImagesByProductIdSpecification specification,
             CancellationToken cancellationToken)
         {
             var images = await _imageRepository.ToListAsync(specification, cancellationToken);

@@ -3,7 +3,6 @@ using Restaurant.Application.Features.Production.Recipes.Commands.AddIngredient;
 using Restaurant.Application.Features.Production.Recipes.Commands.Create;
 using Restaurant.Application.Features.Production.Recipes.Commands.Update;
 using Restaurant.Application.Features.Production.Recipes.Queries.GetAll;
-using Restaurant.Application.Features.Production.Recipes.Queries.GetAllByProductId;
 using Restaurant.Application.Features.Production.Recipes.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Production;
@@ -75,31 +74,6 @@ namespace Restaurant.Infrastructure.Services.Production
 
             var response = _mapper.Map<RecipeResponse>(recipe);
             return Result<RecipeResponse>
-                .Succeed(response, Success<Recipe>.Retrieved);
-        }
-
-        public async Task<Result<IEnumerable<RecipeResponse>>> GetAllByProductIdAsync(
-            GetAllRecipesByProductIdQuery query,
-            GetAllRecipesByProductIdSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var product = await _productRepository.FindByIdAsync(query.ProductId, cancellationToken);
-            if (product is null)
-            {
-                return Result<IEnumerable<RecipeResponse>>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            if (product.InventoryType == InventoryType.StockTracked)
-            {
-                return Result<IEnumerable<RecipeResponse>>
-                    .Fail("Cannot retrieve recipes because this product is stock-tracked.", HttpStatusCode.NotFound);
-            }
-
-            var recipes = await _recipeRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<RecipeResponse>>(recipes);
-            return Result<IEnumerable<RecipeResponse>>
                 .Succeed(response, Success<Recipe>.Retrieved);
         }
 

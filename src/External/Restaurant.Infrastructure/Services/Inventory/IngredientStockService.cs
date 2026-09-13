@@ -1,7 +1,5 @@
 using AutoMapper;
 using Restaurant.Application.Features.Inventory.IngredientStocks.Commands.UpdateQuantity;
-using Restaurant.Application.Features.Inventory.IngredientStocks.Queries.GetAllByBranchId;
-using Restaurant.Application.Features.Inventory.IngredientStocks.Queries.GetAllByIngredientId;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Contract.DTOs.Inventory.IngredientStocks;
@@ -38,44 +36,6 @@ namespace Restaurant.Infrastructure.Services.Inventory
             _ingredientStockRepository = ingredientStockRepository;
             _ingredientRepository = ingredientRepository;
             _branchRepository = branchRepository;
-        }
-
-        public async Task<Result<IEnumerable<IngredientStockResponse>>> GetAllByIngredientIdAsync(
-            GetAllIngredientStocksByIngredientIdQuery query,
-            GetAllIngredientStocksByIngredientIdSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var ingredient = await _ingredientRepository.FindByIdAsync(query.IngredientId, cancellationToken);
-            if (ingredient is null)
-            {
-                return Result<IEnumerable<IngredientStockResponse>>
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var ingredientStocks = await _ingredientStockRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<IngredientStockResponse>>(ingredientStocks);
-            return Result<IEnumerable<IngredientStockResponse>>
-                .Succeed(response, Success<IngredientStock>.Retrieved);
-        }
-
-        public async Task<Result<IEnumerable<IngredientStockResponse>>> GetAllByBranchIdAsync(
-            GetAllIngredientStockByBranchIdQuery query,
-            GetAllIngredientStockByBranchIdSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var branch = await _branchRepository.FindByIdAsync(query.BranchId, cancellationToken);
-            if (branch is null)
-            {
-                return Result<IEnumerable<IngredientStockResponse>>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var ingredientStocks = await _ingredientStockRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<IngredientStockResponse>>(ingredientStocks);
-            return Result<IEnumerable<IngredientStockResponse>>
-                .Succeed(response, Success<IngredientStock>.Retrieved);
         }
 
         public async Task<Result<IngredientStockResponse>> UpdateQuantityAsync(

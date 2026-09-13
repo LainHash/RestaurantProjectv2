@@ -2,7 +2,6 @@ using AutoMapper;
 using Restaurant.Application.Features.Personnel.Positions.Commands.Create;
 using Restaurant.Application.Features.Personnel.Positions.Commands.Update;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAll;
-using Restaurant.Application.Features.Personnel.Positions.Queries.GetAllByDeparmentId;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Personnel;
@@ -41,22 +40,6 @@ namespace Restaurant.Infrastructure.Services.Personnel
             CancellationToken cancellationToken = default)
         {
             var positions = await _positionRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<PositionResponse>>(positions);
-            return Result<IEnumerable<PositionResponse>>
-                .Succeed(response, Success<Position>.Retrieved);
-        }
-
-        public async Task<Result<IEnumerable<PositionResponse>>> GetAllByDepartmentIdAsync(
-            GetAllPositionByDepartmentIdSpecification specification,
-            CancellationToken cancellationToken = default)
-        {
-            var positions = await _positionRepository.ToListAsync(specification, cancellationToken);
-            if (!positions.Any())
-            {
-                return Result<IEnumerable<PositionResponse>>
-                    .Fail("This department is not having any position yet.", HttpStatusCode.NotFound);
-            }
 
             var response = _mapper.Map<IEnumerable<PositionResponse>>(positions);
             return Result<IEnumerable<PositionResponse>>

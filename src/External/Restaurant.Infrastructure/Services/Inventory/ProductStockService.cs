@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Inventory.ProductStocks.Commands.UpdateQuantity;
-using Restaurant.Application.Features.Inventory.ProductStocks.Queries.GetAllByBranchId;
-using Restaurant.Application.Features.Inventory.ProductStocks.Queries.GetAllByProductId;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Contract.DTOs.Inventory.ProductStocks;
@@ -40,50 +38,6 @@ namespace Restaurant.Infrastructure.Services.Inventory
             _productStockRepository = productStockRepository;
             _productRepository = productRepository;
             _branchRepository = branchRepository;
-        }
-
-        public async Task<Result<IEnumerable<ProductStockResponse>>> GetAllByProductIdAsync(
-            GetAllProductStocksByProductIdQuery query,
-            GetAllProductStocksByProductIdSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var product = await _productRepository.FindByIdAsync(query.ProductId, cancellationToken);
-            if (product is null)
-            {
-                return Result<IEnumerable<ProductStockResponse>>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            if(product.InventoryType == InventoryType.MadeToOrder)
-            {
-                return Result<IEnumerable<ProductStockResponse>>
-                    .Fail("This Product is made to order.");
-            }
-
-            var productStocks = await _productStockRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<ProductStockResponse>>(productStocks);
-            return Result<IEnumerable<ProductStockResponse>>
-                .Succeed(response, Success<ProductStock>.Retrieved);
-        }
-
-        public async Task<Result<IEnumerable<ProductStockResponse>>> GetAllByBranchIdAsync(
-            GetAllProductStockByBranchIdQuery query,
-            GetAllProductStockByBranchIdSpecification specification,
-            CancellationToken cancellationToken)
-        {
-            var branch = await _branchRepository.FindByIdAsync(query.BranchId, cancellationToken);
-            if(branch is null)
-            {
-                return Result<IEnumerable<ProductStockResponse>>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var productStocks = await _productStockRepository.ToListAsync(specification, cancellationToken);
-
-            var response = _mapper.Map<IEnumerable<ProductStockResponse>>(productStocks);
-            return Result<IEnumerable<ProductStockResponse>>
-                .Succeed(response, Success<ProductStock>.Retrieved);
         }
 
         public async Task<Result<ProductStockResponse>> UpdateQuantityAsync(

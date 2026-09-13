@@ -1,7 +1,6 @@
 using Restaurant.Application.Features.Personnel.Positions.Commands.Create;
 using Restaurant.Application.Features.Personnel.Positions.Commands.Update;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAll;
-using Restaurant.Application.Features.Personnel.Positions.Queries.GetAllByDeparmentId;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetById;
 using Restaurant.Contract.DTOs.Personnel.Positions;
 using Restaurant.Domain.Entities.Personnel;
@@ -14,10 +13,6 @@ namespace Restaurant.Application.Services.Personnel
     {
         Task<Result<IEnumerable<PositionResponse>>> GetAllAsync(
             GetAllPositionsSpecification specification,
-            CancellationToken cancellationToken = default);
-
-        Task<Result<IEnumerable<PositionResponse>>> GetAllByDepartmentIdAsync(
-            GetAllPositionByDepartmentIdSpecification specification,
             CancellationToken cancellationToken = default);
 
         Task<Result<PositionResponse>> GetByIdAsync(
