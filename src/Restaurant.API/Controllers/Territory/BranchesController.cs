@@ -12,14 +12,14 @@ namespace Restaurant.API.Controllers.Territory
     {
         private readonly IMediator _mediator = mediator;
 
-        [Authorize(Roles = "SuperAdmin,Admin,Manager")]
-        [HttpGet]
-        public async Task<IActionResult> GetAll(
-            [FromQuery] GetAllBranchesQuery query,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin,Manager")]
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll(
+        //    [FromQuery] GetAllBranchesQuery query,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
     }
 }

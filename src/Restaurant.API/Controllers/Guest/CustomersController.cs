@@ -7,6 +7,7 @@ using Restaurant.Application.Features.Guest.Customers.Queries.GetAll;
 using Restaurant.Application.Features.Guest.Customers.Queries.GetById;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Claim;
 using Restaurant.Application.Features.Storage.Images.Commands.UpdateAvatar;
+using Restaurant.Application.Services.Auth;
 using System.Security.Claims;
 
 namespace Restaurant.API.Controllers.Guest
@@ -14,28 +15,31 @@ namespace Restaurant.API.Controllers.Guest
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class CustomersController(IMediator mediator) : ControllerBase
+    public class CustomersController(
+        IMediator mediator,
+        ICurrentUserService currentUserService) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
+        private readonly ICurrentUserService _currentUserService = currentUserService;
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll(
-            [FromQuery] GetAllCustomersQuery query,
-            CancellationToken cancellationToken)
-        {
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll(
+        //    [FromQuery] GetAllCustomersQuery query,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOne(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetCustomerByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetOne(
+        //    [FromRoute] Guid id,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var query = new GetCustomerByIdQuery(id);
+        //    var result = await _mediator.Send(query, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
         [HttpPost("user/images")]
         [Consumes("multipart/form-data")]
@@ -43,35 +47,33 @@ namespace Restaurant.API.Controllers.Guest
             IFormFile file,
             CancellationToken cancellationToken)
         {
-            Guid userId = Guid.Empty;
-
-            if (User.Identity?.IsAuthenticated == true)
+            var userId = _currentUserService.PublicId;
+            if(userId is null)
             {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+                return Unauthorized();
             }
 
             await using var stream = file.OpenReadStream();
 
-            var command = new UploadAvatarCommand(userId, stream, file.FileName);
+            var command = new UploadAvatarCommand(userId.Value, stream, file.FileName);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
 
-        [HttpPost("user/discounts/claim")]
-        public async Task<IActionResult> ClaimDiscount(
-            [FromBody] ClaimDiscountRequest body,
-            CancellationToken cancellationToken)
-        {
-            Guid userId = Guid.Empty;
+        //[HttpPost("user/discounts/claim")]
+        //public async Task<IActionResult> ClaimDiscount(
+        //    [FromBody] ClaimDiscountRequest body,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var userId = _currentUserService.PublicId;
+        //    if (userId is null)
+        //    {
+        //        return Unauthorized();
+        //    }
 
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-            }
-
-            var command = new ClaimDiscountCommand(userId, body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //    var command = new ClaimDiscountCommand(userId.Value, body);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
     }
 }

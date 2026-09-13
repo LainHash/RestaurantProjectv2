@@ -12,6 +12,7 @@ using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ForgotP
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyPasswordResetOtp;
+using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.CompleteProfile;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
 using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Application.Services.Auth;
@@ -61,6 +62,18 @@ namespace Restaurant.API.Controllers.Auth
             CancellationToken cancellationToken)
         {
             var command = new VerifyEmailCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost("complete-profile")]
+        public async Task<IActionResult> CompleteProfile(
+            [FromBody] CompleteProfileRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CompleteProfileCommand(body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

@@ -5,6 +5,7 @@ using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Commerce.Wishlists.Commands.AddItem;
 using Restaurant.Application.Features.Commerce.Wishlists.Commands.RemoveItem;
 using Restaurant.Application.Features.Commerce.Wishlists.Queries.GetWishlist;
+using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Commerce.WishlistItems;
 using System.Security.Claims;
 
@@ -13,9 +14,12 @@ namespace Restaurant.API.Controllers.Commerce
     [Route("api/[controller]")]
     [Authorize(Roles = "Customer")]
     [ApiController]
-    public class WishlistsController(IMediator mediator) : ControllerBase
+    public class WishlistsController(
+        IMediator mediator,
+        ICurrentUserService currentUserService) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
+        private readonly ICurrentUserService _currentUserService = currentUserService;
 
         [HttpGet]
         public async Task<IActionResult> GetWishlist(CancellationToken cancellationToken)
@@ -24,7 +28,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            Guid? userId = Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : null;
+            var userId = _currentUserService.PublicId;
 
             var query = new GetWishlistQuery(userId, sessionId);
             var result = await _mediator.Send(query, cancellationToken);
@@ -40,7 +44,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            Guid? userId = Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : null;
+            var userId = _currentUserService.PublicId;
 
             var command = new AddWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);
@@ -56,7 +60,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            Guid? userId = Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out var uid) ? uid : null;
+            var userId = _currentUserService.PublicId;
 
             var command = new RemoveWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);

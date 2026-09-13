@@ -18,26 +18,26 @@ namespace Restaurant.API.Controllers.Catalog
     {
         private readonly IMediator _mediator = mediator;
 
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] GetAllBrandsQuery query,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllBrandsQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[AllowAnonymous]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var query = new GetBrandByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetBrandByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
         //[Authorize(Roles = "SuperAdmin,Admin")]
         //[HttpPost]

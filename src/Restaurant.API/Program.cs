@@ -70,9 +70,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("WebClient", policy =>
     {
         policy
-            .AllowAnyOrigin()
-            .AllowAnyHeader()
-            .AllowAnyMethod();
+            .WithOrigins("http://localhost:8081/")
+            .WithOrigins("http://localhost:3000/")
+            .AllowCredentials();
     });
 });
 
