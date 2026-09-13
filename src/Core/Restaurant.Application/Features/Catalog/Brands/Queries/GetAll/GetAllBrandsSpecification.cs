@@ -12,9 +12,6 @@ namespace Restaurant.Application.Features.Catalog.Brands.Queries.GetAll
         {
             EnableSoftDeleteFilter();
 
-            AddIncludeAggregator(x => x.Include(b => b.BrandImages)
-                                        .ThenInclude(bi => bi.Image));
-
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
                 Criteria = p =>
