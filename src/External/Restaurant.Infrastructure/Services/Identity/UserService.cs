@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
+using Restaurant.Application.Features.Identity.Users.Queries.GetAll;
 using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
@@ -37,12 +38,26 @@ namespace Restaurant.Infrastructure.Services.Identity
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<PageResult<IEnumerable<UserResponse>>> GetAllAsync(
+            GetAllUsersSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var totalItems = await _userRepository.CountAsync(specification, cancellationToken);
+
+            var users = await _userRepository.ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<UserResponse>>(users);
+            return PageResult<IEnumerable<UserResponse>>
+                .Succeed(response, Success<User>.Retrieved, totalItems, specification.Skip, specification.Take);
+
+        }
+
         public async Task<Result<UserDetailResponse>> GetByIdAsync(
             GetUserByIdSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var user = await _userRepository.FindAsync(specification, cancellationToken);
-            if(user is null)
+            if (user is null)
             {
                 return Result<UserDetailResponse>
                     .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
