@@ -11,7 +11,7 @@ namespace Restaurant.Contract.DTOs.Guest.Customers
 
         public string? AvatarUrl { get; set; }
 
-        public AccountResponse Account { get; set; } = null!;
+        public UserResponse Account { get; set; } = null!;
         public PersonalProfileResponse PersonalProfile { get; set; } = null!;
     }
 }

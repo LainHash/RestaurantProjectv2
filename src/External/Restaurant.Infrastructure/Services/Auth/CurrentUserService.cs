@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Restaurant.Application.Services.Auth;
 using System.Security.Claims;
 
@@ -29,6 +29,20 @@ namespace Restaurant.Infrastructure.Services.Auth
                 if (claim is null) return null;
 
                 return int.TryParse(claim.Value, out var id) ? id : null;
+            }
+        }
+
+        /// <inheritdoc />
+        public Guid? PublicId
+        {
+            get
+            {
+                var claim = _httpContextAccessor.HttpContext?.User
+                    ?.FindFirst("sub");
+
+                if (claim is null) return null;
+
+                return Guid.TryParse(claim.Value, out var id) ? id : null;
             }
         }
 

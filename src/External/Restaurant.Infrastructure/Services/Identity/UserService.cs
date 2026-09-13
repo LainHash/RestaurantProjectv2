@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
+using Restaurant.Application.Features.Identity.Users.Queries.GetAll;
+using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
+using Restaurant.Contract.DTOs.Identity.Users;
 using Restaurant.Domain.Entities.Identity;
+using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Identity;
 using System.Net;
-using System.Resources;
 
 namespace Restaurant.Infrastructure.Services.Identity
 {
@@ -35,6 +38,36 @@ namespace Restaurant.Infrastructure.Services.Identity
             _unitOfWork = unitOfWork;
         }
 
+        public async Task<PageResult<IEnumerable<UserResponse>>> GetAllAsync(
+            GetAllUsersSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var totalItems = await _userRepository.CountAsync(specification, cancellationToken);
+
+            var users = await _userRepository.ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<UserResponse>>(users);
+            return PageResult<IEnumerable<UserResponse>>
+                .Succeed(response, Success<User>.Retrieved, totalItems, specification.Skip, specification.Take);
+
+        }
+
+        public async Task<Result<UserDetailResponse>> GetByIdAsync(
+            GetUserByIdSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindAsync(specification, cancellationToken);
+            if (user is null)
+            {
+                return Result<UserDetailResponse>
+                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<UserDetailResponse>(user);
+            return Result<UserDetailResponse>
+                .Succeed(response, Success<User>.Retrieved);
+        }
+
         public async Task<Result> CreateForEmployeeAsync(
             CreateUsersForEmployeeCommand command,
             CancellationToken cancellationToken)
@@ -48,7 +81,7 @@ namespace Restaurant.Infrastructure.Services.Identity
                             + DateTime.UtcNow.Month.ToString("00")
                             + index.ToString("000000");
 
-                var email = code + "@HauteDeHallen.edu.vn";
+                var email = code + "@hdh.edu.vn";
 
                 var passwordHash = _passwordHasher.HashPassword(code);
 
@@ -60,7 +93,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             }
 
             return Result
-                .Succeed($"Create {index - 1} employee account successfully.", HttpStatusCode.Created);
+                .Succeed($"{index - 1} employee account created successfully.", HttpStatusCode.Created);
         }
     }
 }

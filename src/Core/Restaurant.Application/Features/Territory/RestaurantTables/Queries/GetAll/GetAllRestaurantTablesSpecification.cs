@@ -18,6 +18,11 @@ namespace Restaurant.Application.Features.Territory.RestaurantTables.Queries.Get
                     EF.Functions.Like(nameof(rt.Status), $"%{query.Keyword}%"));
             }
 
+            if (query.AreaId is not null)
+            {
+                AddCriteria(x => x.Area.PublicId == query.AreaId);
+            }
+
             switch (query.SortField)
             {
                 case SortField.Capacity:

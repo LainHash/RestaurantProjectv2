@@ -8,10 +8,7 @@ using Restaurant.Application.Features.Personnel.Departments.Commands.Restore;
 using Restaurant.Application.Features.Personnel.Departments.Commands.Update;
 using Restaurant.Application.Features.Personnel.Departments.Queries.GetAll;
 using Restaurant.Application.Features.Personnel.Departments.Queries.GetById;
-using Restaurant.Application.Features.Personnel.Departments.Queries.GetByName;
-using Restaurant.Application.Features.Personnel.Positions.Queries.GetAllByDeparmentId;
 using Restaurant.Contract.DTOs.Personnel.Departments;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Restaurant.API.Controllers.Personnel
 {
@@ -38,17 +35,6 @@ namespace Restaurant.API.Controllers.Personnel
             CancellationToken cancellationToken)
         {
             var query = new GetDepartmentByIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [AllowAnonymous]
-        [HttpGet("by-name/{name}")]
-        public async Task<IActionResult> GetByName(
-            [FromRoute] string name,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetDepartmentByNameQuery(name);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
@@ -95,16 +81,6 @@ namespace Restaurant.API.Controllers.Personnel
         {
             var command = new RestoreDepartmentCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [HttpGet("{id}/positions")]
-        public async Task<IActionResult> GetPositons(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetAllPositionByDepartmentIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
     }

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Restaurant.Application.DTOs.Identity.PersonalProfiles;
-using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using Restaurant.Domain.Entities.Identity;
 

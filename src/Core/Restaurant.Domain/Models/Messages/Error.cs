@@ -2,22 +2,18 @@
 {
     public static class Error<TEntity> where TEntity : class
     {
-        public static string EmptyList = $"{typeof(TEntity).Name} list empty.";
+        public readonly static string NotFound = $"{typeof(TEntity).Name} is not found.";
 
-        public static string NotFound = $"{typeof(TEntity).Name} not found.";
+        public readonly static string NotYetDeleted = $"{typeof(TEntity).Name} has not yet been deleted.";
 
-        public static string NotYetDeleted = $"{typeof(TEntity).Name} not yet deleted.";
+        public readonly static string AlreadyDeleted = $"{typeof(TEntity).Name}has already been deleted.";
 
-        public static string AlreadyDeleted = $"{typeof(TEntity).Name} already deleted.";
+        public readonly static string AlreadyAdded = $"{typeof(TEntity).Name} has already been added.";
 
-        public static string AlreadyAdded = $"{typeof(TEntity).Name} already added.";
+        public readonly static string OutOfStock = $"{typeof(TEntity).Name} has run out of stock.";
 
-        public static string OutOfStock = $"{typeof(TEntity).Name} out of stock.";
+        public readonly static string Occupied = $"{typeof(TEntity).Name} was occupied.";
 
-        public static string Occupied = $"{typeof(TEntity).Name} occupied.";
-
-        public static string Empty = $"{typeof(TEntity).Name} empty.";
-
-        public static string ExistedName = $"{typeof(TEntity).Name} with this name already existed.";
+        public readonly static string ExistedName = $"{typeof(TEntity).Name} with this name is already existed.";
     }
 }

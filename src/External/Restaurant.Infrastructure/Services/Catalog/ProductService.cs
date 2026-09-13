@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Core;
 using Restaurant.Application.Features.Catalog.Products.Commands.Create;
 using Restaurant.Application.Features.Catalog.Products.Commands.Update;
+using Restaurant.Application.Features.Catalog.Products.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Catalog;
 using Restaurant.Contract.DTOs.Catalog.Ingredients;
@@ -56,19 +57,19 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 .Succeed(response, Success<Product>.Retrieved, totalItems, specification.Skip, specification.Take);
         }
 
-        public async Task<Result<ProductResponse>> GetByIdAsync(
-            ISpecification<Product> specification,
+        public async Task<Result<ProductDetailResponse>> GetByIdAsync(
+            GetProductByIdSpecification specification,
             CancellationToken cancellationToken)
         {
             var product = await _productRepository.FindAsync(specification, cancellationToken);
             if(product is null)
             {
-                return Result<ProductResponse>
+                return Result<ProductDetailResponse>
                     .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var response = _mapper.Map<ProductResponse>(product);
-            return Result<ProductResponse>
+            var response = _mapper.Map<ProductDetailResponse>(product);
+            return Result<ProductDetailResponse>
                 .Succeed(response, Success<Product>.Retrieved);
         }
 

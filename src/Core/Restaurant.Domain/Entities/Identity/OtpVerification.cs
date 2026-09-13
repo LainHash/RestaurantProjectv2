@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Enums;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Identity
@@ -30,6 +30,7 @@ namespace Restaurant.Domain.Entities.Identity
             CodeHash = codeHash;
             Purpose = otpPurpose;
             ExpiresAt = DateTime.UtcNow.AddMinutes(15);
+            IsAvailable = true;
         }
 
         public void Invalidate()

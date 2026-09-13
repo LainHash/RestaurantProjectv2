@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Restaurant.Application.Features.Guest.Wallets.Queries.GetByUserId;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Guest;
 using Restaurant.Contract.DTOs.Guest.Wallets;
@@ -33,25 +32,6 @@ namespace Restaurant.Infrastructure.Services.Guest
             _userRepository = userRepository;
             _customerRepository = customerRepository;
             _mapper = mapper;
-        }
-
-        public async Task<Result<WalletResponse>> GetByUserIdAsync(
-            GetWalletByUserIdQuery query,
-            CancellationToken cancellationToken = default)
-        {
-            var customer = await _customerRepository
-                .FindByUserIdWithWalletAsync(query.UserId, cancellationToken);
-            if(customer is null)
-            {
-                return Result<WalletResponse>
-                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var wallet = await GetOrCreateAsync(customer.Id, () => new Wallet(customer.Id), cancellationToken);
-
-            var response = _mapper.Map<WalletResponse>(wallet);
-            return Result<WalletResponse>
-                .Succeed(response, Success<Wallet>.Retrieved);
         }
 
         private async Task<Wallet> InitializeAsync(

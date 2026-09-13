@@ -1,7 +1,6 @@
 using AutoMapper;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetAll;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetById;
-using Restaurant.Application.Features.Billing.Invoices.Queries.GetByOrderId;
 using Restaurant.Application.Services.Billing;
 using Restaurant.Contract.DTOs.Billing.Invoices;
 using Restaurant.Domain.Entities.Billing;
@@ -55,20 +54,5 @@ namespace Restaurant.Infrastructure.Services.Billing
                 .Succeed(response, Success<Invoice>.Retrieved);
         }
 
-        public async Task<Result<InvoiceResponse>> GetByOrderIdAsync(
-            GetInvoiceByOrderIdSpecification specification,
-            CancellationToken cancellationToken = default)
-        {
-            var invoice = await _invoiceRepository.FindAsync(specification, cancellationToken);
-            if (invoice is null)
-            {
-                return Result<InvoiceResponse>
-                    .Fail(Error<Invoice>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var response = _mapper.Map<InvoiceResponse>(invoice);
-            return Result<InvoiceResponse>
-                .Succeed(response, Success<Invoice>.Retrieved);
-        }
     }
 }

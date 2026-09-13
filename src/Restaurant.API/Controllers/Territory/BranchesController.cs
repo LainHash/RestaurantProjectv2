@@ -1,10 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens.Experimental;
 using Restaurant.API.Extensions;
-using Restaurant.Application.Features.Inventory.ProductStocks.Queries.GetAllByBranchId;
-using Restaurant.Application.Features.Territory.Areas.Queries.GetAllByBranchId;
 using Restaurant.Application.Features.Territory.Branches.Queries.GetAll;
 
 namespace Restaurant.API.Controllers.Territory
@@ -21,28 +18,6 @@ namespace Restaurant.API.Controllers.Territory
             [FromQuery] GetAllBranchesQuery query,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [Authorize(Roles = "SuperAdmin,Admin,Manager,InventoryManager")]
-        [HttpGet("{id}/stock-list")]
-        public async Task<IActionResult> GetAllStock(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetAllProductStockByBranchIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [Authorize(Roles = "SuperAdmin,Admin,Manager")]
-        [HttpGet("{id}/areas")]
-        public async Task<IActionResult> GetAllAreas(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetAllAreasByBranchIdQuery(id);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }

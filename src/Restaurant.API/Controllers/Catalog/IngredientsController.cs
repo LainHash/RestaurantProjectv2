@@ -9,7 +9,6 @@ using Restaurant.Application.Features.Catalog.Ingredients.Commands.Update;
 using Restaurant.Application.Features.Catalog.Ingredients.Queries.GetAll;
 using Restaurant.Application.Features.Catalog.Ingredients.Queries.GetById;
 using Restaurant.Application.Features.Inventory.IngredientStocks.Commands.UpdateQuantity;
-using Restaurant.Application.Features.Inventory.IngredientStocks.Queries.GetAllByIngredientId;
 using Restaurant.Contract.DTOs.Catalog.Ingredients;
 using Restaurant.Contract.DTOs.Inventory.IngredientStocks;
 
@@ -84,17 +83,6 @@ namespace Restaurant.API.Controllers.Catalog
         {
             var command = new RestoreIngredientCommand(id);
             var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
-
-        [Authorize(Roles = "SuperAdmin,Admin,Manager,InventoryManager")]
-        [HttpGet("{id}/stock-list")]
-        public async Task<IActionResult> GetAllStock(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var query = new GetAllIngredientStocksByIngredientIdQuery(id);
-            var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
 

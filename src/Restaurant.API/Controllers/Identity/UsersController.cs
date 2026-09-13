@@ -3,12 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.DTOs.Identity.Users;
-using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
-using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.CompleteProfile;
 using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
-using Restaurant.Contract.DTOs.Auth;
+using Restaurant.Application.Features.Identity.Users.Queries.GetAll;
+using Restaurant.Application.Features.Identity.Users.Queries.GetById;
 using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using System.Security.Claims;
 
@@ -20,25 +19,24 @@ namespace Restaurant.API.Controllers.Identity
     {
         private readonly IMediator _mediator = mediator;
 
-        [AllowAnonymous]
-        [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmail(
-            [FromBody] VerifyEmailRequest body,
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllUsersQuery query,
             CancellationToken cancellationToken)
         {
-            var command = new VerifyEmailCommand(body);
-            var result = await _mediator.Send(command, cancellationToken);
+            var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
 
-        [AllowAnonymous]
-        [HttpPost("resend-verification")]
-        public async Task<IActionResult> ResendVerification(
-            [FromBody] ResendVerificationRequest body,
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(
+            [FromRoute] Guid id,
             CancellationToken cancellationToken)
         {
-            var command = new ResendVerificationCommand(body);
-            var result = await _mediator.Send(command, cancellationToken);
+            var query = new GetUserByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
 
@@ -72,7 +70,7 @@ namespace Restaurant.API.Controllers.Identity
         }
 
         [Authorize]
-        [HttpPost("create-employee-account")]
+        [HttpPost("create-employee-accounts")]
         public async Task<IActionResult> CreateForEmployee(
             [FromBody] CreateUsersForEmployeeRequest body,
             CancellationToken cancellationToken)
