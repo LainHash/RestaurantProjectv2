@@ -1,6 +1,6 @@
 ﻿using Restaurant.Domain.Enums;
 
-namespace Restaurant.Contract.DTOs.Auth
+namespace Restaurant.Contract.DTOs.Identity.OtpVerifications
 {
     public class ResendVerificationRequest
     {

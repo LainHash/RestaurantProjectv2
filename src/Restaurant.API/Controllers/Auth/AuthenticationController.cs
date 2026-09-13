@@ -10,6 +10,7 @@ using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendV
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Auth;
+using Restaurant.Contract.DTOs.Identity.OtpVerifications;
 
 namespace Restaurant.API.Controllers.Auth
 {

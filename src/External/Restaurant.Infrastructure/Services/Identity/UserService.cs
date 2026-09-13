@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
+using Restaurant.Application.Features.Identity.Users.Commands.ResetPassword;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Identity;
@@ -7,7 +8,6 @@ using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Identity;
 using System.Net;
-using System.Resources;
 
 namespace Restaurant.Infrastructure.Services.Identity
 {
@@ -48,7 +48,7 @@ namespace Restaurant.Infrastructure.Services.Identity
                             + DateTime.UtcNow.Month.ToString("00")
                             + index.ToString("000000");
 
-                var email = code + "@HauteDeHallen.edu.vn";
+                var email = code + "@hdh.edu.vn";
 
                 var passwordHash = _passwordHasher.HashPassword(code);
 
@@ -60,7 +60,14 @@ namespace Restaurant.Infrastructure.Services.Identity
             }
 
             return Result
-                .Succeed($"Create {index - 1} employee account successfully.", HttpStatusCode.Created);
+                .Succeed($"{index - 1} employee account created successfully.", HttpStatusCode.Created);
+        }
+
+        public Task<Result> ResetPasswordAsync(
+            ResetPasswordCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
         }
     }
 }
