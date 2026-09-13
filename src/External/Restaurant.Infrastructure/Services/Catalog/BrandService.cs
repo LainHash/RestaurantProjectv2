@@ -1,6 +1,7 @@
 using AutoMapper;
 using Restaurant.Application.Features.Catalog.Brands.Commands.Create;
 using Restaurant.Application.Features.Catalog.Brands.Commands.Update;
+using Restaurant.Application.Features.Catalog.Brands.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Catalog;
 using Restaurant.Contract.DTOs.Catalog.Brands;
@@ -43,19 +44,19 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 .Succeed(response, Success<Brand>.Retrieved, totalItems, specification.Skip, specification.Take);
         }
 
-        public async Task<Result<BrandResponse>> GetOneAsync(
-            ISpecification<Brand> specification,
+        public async Task<Result<BrandDetailResponse>> GetByIdAsync(
+            GetBrandByIdSpecification specification,
             CancellationToken cancellationToken)
         {
             var brand = await _brandRepository.FindAsync(specification, cancellationToken);
             if (brand == null)
             {
-                return Result<BrandResponse>
+                return Result<BrandDetailResponse>
                     .Fail(Error<Brand>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var response = _mapper.Map<BrandResponse>(brand);
-            return Result<BrandResponse>
+            var response = _mapper.Map<BrandDetailResponse>(brand);
+            return Result<BrandDetailResponse>
                 .Succeed(response, Success<Brand>.Retrieved);
         }
 

@@ -1,6 +1,7 @@
 using AutoMapper;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Create;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Update;
+using Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Catalog;
 using Restaurant.Contract.DTOs.Catalog.ProductCategories;
@@ -44,19 +45,19 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
         }
 
-        public async Task<Result<ProductCategoryResponse>> GetOneAsync(
-            ISpecification<ProductCategory> specification,
+        public async Task<Result<ProductCategoryDetailResponse>> GetByIdAsync(
+            GetProductCategoryByIdSpecification specification,
             CancellationToken cancellationToken)
         {
             var category = await _categoryRepository.FindAsync(specification, cancellationToken);
             if (category == null)
             {
-                return Result<ProductCategoryResponse>
+                return Result<ProductCategoryDetailResponse>
                     .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var response = _mapper.Map<ProductCategoryResponse>(category);
-            return Result<ProductCategoryResponse>
+            var response = _mapper.Map<ProductCategoryDetailResponse>(category);
+            return Result<ProductCategoryDetailResponse>
                 .Succeed(response, Success<ProductCategory>.Retrieved);
         }
 

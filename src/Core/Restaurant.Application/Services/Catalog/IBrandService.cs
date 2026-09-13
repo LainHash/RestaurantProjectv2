@@ -1,5 +1,6 @@
 using Restaurant.Application.Features.Catalog.Brands.Commands.Create;
 using Restaurant.Application.Features.Catalog.Brands.Commands.Update;
+using Restaurant.Application.Features.Catalog.Brands.Queries.GetById;
 using Restaurant.Contract.DTOs.Catalog.Brands;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Models.Results;
@@ -13,8 +14,8 @@ namespace Restaurant.Application.Services.Catalog
             ISpecification<Brand> specification,
             CancellationToken cancellationToken);
 
-        Task<Result<BrandResponse>> GetOneAsync(
-            ISpecification<Brand> specification,
+        Task<Result<BrandDetailResponse>> GetByIdAsync(
+            GetBrandByIdSpecification specification,
             CancellationToken cancellationToken);
 
         Task<Result<BrandResponse>> CreateAsync(
