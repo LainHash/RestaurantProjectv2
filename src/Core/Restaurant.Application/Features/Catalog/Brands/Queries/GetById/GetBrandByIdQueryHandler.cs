@@ -6,14 +6,14 @@ using Restaurant.Domain.Models.Results;
 namespace Restaurant.Application.Features.Catalog.Brands.Queries.GetById
 {
     internal class GetBrandByIdQueryHandler(IBrandService brandService)
-                : IRequestHandler<GetBrandByIdQuery, Result<BrandResponse>>
+                : IRequestHandler<GetBrandByIdQuery, Result<BrandDetailResponse>>
     {
         private readonly IBrandService _brandService = brandService;
 
-        public async Task<Result<BrandResponse>> Handle(GetBrandByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<BrandDetailResponse>> Handle(GetBrandByIdQuery request, CancellationToken cancellationToken)
         {
             var specification = new GetBrandByIdSpecification(request);
-            var response = await _brandService.GetOneAsync(specification, cancellationToken);
+            var response = await _brandService.GetByIdAsync(specification, cancellationToken);
             return response;
         }
     }

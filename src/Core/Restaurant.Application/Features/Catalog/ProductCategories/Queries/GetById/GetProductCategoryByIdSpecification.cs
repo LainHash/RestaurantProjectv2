@@ -13,6 +13,7 @@ namespace Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetB
 
             AddIncludeAggregator(x => x.Include(b => b.ProductCategoryImages)
                                         .ThenInclude(bi => bi.Image));
+            AddIncludeAggregator(x => x.Include(b => b.Products));
 
             EnableSoftDeleteFilter();
         }

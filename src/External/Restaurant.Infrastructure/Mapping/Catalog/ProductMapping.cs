@@ -31,6 +31,9 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
                 .ForMember(dest => dest.Recipes, opt => opt.MapFrom(src => src.Recipes))
                 .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.ProductImages));
 
+            CreateMap<Product, ProductMinimalResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
             CreateMap<CreateProductRequest, Product>()
                 .ForPath(dest => dest.ProductPrice.UnitPrice, opt => opt.MapFrom(src => src.UnitPrice))
                 .ForPath(dest => dest.ProductPrice.Currency, opt => opt.MapFrom(src => src.Currency));

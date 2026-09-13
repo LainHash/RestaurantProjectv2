@@ -43,82 +43,82 @@ namespace Restaurant.API.Controllers.Catalog
             return this.ToActionResult(result);
         }
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPost]
-        public async Task<IActionResult> Create(
-            [FromBody] CreateProductRequest body,
-            CancellationToken cancellationToken)
-        {
-            var command = new CreateProductCommand(body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        //[HttpPost]
+        //public async Task<IActionResult> Create(
+        //    [FromBody] CreateProductRequest body,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var command = new CreateProductCommand(body);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Update(
-            [FromRoute] Guid id,
-            [FromBody] UpdateProductRequest body,
-            CancellationToken cancellationToken)
-        {
-            var command = new UpdateProductCommand(id, body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        //[HttpPut("{id}")]
+        //public async Task<IActionResult> Update(
+        //    [FromRoute] Guid id,
+        //    [FromBody] UpdateProductRequest body,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var command = new UpdateProductCommand(id, body);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var command = new DeleteProductCommand(id);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> Delete(
+        //    [FromRoute] Guid id,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var command = new DeleteProductCommand(id);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPatch("{id}/restore")]
-        public async Task<IActionResult> Restore(
-            [FromRoute] Guid id,
-            CancellationToken cancellationToken)
-        {
-            var command = new RestoreProductCommand(id);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        //[HttpPatch("{id}/restore")]
+        //public async Task<IActionResult> Restore(
+        //    [FromRoute] Guid id,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var command = new RestoreProductCommand(id);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [Authorize(Roles = "SuperAdmin,Admin,Manager,InventoryManager")]
-        [HttpPatch("{productId}/branch/{branchId}/update-quantity")]
-        public async Task<IActionResult> UpdateQuantity(
-            [FromRoute] Guid productId,
-            [FromRoute] Guid branchId,
-            [FromBody] UpdateProductStockQuantityRequest body,
-            CancellationToken cancellationToken)
-        {
-            var command = new UpdateProductStockQuantityCommand(productId, branchId, body);
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //[Authorize(Roles = "SuperAdmin,Admin,Manager,InventoryManager")]
+        //[HttpPatch("{productId}/branch/{branchId}/update-quantity")]
+        //public async Task<IActionResult> UpdateQuantity(
+        //    [FromRoute] Guid productId,
+        //    [FromRoute] Guid branchId,
+        //    [FromBody] UpdateProductStockQuantityRequest body,
+        //    CancellationToken cancellationToken)
+        //{
+        //    var command = new UpdateProductStockQuantityCommand(productId, branchId, body);
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
-        [HttpPost("{id}/images")]
-        [Consumes("multipart/form-data")]
-        public async Task<IActionResult> UploadImage(
-            [FromRoute] Guid id,
-            IFormFile file,
-            [FromForm] UploadImageRequest metadata,
-            CancellationToken cancellationToken)
-        {
-            if (file is null || file.Length == 0)
-                return BadRequest("File ảnh không được để trống.");
+        //[Authorize(Roles = "SuperAdmin,Admin")]
+        //[HttpPost("{id}/images")]
+        //[Consumes("multipart/form-data")]
+        //public async Task<IActionResult> UploadImage(
+        //    [FromRoute] Guid id,
+        //    IFormFile file,
+        //    [FromForm] UploadImageRequest metadata,
+        //    CancellationToken cancellationToken)
+        //{
+        //    if (file is null || file.Length == 0)
+        //        return BadRequest("File ảnh không được để trống.");
 
-            await using var stream = file.OpenReadStream();
+        //    await using var stream = file.OpenReadStream();
 
-            var command = new UploadProductImageCommand(id, stream, file.FileName, metadata);
+        //    var command = new UploadProductImageCommand(id, stream, file.FileName, metadata);
 
-            var result = await _mediator.Send(command, cancellationToken);
-            return this.ToActionResult(result);
-        }
+        //    var result = await _mediator.Send(command, cancellationToken);
+        //    return this.ToActionResult(result);
+        //}
     }
 }

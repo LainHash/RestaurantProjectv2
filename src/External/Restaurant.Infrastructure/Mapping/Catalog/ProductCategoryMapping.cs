@@ -10,8 +10,12 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
         public ProductCategoryMapping()
         {
             CreateMap<ProductCategory, ProductCategoryResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<ProductCategory, ProductCategoryDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
-                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.ProductCategoryImages));
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.ProductCategoryImages))
+                .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));
 
             CreateMap<CreateProductCategoryRequest, ProductCategory>();
 

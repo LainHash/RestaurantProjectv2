@@ -188,7 +188,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             ForgotPasswordCommand command,
             CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.FindByEmailAsync(command.Email, cancellationToken);
+            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
             if (user is null)
             {
                 return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
@@ -229,7 +229,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             VerifyPasswordResetOtpCommand command,
             CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.FindByEmailAsync(command.Email, cancellationToken);
+            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
             if (user is null)
             {
                 return Result<VerifyPasswordResetOtpResponse>

@@ -1,5 +1,6 @@
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Create;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Update;
+using Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetById;
 using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Models.Results;
@@ -13,8 +14,8 @@ namespace Restaurant.Application.Services.Catalog
             ISpecification<ProductCategory> specification,
             CancellationToken cancellationToken);
 
-        Task<Result<ProductCategoryResponse>> GetOneAsync(
-            ISpecification<ProductCategory> specification,
+        Task<Result<ProductCategoryDetailResponse>> GetByIdAsync(
+            GetProductCategoryByIdSpecification specification,
             CancellationToken cancellationToken);
 
         Task<Result<ProductCategoryResponse>> CreateAsync(

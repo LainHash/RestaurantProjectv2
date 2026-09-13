@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Restaurant.Application.Features.Auth.Commands.ChangePassword;
 using Restaurant.Application.Features.Auth.Commands.Login;
 using Restaurant.Application.Features.Auth.Commands.Logout;
 using Restaurant.Application.Features.Auth.Commands.RefreshToken;
@@ -245,6 +246,30 @@ namespace Restaurant.Infrastructure.Services.Auth
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Succeed("Password reset successfully. Please login with your new password.");
+        }
+
+        public async Task<Result> ChangePasswordAsync(
+            ChangePasswordCommand command,
+            CancellationToken cancellationToken = default)
+        {
+            var user = await _userRepository.FindByIdAsync(command.UserId, cancellationToken);
+            if (user is null || !user.IsActive)
+            {
+                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            if (!_passwordHasher.VerifyPassword(command.Body.OldPassword, user.PasswordHash))
+            {
+                return Result.Fail("Current password is incorrect.", HttpStatusCode.BadRequest);
+            }
+
+            var newPasswordHash = _passwordHasher.HashPassword(command.Body.NewPassword);
+            user.SetPasswordHash(newPasswordHash);
+
+            await _refreshTokenRepository.RevokeAllByUserIdAsync(user.Id, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Succeed("Password changed successfully. Please login with your new password.");
         }
     }
 }
