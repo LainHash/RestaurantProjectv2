@@ -188,12 +188,10 @@ namespace Restaurant.Infrastructure.Services.Identity
             ForgotPasswordCommand command,
             CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
-
-            // Always return success to prevent email enumeration
-            if (user is null || !user.IsActive)
+            var user = await _userRepository.FindByEmailAsync(command.Email, cancellationToken);
+            if (user is null)
             {
-                return Result.Succeed("If the email is registered and active, you will receive a reset code.");
+                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
             }
 
             // Invalidate any existing active OTP for this purpose
@@ -223,14 +221,15 @@ namespace Restaurant.Infrastructure.Services.Identity
                 _logger.LogError(ex, "Send password reset email failed. UserId: {UserId}", user.Id);
             }
 
-            return Result.Succeed("If the email is registered and active, you will receive a reset code.");
+            return Result.Succeed("Password reset OTP sent. Please check your email.");
         }
+
 
         public async Task<Result<VerifyPasswordResetOtpResponse>> VerifyPasswordResetOtpAsync(
             VerifyPasswordResetOtpCommand command,
             CancellationToken cancellationToken = default)
         {
-            var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
+            var user = await _userRepository.FindByEmailAsync(command.Email, cancellationToken);
             if (user is null)
             {
                 return Result<VerifyPasswordResetOtpResponse>

@@ -170,7 +170,6 @@ namespace Restaurant.Infrastructure.Services.Auth
             var role = await _roleRepository.FindByIdAsync(user.RoleId, cancellationToken);
             var roleName = role?.Name ?? "Customer";
 
-            // Rotate: revoke old token, issue new pair
             storedToken.Revoke();
 
             var newAccessToken = _jwtProvider.GenerateToken(user.PublicId, user.UserName, user.Email, roleName);
@@ -199,7 +198,6 @@ namespace Restaurant.Infrastructure.Services.Auth
 
             if (storedToken is null)
             {
-                // Idempotent — already revoked or doesn't exist
                 return Result.Succeed("Logged out successfully.");
             }
 
@@ -243,7 +241,6 @@ namespace Restaurant.Infrastructure.Services.Auth
             var newPasswordHash = _passwordHasher.HashPassword(command.Body.NewPassword);
             user.SetPasswordHash(newPasswordHash);
 
-            // Revoke all active sessions to force re-login on all devices
             await _refreshTokenRepository.RevokeAllByUserIdAsync(user.Id, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

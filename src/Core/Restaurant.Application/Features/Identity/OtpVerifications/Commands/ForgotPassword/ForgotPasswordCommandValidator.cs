@@ -7,9 +7,7 @@ namespace Restaurant.Application.Features.Identity.OtpVerifications.Commands.For
     {
         public ForgotPasswordCommandValidator()
         {
-            RuleFor(x => x.Body.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is not valid.");
+            // Email is extracted from the authenticated user's JWT — no validation needed.
         }
     }
 }

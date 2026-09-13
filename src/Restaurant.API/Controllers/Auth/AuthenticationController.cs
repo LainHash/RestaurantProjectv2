@@ -14,6 +14,8 @@ using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyP
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Auth;
 using Restaurant.Contract.DTOs.Identity.OtpVerifications;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Restaurant.API.Controllers.Auth
 {
@@ -105,24 +107,34 @@ namespace Restaurant.API.Controllers.Auth
             return this.ToActionResult(result);
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(
-            [FromBody] ForgotPasswordRequest body,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> ForgotPassword(CancellationToken cancellationToken)
         {
-            var command = new ForgotPasswordCommand(body);
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized();
+            }
+
+            var command = new ForgotPasswordCommand(email);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
 
-        [AllowAnonymous]
+        [Authorize]
         [HttpPost("verify-reset-otp")]
         public async Task<IActionResult> VerifyResetOtp(
             [FromBody] VerifyPasswordResetOtpRequest body,
             CancellationToken cancellationToken)
         {
-            var command = new VerifyPasswordResetOtpCommand(body);
+            var email = User.FindFirst(ClaimTypes.Email)?.Value;
+            if (string.IsNullOrEmpty(email))
+            {
+                return Unauthorized();
+            }
+
+            var command = new VerifyPasswordResetOtpCommand(email, body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

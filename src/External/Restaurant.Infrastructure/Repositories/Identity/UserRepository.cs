@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Repositories.Identity;
-using Restaurant.Infrastructure.Repositories;
 using Restaurant.Infrastructure.Context;
+using Restaurant.Infrastructure.Repositories;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Restaurant.Infrastructure.Repositories.Identity
 {
@@ -13,7 +14,8 @@ namespace Restaurant.Infrastructure.Repositories.Identity
 
         public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
         {
-            return await _context.Users.FirstOrDefaultAsync(x => x.Email == email, cancellationToken);
+            return await _context.Users
+                .FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower(), cancellationToken);
         }
 
         public async Task<User?> FindByIdAsync(int id, CancellationToken cancellationToken = default)

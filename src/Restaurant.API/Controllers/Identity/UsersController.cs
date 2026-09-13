@@ -20,44 +20,44 @@ namespace Restaurant.API.Controllers.Identity
     {
         private readonly IMediator _mediator = mediator;
 
-        //[AllowAnonymous]
-        //[HttpPost("complete-profile")]
-        //public async Task<IActionResult> CompleteProfile(
-        //    [FromBody] CompleteProfileRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CompleteProfileCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [AllowAnonymous]
+        [HttpPost("complete-profile")]
+        public async Task<IActionResult> CompleteProfile(
+            [FromBody] CompleteProfileRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CompleteProfileCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize]
-        //[HttpPost("update-profile")]
-        //public async Task<IActionResult> UpdateProfile(
-        //    [FromBody] UpdatePersonalProfileRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    Guid userId = Guid.Empty;
+        [Authorize]
+        [HttpPost("update-profile")]
+        public async Task<IActionResult> UpdateProfile(
+            [FromBody] UpdatePersonalProfileRequest body,
+            CancellationToken cancellationToken)
+        {
+            Guid userId = Guid.Empty;
 
-        //    if (User.Identity?.IsAuthenticated == true)
-        //    {
-        //        Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
-        //    }
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                Guid.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value, out userId);
+            }
 
-        //    var command = new UpdatePersonalProfileCommand(userId, body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+            var command = new UpdatePersonalProfileCommand(userId, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize]
-        //[HttpPost("create-employee-account")]
-        //public async Task<IActionResult> CreateForEmployee(
-        //    [FromBody] CreateUsersForEmployeeRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CreateUsersForEmployeeCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize]
+        [HttpPost("create-employee-account")]
+        public async Task<IActionResult> CreateForEmployee(
+            [FromBody] CreateUsersForEmployeeRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateUsersForEmployeeCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }

@@ -100,12 +100,11 @@ namespace Restaurant.Infrastructure.Services.Auth
                 var handler = new JwtSecurityTokenHandler();
                 var principal = handler.ValidateToken(token, validationParameters, out _);
 
-                // Ensure this token was issued specifically for password reset
                 var purposeClaim = principal.FindFirst("purpose")?.Value;
                 if (purposeClaim != "password_reset")
                     return false;
 
-                var subClaim = principal.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+                var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 if (!int.TryParse(subClaim, out userId))
                     return false;
 

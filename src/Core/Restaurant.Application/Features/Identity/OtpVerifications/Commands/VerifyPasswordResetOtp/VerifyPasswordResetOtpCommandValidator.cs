@@ -7,9 +7,7 @@ namespace Restaurant.Application.Features.Identity.OtpVerifications.Commands.Ver
     {
         public VerifyPasswordResetOtpCommandValidator()
         {
-            RuleFor(x => x.Body.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .EmailAddress().WithMessage("Email is not valid.");
+            // Email is extracted from the authenticated user's JWT — no validation needed.
 
             RuleFor(x => x.Body.Code)
                 .NotEmpty().WithMessage("OTP Code is required.")
