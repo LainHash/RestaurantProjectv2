@@ -5,23 +5,14 @@ namespace Restaurant.Domain.Models.Messages
         public string Subject { get; private set; } = string.Empty;
         public string Body { get; private set; } = string.Empty;
 
-        /// <summary>
-        /// Constructor mặc định cho Object Initializer.
-        /// </summary>
         private EmailMessage() { }
 
-        /// <summary>
-        /// Email xác thực tài khoản (đăng ký).
-        /// </summary>
         public EmailMessage(string userName, string verificationCode)
         {
             Subject = "Restaurant - Email Verification Code";
             Body = $"Hello {userName},<br/><br/>Your verification code is: <b>{verificationCode}</b><br/>This code will expire in 15 minutes.";
         }
 
-        /// <summary>
-        /// Email xác nhận yêu cầu đổi email (gửi tới current email).
-        /// </summary>
         public static EmailMessage ForCurrentEmailConfirmation(string userName, string verificationCode)
         {
             return new EmailMessage
@@ -31,9 +22,6 @@ namespace Restaurant.Domain.Models.Messages
             };
         }
 
-        /// <summary>
-        /// Email xác nhận địa chỉ email mới.
-        /// </summary>
         public static EmailMessage ForEmailChange(string userName, string verificationCode)
         {
             return new EmailMessage
