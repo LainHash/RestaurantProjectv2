@@ -70,15 +70,18 @@ builder.Services.AddCors(options =>
     options.AddPolicy("WebClient", policy =>
     {
         policy
-            .WithOrigins("http://localhost:8081/")
-            .WithOrigins("http://localhost:3000/")
+            .WithOrigins("http://localhost:8081")
+            .WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
     });
 });
 
 var app = builder.Build();
+
 app.UseCors("WebClient");
+
 using (var scope = app.Services.CreateScope())
 {
     await scope.ServiceProvider.InitialiseDatabaseAsync();
