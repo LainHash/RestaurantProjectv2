@@ -21,7 +21,7 @@ namespace Restaurant.Application.Behaviors
             CancellationToken cancellationToken)
         {
             if (!_validators.Any())
-                return await next();
+                return await next(cancellationToken);
 
             var context = new ValidationContext<TRequest>(request);
 
@@ -32,30 +32,26 @@ namespace Restaurant.Application.Behaviors
                 .ToList();
 
             if (failures.Count == 0)
-                return await next();
+                return await next(cancellationToken);
 
             var message = string.Join(" | ", failures.Select(f => f.ErrorMessage));
 
-            // Try to create a typed failure response matching TResponse
             var responseType = typeof(TResponse);
 
-            // DataResult<T> case
             if (responseType.IsGenericType &&
-                responseType.GetGenericTypeDefinition() == typeof(Result<>))
+                responseType.GetGenericTypeDefinition() == typeof(Result))
             {
                 var failMethod = responseType.GetMethod(
-                    nameof(Result<object>.Fail),
+                    nameof(Result.Fail),
                     [typeof(string), typeof(HttpStatusCode)]);
 
                 if (failMethod != null)
                     return (TResponse)failMethod.Invoke(null, [message, HttpStatusCode.UnprocessableEntity])!;
             }
 
-            // Result case
-            if (typeof(Result<>).IsAssignableFrom(responseType))
-                return (TResponse)(object)Result<object>.Fail(message, HttpStatusCode.UnprocessableEntity);
+            if (typeof(Result).IsAssignableFrom(responseType))
+                return (TResponse)(object)Result.Fail(message, HttpStatusCode.UnprocessableEntity);
 
-            // Fallback: throw for non-Result responses
             throw new ValidationException(failures);
         }
     }

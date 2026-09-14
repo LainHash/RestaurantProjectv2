@@ -2,9 +2,7 @@ namespace Restaurant.Application.Services.Auth
 {
     public interface ICurrentUserService
     {
-        int? UserId { get; }
-
-        Guid? PublicId { get; }
+        Guid? UserId { get; }
 
         string? IpAddress { get; }
     }

@@ -28,7 +28,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
 
             var query = new GetWishlistQuery(userId, sessionId);
             var result = await _mediator.Send(query, cancellationToken);
@@ -44,7 +44,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
 
             var command = new AddWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);
@@ -60,7 +60,7 @@ namespace Restaurant.API.Controllers.Commerce
             if (sessionId is null)
                 return BadRequest("X-Session-Id header is required.");
 
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
 
             var command = new RemoveWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);

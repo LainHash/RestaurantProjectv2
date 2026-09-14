@@ -9,9 +9,12 @@ namespace Restaurant.Infrastructure.Mapping.Guest
         public CustomerMapping()
         {
             CreateMap<Customer, CustomerResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<Customer, CustomerDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
-                .ForMember(dest => dest.Account, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.AvatarUrl, opt => opt.MapFrom(src => src.AvatarImage != null ? src.AvatarImage.Url : ""))
+                .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User))
                 .ForMember(dest => dest.PersonalProfile, opt => opt.MapFrom(src => src.User.PersonalProfile));
         }
     }

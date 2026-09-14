@@ -20,8 +20,5 @@ namespace Restaurant.Contract.DTOs.Personnel.Employees
         public DateTime? TerminationDate { get; set; }
 
         public EmployeeStatus Status { get; set; }
-
-        public UserResponse Account { get; set; } = null!;
-        public PersonalProfileResponse PersonalProfile { get; set; } = null!;
     }
 }

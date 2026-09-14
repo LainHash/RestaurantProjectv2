@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Identity;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Specifications;
 
 namespace Restaurant.Application.Features.Identity.Users.Queries.GetById
@@ -12,6 +13,12 @@ namespace Restaurant.Application.Features.Identity.Users.Queries.GetById
 
             AddInclude(x => x.Role);
             AddInclude(x => x.PersonalProfile!);
+            AddInclude(x => x.Customer!);
+            AddIncludeAggregator(x => x.Include(u => u.Employee)
+                                        .ThenInclude(e => e!.Position)
+                                        .ThenInclude(p => p.Department));
+            AddIncludeAggregator(x => x.Include(u => u.Employee)
+                                        .ThenInclude(e => e!.Branch));
         }
     }
 }
