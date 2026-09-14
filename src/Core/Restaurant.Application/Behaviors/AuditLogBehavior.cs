@@ -1,24 +1,24 @@
 ﻿using MediatR;
 using Restaurant.Application.Services.Auth;
+using Restaurant.Domain.Repositories.Identity;
 
 namespace Restaurant.Application.Behaviors
 {
-    /// <summary>
-    /// MediatR Pipeline Behavior ghi nhận audit context (userId, IP) cho mỗi command.
-    /// Thông tin này được lưu vào IAuditContext và DbContext sẽ đọc khi SaveChanges.
-    /// </summary>
     public class AuditLogBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
     {
         private readonly IAuditContext _auditContext;
         private readonly ICurrentUserService _currentUser;
+        private readonly IUserRepository _userRepository;
 
         public AuditLogBehavior(
             IAuditContext auditContext,
-            ICurrentUserService currentUser)
+            ICurrentUserService currentUser,
+            IUserRepository userRepository)
         {
             _auditContext = auditContext;
             _currentUser = currentUser;
+            _userRepository = userRepository;
         }
 
         public async Task<TResponse> Handle(
@@ -26,11 +26,21 @@ namespace Restaurant.Application.Behaviors
             RequestHandlerDelegate<TResponse> next,
             CancellationToken cancellationToken)
         {
-            // Truyền thông tin user vào AuditContext để DbContext dùng khi capture audit entries
-            _auditContext.UserId = _currentUser.UserId;
+            var userId = _currentUser.UserId;
+            userId ??= Guid.Empty;
+
+            var user = await _userRepository.FindByIdAsync(userId.Value, cancellationToken);
+            if(user is null)
+            {
+                _auditContext.UserId = 0;
+            }
+            else
+            {
+                _auditContext.UserId = user.Id;
+            }
             _auditContext.IpAddress = _currentUser.IpAddress;
 
-            return await next();
+            return await next(cancellationToken);
         }
     }
 }

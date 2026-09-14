@@ -116,7 +116,7 @@ namespace Restaurant.API.Controllers.Auth
         public async Task<IActionResult> LogoutAll(
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
             if (userId is null)
             {
                 return Unauthorized();
@@ -166,7 +166,7 @@ namespace Restaurant.API.Controllers.Auth
             [FromBody] ChangePasswordRequest body,
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
             if (userId is null)
             {
                 return Unauthorized();
@@ -183,7 +183,7 @@ namespace Restaurant.API.Controllers.Auth
             [FromBody] UpdatePersonalProfileRequest body,
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
             if (userId is null)
             {
                 return Unauthorized();
@@ -199,7 +199,7 @@ namespace Restaurant.API.Controllers.Auth
         public async Task<IActionResult> GetCurrentUser(
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
             if (userId is null)
             {
                 return Unauthorized();

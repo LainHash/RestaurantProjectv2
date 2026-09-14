@@ -47,7 +47,7 @@ namespace Restaurant.API.Controllers.Guest
             IFormFile file,
             CancellationToken cancellationToken)
         {
-            var userId = _currentUserService.PublicId;
+            var userId = _currentUserService.UserId;
             if(userId is null)
             {
                 return Unauthorized();

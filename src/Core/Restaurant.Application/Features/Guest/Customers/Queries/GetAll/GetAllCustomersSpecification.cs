@@ -10,10 +10,6 @@ namespace Restaurant.Application.Features.Guest.Customers.Queries.GetAll
         public GetAllCustomersSpecification(GetAllCustomersQuery query)
         {
             AddInclude(x => x.AvatarImage!);
-            AddIncludeAggregator(x => x.Include(c => c.User)
-                                        .ThenInclude(u => u.Role));
-            AddIncludeAggregator(x => x.Include(c => c.User)
-                                        .ThenInclude(u => u.PersonalProfile));
         }
     }
 }
