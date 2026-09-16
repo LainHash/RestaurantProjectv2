@@ -37,6 +37,7 @@ namespace Restaurant.Seeding.Seeders
 
             await SeedAsync<BranchSeeder>(_context);
             await SeedAsync<AreaSeeder>(_context);
+            await SeedAsync<RestaurantTableSeeder>(_context);
 
             await SeedAsync<ProductStockSeeder>(_context);
             await SeedAsync<IngredientStockSeeder>(_context);

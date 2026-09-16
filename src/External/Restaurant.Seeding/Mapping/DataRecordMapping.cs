@@ -79,6 +79,7 @@ namespace Restaurant.Seeding.Mapping
                 .ForMember(dest => dest.CloseTime, opt => opt
                     .MapFrom(src => TimeOnly.FromDateTime(src.CloseTime)));
             CreateMap<AreaRecord, Area>();
+            CreateMap<RestaurantTableRecord, RestaurantTable>();
         }
     }
 }
