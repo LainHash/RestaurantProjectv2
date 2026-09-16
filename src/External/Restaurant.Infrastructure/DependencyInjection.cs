@@ -43,6 +43,8 @@ using Restaurant.Infrastructure.Services.Billing;
 using Restaurant.Infrastructure.Services.Sale;
 using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
+using Restaurant.Application.Services.Schedule;
+using Restaurant.Infrastructure.Services.Schedule;
 
 namespace Restaurant.Infrastructure
 {
@@ -180,6 +182,8 @@ namespace Restaurant.Infrastructure
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderPreparationService, OrderPreparationService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
+
+            services.AddScoped<IReservationService, ReservationService>();
 
             return services;
         }

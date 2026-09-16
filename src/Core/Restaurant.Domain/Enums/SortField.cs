@@ -8,6 +8,7 @@ namespace Restaurant.Domain.Enums
         CreatedAt,
         Name,
         Price,
-        Capacity
+        Capacity,
+        ReservationDate
     }
 }
