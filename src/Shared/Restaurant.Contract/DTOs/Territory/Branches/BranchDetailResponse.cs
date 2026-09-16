@@ -3,7 +3,7 @@ using Restaurant.Domain.Enums;
 
 namespace Restaurant.Contract.DTOs.Territory.Branches
 {
-    public class BranchResponse
+    public class BranchDetailResponse
     {
         public Guid Id { get; set; }
         public string City { get; set; } = null!;
@@ -21,5 +21,7 @@ namespace Restaurant.Contract.DTOs.Territory.Branches
 
         public TimeOnly OpenTime { get; set; }
         public TimeOnly CloseTime { get; set; }
+
+        public IEnumerable<AreaResponse> Areas { get; set; } = [];
     }
 }
