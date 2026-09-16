@@ -9,8 +9,10 @@ namespace Restaurant.Application.Features.Territory.Areas.Queries.GetById
         public GetAreaByIdSpecification(GetAreaByIdQuery query)
         {
             EnableSoftDeleteFilter();
-            AddInclude(x => x.Branch);
+
             AddCriteria(x => x.PublicId == query.Id);
+
+            AddInclude(x => x.RestaurantTables);
         }
     }
 }

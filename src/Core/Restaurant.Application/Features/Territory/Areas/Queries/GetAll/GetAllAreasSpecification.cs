@@ -11,7 +11,6 @@ namespace Restaurant.Application.Features.Territory.Areas.Queries.GetAll
         public GetAllAreasSpecification(GetAllAreasQuery query)
         {
             EnableSoftDeleteFilter();
-            AddInclude(x => x.Branch);
 
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
