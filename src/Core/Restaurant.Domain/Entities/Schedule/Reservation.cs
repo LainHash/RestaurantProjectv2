@@ -11,8 +11,8 @@ namespace Restaurant.Domain.Entities.Schedule
 
         public int? CustomerId { get; set; }
 
-        public string? GuestName { get; set; }
-        public string? GuestPhone { get; set; }
+        public string GuestName { get; set; } = null!;
+        public string GuestPhone { get; set; } = null!;
         public string? GuestEmail { get; set; }
 
         public DateTime ReservationDate { get; set; }

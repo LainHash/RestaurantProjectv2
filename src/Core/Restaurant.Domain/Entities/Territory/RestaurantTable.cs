@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Enums;
+﻿using Restaurant.Domain.Entities.Schedule;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Territory
@@ -23,6 +24,7 @@ namespace Restaurant.Domain.Entities.Territory
         public bool IsActive { get; private set; }
 
         public Area Area { get; private set; } = null!;
+        public ICollection<ReservationTable> ReservationTables { get; private set; } = [];
     }
 
     public partial class RestaurantTable

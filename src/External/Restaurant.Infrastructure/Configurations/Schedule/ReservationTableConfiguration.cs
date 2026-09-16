@@ -32,7 +32,7 @@ namespace Restaurant.Infrastructure.Configurations.Schedule
                 .OnDelete(DeleteBehavior.Cascade);
 
             builder.HasOne(x => x.RestaurantTable)
-                .WithMany()
+                .WithMany(x => x.ReservationTables)
                 .HasForeignKey(x => x.RestaurantTableId)
                 .OnDelete(DeleteBehavior.Restrict);
 
