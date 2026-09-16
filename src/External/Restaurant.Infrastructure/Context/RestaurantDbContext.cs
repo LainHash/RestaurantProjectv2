@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Options;
 using Restaurant.Application.Services.Auth;
+using Restaurant.Contract.Settings.AuditLog;
 using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Business;
 using Restaurant.Domain.Entities.Catalog;
@@ -86,13 +88,16 @@ namespace Restaurant.Infrastructure.Context
 
         // ── IAuditContext injected via constructor ────────────────────────────
         private readonly IAuditContext _auditContext;
+        private readonly IOptions<AuditLogSettings> _auditSettings;
 
         public RestaurantDbContext(
             DbContextOptions<RestaurantDbContext> options,
-            IAuditContext auditContext)
+            IAuditContext auditContext,
+            IOptions<AuditLogSettings> auditSettings)
             : base(options)
         {
             _auditContext = auditContext;
+            _auditSettings = auditSettings;
         }
 
         // ── Model building ──────────────────────────────────────────────────
@@ -115,11 +120,12 @@ namespace Restaurant.Infrastructure.Context
         {
             SetAuditFields();
 
-            var auditEntries = CaptureAuditEntries();
+            var auditEntries = _auditSettings.Value.Enabled
+                ? CaptureAuditEntries()
+                : [];
 
             var result = await base.SaveChangesAsync(cancellationToken);
 
-            // Sau khi save, flush audit logs (Id của entity Added giờ đã có giá trị)
             if (auditEntries.Count > 0)
             {
                 FinalizeAuditEntries(auditEntries);
