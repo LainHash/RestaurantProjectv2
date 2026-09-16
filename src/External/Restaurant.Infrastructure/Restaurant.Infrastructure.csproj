@@ -38,4 +38,8 @@
 		<ProjectReference Include="..\..\Core\Restaurant.Domain\Restaurant.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Configurations\Schedule\" />
+	</ItemGroup>
+
 </Project>

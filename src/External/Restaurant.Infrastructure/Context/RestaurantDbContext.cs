@@ -12,6 +12,7 @@ using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Entities.Sale;
+using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models;
@@ -77,6 +78,9 @@ namespace Restaurant.Infrastructure.Context
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; } = null!;
         public DbSet<Payment> Payments { get; set; } = null!;
         public DbSet<PaymentTransaction> PaymentTransactions { get; set; } = null!;
+
+        public DbSet<Reservation> Reservations { get; set; } = null!;
+        public DbSet<ReservationTable> ReservationTables { get; set; } = null!;
 
         public DbSet<AuditLog> AuditLogs { get; set; } = null!;
 
