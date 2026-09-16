@@ -11,6 +11,10 @@ namespace Restaurant.Infrastructure.Mapping.Territory
             CreateMap<Area, AreaResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
 
+            CreateMap<Area, AreaDetailResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.RestaurantTables, opt => opt.MapFrom(src => src.RestaurantTables));
+
             CreateMap<CreateAreaRequest, Area>();
 
             CreateMap<UpdateAreaRequest, Area>();

@@ -46,19 +46,19 @@ namespace Restaurant.Infrastructure.Services.Territory
                 .Succeed(response, Success<Area>.Retrieved, totalItems, specification.Skip, specification.Take);
         }
 
-        public async Task<Result<AreaResponse>> GetByIdAsync(
+        public async Task<Result<AreaDetailResponse>> GetByIdAsync(
             GetAreaByIdSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var area = await _areaRepository.FindAsync(specification, cancellationToken);
             if (area is null)
             {
-                return Result<AreaResponse>
+                return Result<AreaDetailResponse>
                     .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var response = _mapper.Map<AreaResponse>(area);
-            return Result<AreaResponse>
+            var response = _mapper.Map<AreaDetailResponse>(area);
+            return Result<AreaDetailResponse>
                 .Succeed(response, Success<Area>.Retrieved);
         }
 

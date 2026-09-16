@@ -9,5 +9,6 @@
         /// Mặc định: 90 ngày.
         /// </summary>
         public int RetentionDays { get; set; } = 90;
+        public bool Enabled { get; set; } = true;
     }
 }

@@ -15,7 +15,9 @@ namespace Restaurant.Application.Features.Territory.Branches.Queries.GetAll
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
                 Criteria = p =>
-                    EF.Functions.Like(p.City, $"%{query.Keyword}%");
+                    EF.Functions.Like(p.City, $"%{query.Keyword}%") ||
+                    EF.Functions.Like(p.BranchCode, $"%{query.Keyword}%") ||
+                    EF.Functions.Like(p.Address, $"%{query.Keyword}%");
             }
 
             switch (query.SortField)

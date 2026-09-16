@@ -1,5 +1,7 @@
-﻿using Restaurant.Domain.Entities.Inventory;
+﻿using NanoidDotNet;
+using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Sale;
+using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
@@ -8,7 +10,7 @@ namespace Restaurant.Domain.Entities.Territory
     public class Branch : SoftDeletableEntity
     {
         public string City { get; private set; } = null!;
-        public string BranchCode { get; private set; } = null!;
+        public string BranchCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
         public string PhoneNumber { get; private set; } = null!;
         public string Email { get; private set; } = null!;
@@ -27,5 +29,7 @@ namespace Restaurant.Domain.Entities.Territory
         public ICollection<IngredientStock> IngredientStocks { get; private set; } = [];
         public ICollection<Order> Orders { get; private set; } = [];
         public ICollection<Area> Areas { get; private set; } = [];
+        public ICollection<Reservation> Reservations { get; private set; } = [];
+
     }
 }

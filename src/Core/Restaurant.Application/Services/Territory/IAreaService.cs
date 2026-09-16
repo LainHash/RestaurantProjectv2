@@ -15,7 +15,7 @@ namespace Restaurant.Application.Services.Territory
             GetAllAreasSpecification specification,
             CancellationToken cancellationToken = default);
 
-        Task<Result<AreaResponse>> GetByIdAsync(
+        Task<Result<AreaDetailResponse>> GetByIdAsync(
             GetAreaByIdSpecification specification,
             CancellationToken cancellationToken = default);
 

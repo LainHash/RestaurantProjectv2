@@ -369,3 +369,5 @@ src/External/Restaurant.Infrastructure/Migrations
 .temp.txt
 src/External/Restaurant.Seeding/Data/*
 *.xlsx.bak
+AGENT.md
+ARCHITECTURE.md

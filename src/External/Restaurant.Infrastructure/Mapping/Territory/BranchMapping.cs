@@ -10,6 +10,10 @@ namespace Restaurant.Infrastructure.Mapping.Territory
         {
             CreateMap<Branch, BranchResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+
+            CreateMap<Branch, BranchDetailResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.Areas, opt => opt.MapFrom(src => src.Areas));
         }
     }
 }
