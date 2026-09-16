@@ -1,7 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Restaurant.Application.Services.Auth;
+using Restaurant.Contract.Settings.AuditLog;
 using Restaurant.Infrastructure.Context;
 
 namespace Restaurant.Infrastructure
@@ -34,7 +36,9 @@ namespace Restaurant.Infrastructure
 
             var auditContext = new DesignTimeAuditContext();
 
-            return new RestaurantDbContext(optionsBuilder.Options, auditContext);
+            var auditSettings = Options.Create(new AuditLogSettings());
+
+            return new RestaurantDbContext(optionsBuilder.Options, auditContext, auditSettings);
         }
 
         private static void LoadDotEnv()
