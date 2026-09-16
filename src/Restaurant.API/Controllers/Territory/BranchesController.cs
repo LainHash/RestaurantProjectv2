@@ -24,6 +24,7 @@ namespace Restaurant.API.Controllers.Territory
         }
 
         [Authorize(Roles = "SuperAdmin,Admin,Manager")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetById(
             [FromRoute] Guid id,
             CancellationToken cancellationToken)
