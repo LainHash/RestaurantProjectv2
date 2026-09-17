@@ -4,7 +4,7 @@ namespace Restaurant.Domain.Entities.Identity
 {
     public class UserRefreshToken : Entity
     {
-        public int UserId { get; private set; }
+        public long UserId { get; private set; }
         public string TokenHash { get; private set; } = string.Empty;
         public DateTime ExpiresAt { get; private set; }
         public bool IsRevoked { get; private set; }
@@ -14,7 +14,7 @@ namespace Restaurant.Domain.Entities.Identity
 
         public UserRefreshToken() { }
 
-        public UserRefreshToken(int userId, string tokenHash, DateTime expiresAt)
+        public UserRefreshToken(long userId, string tokenHash, DateTime expiresAt)
         {
             UserId = userId;
             TokenHash = tokenHash;

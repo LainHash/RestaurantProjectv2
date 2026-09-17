@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Territory;
+using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Specifications;
 
 namespace Restaurant.Application.Features.Territory.RestaurantTables.Commands.Create
@@ -10,7 +10,7 @@ namespace Restaurant.Application.Features.Territory.RestaurantTables.Commands.Cr
         {
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             AddCriteria(x => x.Id == id);
         }

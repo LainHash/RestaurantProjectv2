@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Business;
+using Restaurant.Domain.Entities.Business;
 
 namespace Restaurant.Domain.Repositories.Business
 {
@@ -9,7 +9,7 @@ namespace Restaurant.Domain.Repositories.Business
 
         Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetPagedAsync(
             string? entityName,
-            int? userId,
+            long? userId,
             string? action,
             DateTime? from,
             DateTime? to,

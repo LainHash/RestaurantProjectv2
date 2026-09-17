@@ -17,7 +17,7 @@ namespace Restaurant.Domain.Entities.Identity
         public string Phone { get; private set; } = string.Empty;
         public string CitizenCardId { get; private set; } = string.Empty;
 
-        public int UserId { get; private set; }
+        public long UserId { get; private set; }
 
         public User User { get; private set; } = null!;
     }
@@ -29,7 +29,7 @@ namespace Restaurant.Domain.Entities.Identity
 
         }
 
-        public PersonalProfile SetUser(int userId)
+        public PersonalProfile SetUser(long userId)
         {
             UserId = userId;
             return this;

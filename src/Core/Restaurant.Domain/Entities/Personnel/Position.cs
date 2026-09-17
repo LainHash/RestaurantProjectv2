@@ -8,7 +8,7 @@ namespace Restaurant.Domain.Entities.Personnel
         public string? Description { get; private set; }
         public string PositionCode { get; private set; } = null!;
 
-        public int DepartmentId { get; private set; }
+        public long DepartmentId { get; private set; }
         public Department Department { get; private set; } = null!;
 
         public ICollection<Employee> Employees { get; private set; } = [];
@@ -19,7 +19,7 @@ namespace Restaurant.Domain.Entities.Personnel
         public Position() { }
 
 
-        public Position SetDepartment(int departmentId)
+        public Position SetDepartment(long departmentId)
         {
             DepartmentId = departmentId;
             return this;

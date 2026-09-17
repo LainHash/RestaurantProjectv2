@@ -6,8 +6,8 @@ namespace Restaurant.Application.Services.Auth
         string GenerateRefreshToken();
         string HashToken(string rawToken);
 
-        string GeneratePasswordResetToken(int userId);
+        string GeneratePasswordResetToken(long userId);
 
-        bool TryValidatePasswordResetToken(string token, out int userId);
+        bool TryValidatePasswordResetToken(string token, out long userId);
     }
 }

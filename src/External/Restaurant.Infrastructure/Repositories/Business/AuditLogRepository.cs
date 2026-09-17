@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Business;
 using Restaurant.Domain.Repositories.Business;
 using Restaurant.Infrastructure.Context;
@@ -20,7 +20,7 @@ namespace Restaurant.Infrastructure.Repositories.Business
 
         public async Task<(IEnumerable<AuditLog> Items, int TotalCount)> GetPagedAsync(
             string? entityName,
-            int? userId,
+            long? userId,
             string? action,
             DateTime? from,
             DateTime? to,

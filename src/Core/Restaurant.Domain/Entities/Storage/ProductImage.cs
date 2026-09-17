@@ -8,8 +8,8 @@ namespace Restaurant.Domain.Entities.Storage
         public int DisplayOrder { get; private set; }
         public bool IsPrimary { get; private set; }
 
-        public int ProductId { get; private set; }
-        public int ImageId { get; private set; }
+        public long ProductId { get; private set; }
+        public long ImageId { get; private set; }
 
         public Product Product { get; private set; } = null!;
         public Image Image { get; private set; } = null!;
@@ -25,7 +25,7 @@ namespace Restaurant.Domain.Entities.Storage
             DisplayOrder = displayOrder;
         }
 
-        public ProductImage(int productId, int imageId, bool isPrimary, int displayOrder)
+        public ProductImage(long productId, long imageId, bool isPrimary, int displayOrder)
         {
             ProductId = productId;
             ImageId = imageId;
@@ -33,7 +33,7 @@ namespace Restaurant.Domain.Entities.Storage
             DisplayOrder = displayOrder;
         }
 
-        public static ProductImage Create(int productId, int imageId, bool isPrimary, int displayOrder)
+        public static ProductImage Create(long productId, long imageId, bool isPrimary, int displayOrder)
         {
             return new ProductImage(productId, imageId, isPrimary, displayOrder);
         }
@@ -43,13 +43,13 @@ namespace Restaurant.Domain.Entities.Storage
             IsPrimary = false;
         }
 
-        public ProductImage SetProduct(int productId)
+        public ProductImage SetProduct(long productId)
         {
             ProductId = productId;
             return this;
         }
 
-        public ProductImage SetImage(int imageId)
+        public ProductImage SetImage(long imageId)
         {
             ImageId = imageId;
             return this;

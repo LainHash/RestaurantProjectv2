@@ -6,7 +6,7 @@ namespace Restaurant.Application.Services.Inventory
     public interface IInventoryDeductionService
     {
         Task<Result> DeductInventoryForOrderAsync(
-            int branchId,
+            long branchId,
             IEnumerable<(Product Product, int Quantity)> items,
             CancellationToken cancellationToken = default);
     }

@@ -56,7 +56,7 @@ namespace Restaurant.Infrastructure.Services.Auth
             return Convert.ToHexString(bytes).ToLowerInvariant();
         }
 
-        public string GeneratePasswordResetToken(int userId)
+        public string GeneratePasswordResetToken(long userId)
         {
             var claims = new[]
             {
@@ -78,7 +78,7 @@ namespace Restaurant.Infrastructure.Services.Auth
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public bool TryValidatePasswordResetToken(string token, out int userId)
+        public bool TryValidatePasswordResetToken(string token, out long userId)
         {
             userId = 0;
             try
@@ -105,7 +105,7 @@ namespace Restaurant.Infrastructure.Services.Auth
                     return false;
 
                 var subClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-                if (!int.TryParse(subClaim, out userId))
+                if (!long.TryParse(subClaim, out userId))
                     return false;
 
                 return true;

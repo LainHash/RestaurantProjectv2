@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Pricing;
 using Restaurant.Domain.Repositories.Pricing;
 using Restaurant.Infrastructure.Context;
@@ -15,7 +15,7 @@ namespace Restaurant.Infrastructure.Repositories.Pricing
             return await _context.Discounts.FirstOrDefaultAsync(x => x.DiscountCode == code, cancellationToken);
         }
 
-        public async Task<int> ReserveRemainingQuantityAsync(int discountId, CancellationToken cancellationToken = default)
+        public async Task<int> ReserveRemainingQuantityAsync(long discountId, CancellationToken cancellationToken = default)
         {
             return await _context.Database.ExecuteSqlInterpolatedAsync(
                 $@"UPDATE ""Discounts"" 

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Repositories.Commerce;
 using Restaurant.Infrastructure.Repositories;
@@ -11,7 +11,7 @@ namespace Restaurant.Infrastructure.Repositories.Commerce
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Wishlist?> FindByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default)
+        public async Task<Wishlist?> FindByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default)
         {
             return await _context.Wishlists
                 .Include(x => x.WishlistItems)

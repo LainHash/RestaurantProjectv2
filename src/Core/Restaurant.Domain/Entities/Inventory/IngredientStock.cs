@@ -8,8 +8,8 @@ namespace Restaurant.Domain.Entities.Inventory
     {
         public decimal QuantityOnHand { get; private set; }
 
-        public int IngredientId { get; private set; }
-        public int BranchId { get; private set; }
+        public long IngredientId { get; private set; }
+        public long BranchId { get; private set; }
 
         public Ingredient Ingredient { get; private set; } = null!;
         public Branch Branch { get; private set; } = null!;
@@ -24,13 +24,13 @@ namespace Restaurant.Domain.Entities.Inventory
             QuantityOnHand = quantityOnHand;
         }
 
-        public IngredientStock SetIngredient(int ingredientId)
+        public IngredientStock SetIngredient(long ingredientId)
         {
             IngredientId = ingredientId;
             return this;
         }
 
-        public IngredientStock SetBranch(int branchId)
+        public IngredientStock SetBranch(long branchId)
         {
             BranchId = branchId;
             return this;

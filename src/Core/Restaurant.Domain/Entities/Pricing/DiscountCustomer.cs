@@ -6,8 +6,8 @@ namespace Restaurant.Domain.Entities.Pricing
 {
     public partial class DiscountCustomer : SoftDeletableEntity
     {
-        public int CustomerId { get; private set; }
-        public int DiscountId { get; private set; }
+        public long CustomerId { get; private set; }
+        public long DiscountId { get; private set; }
 
         public DateTime ClaimAt { get; private set; }
         public DateTime ExpiredAt { get; private set; }
@@ -23,16 +23,16 @@ namespace Restaurant.Domain.Entities.Pricing
         public DiscountCustomer() { }
 
         public DiscountCustomer(
-            int customerId,
-            int discountId)
+            long customerId,
+            long discountId)
         {
             CustomerId = customerId;
             DiscountId = discountId;
         }
 
         public DiscountCustomer(
-            int customerId,
-            int discountId,
+            long customerId,
+            long discountId,
             DateTime claimAt,
             DateTime expiredAt,
             DiscountCustomerStatus status)
@@ -43,7 +43,7 @@ namespace Restaurant.Domain.Entities.Pricing
             Status = status;
         }
 
-        public static DiscountCustomer Claim(int customerId, int discountId, DateTime expiredAt)
+        public static DiscountCustomer Claim(long customerId, long discountId, DateTime expiredAt)
         {
             return new DiscountCustomer(
                 customerId,

@@ -13,9 +13,9 @@ namespace Restaurant.Domain.Entities.Guest
     {
         public string CustomerCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",20);
 
-        public int UserId { get; private set; }
+        public long UserId { get; private set; }
 
-        public int? AvatarImageId { get; private set; }
+        public long? AvatarImageId { get; private set; }
 
         public Image? AvatarImage { get; private set; } = null!;
 
@@ -33,18 +33,18 @@ namespace Restaurant.Domain.Entities.Guest
     {
         public Customer() { }
 
-        public Customer(int userId)
+        public Customer(long userId)
         {
             UserId = userId;
         }
 
-        public Customer SetUser(int userId)
+        public Customer SetUser(long userId)
         {
             UserId = userId;
             return this;
         }
 
-        public Customer SetAvatar(int imageId)
+        public Customer SetAvatar(long imageId)
         {
             AvatarImageId = imageId;
             return this;

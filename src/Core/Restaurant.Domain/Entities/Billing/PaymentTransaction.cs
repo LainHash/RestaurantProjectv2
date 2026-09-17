@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Entities.Billing
 {
     public class PaymentTransaction : SoftDeletableEntity
     {
-        public int PaymentId { get; private set; }
+        public long PaymentId { get; private set; }
 
         public string Provider { get; private set; } = null!;
         public string TransactionCode { get; private set; } = null!;

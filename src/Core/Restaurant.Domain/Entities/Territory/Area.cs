@@ -4,7 +4,7 @@ namespace Restaurant.Domain.Entities.Territory
 {
     public partial class Area : SoftDeletableEntity
     {
-        public int BranchId { get; private set; }
+        public long BranchId { get; private set; }
 
         public string Name { get; private set; } = string.Empty;
         public string? Description { get; private set; }
@@ -19,7 +19,7 @@ namespace Restaurant.Domain.Entities.Territory
     {
         public Area() { }
 
-        public Area SetBranch(int branchId)
+        public Area SetBranch(long branchId)
         {
             BranchId = branchId;
             return this;

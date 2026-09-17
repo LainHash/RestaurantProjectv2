@@ -6,7 +6,7 @@
     /// </summary>
     public interface IAuditContext
     {
-        int? UserId { get; set; }
+        long? UserId { get; set; }
         string? IpAddress { get; set; }
     }
 }

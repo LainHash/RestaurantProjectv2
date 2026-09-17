@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Entities.Billing
 {
     public class Payment : SoftDeletableEntity
     {
-        public int InvoiceId { get; private set; }
+        public long InvoiceId { get; private set; }
 
         public decimal Amount { get; private set; }
         public string Currency { get; private set; } = "VND";

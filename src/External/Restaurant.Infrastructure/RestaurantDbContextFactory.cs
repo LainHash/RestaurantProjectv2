@@ -101,7 +101,7 @@ namespace Restaurant.Infrastructure
 
         private sealed class DesignTimeAuditContext : IAuditContext
         {
-            public int? UserId { get; set; }
+            public long? UserId { get; set; }
             public string? IpAddress { get; set; }
         }
     }

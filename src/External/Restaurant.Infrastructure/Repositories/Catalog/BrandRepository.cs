@@ -16,7 +16,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
             return await _context.Brands.AnyAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
         }
 
-        public async Task<Brand?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Brand?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Brands.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }

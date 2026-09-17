@@ -5,10 +5,10 @@ namespace Restaurant.Domain.Entities.Commerce
 {
     public partial class CartItem : AuditableEntity
     {
-        public int CartId { get; private set; }
+        public long CartId { get; private set; }
         public Cart Cart { get; private set; } = null!;
 
-        public int ProductId { get; private set; }
+        public long ProductId { get; private set; }
         public Product Product { get; private set; } = null!;
 
         public int Quantity { get; private set; }
@@ -17,7 +17,7 @@ namespace Restaurant.Domain.Entities.Commerce
     public partial class CartItem
     {
         public CartItem() { }
-        public CartItem(int cartId, int productId)
+        public CartItem(long cartId, long productId)
         {
             CartId = cartId;
             ProductId = productId;

@@ -6,8 +6,8 @@ namespace Restaurant.Domain.Entities.Billing
 {
     public partial class InvoiceDetail : SoftDeletableEntity
     {
-        public int InvoiceId { get; private set; }
-        public int ProductId { get; private set; }
+        public long InvoiceId { get; private set; }
+        public long ProductId { get; private set; }
 
         public string ProductName { get; private set; } = null!;
         public decimal UnitPrice { get; private set; }

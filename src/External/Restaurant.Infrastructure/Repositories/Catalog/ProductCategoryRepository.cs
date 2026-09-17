@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Infrastructure.Repositories;
@@ -16,7 +16,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
             return await _context.ProductCategories.AnyAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
         }
 
-        public async Task<ProductCategory?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<ProductCategory?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.ProductCategories.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }

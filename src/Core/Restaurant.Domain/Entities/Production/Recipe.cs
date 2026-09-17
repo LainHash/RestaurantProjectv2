@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Entities.Production
 {
     public partial class Recipe : SoftDeletableEntity
     {
-        public int ProductId { get; private set; }
+        public long ProductId { get; private set; }
 
         public string? Instructions { get; private set; }
 
@@ -15,7 +15,7 @@ namespace Restaurant.Domain.Entities.Production
 
     public partial class Recipe
     {
-        public Recipe SetProduct(int productId)
+        public Recipe SetProduct(long productId)
         {
             ProductId = productId;
             return this;

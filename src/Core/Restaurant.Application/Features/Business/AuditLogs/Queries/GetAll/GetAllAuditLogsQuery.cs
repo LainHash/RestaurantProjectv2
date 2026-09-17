@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using Restaurant.Contract.DTOs.Business.AuditLogs;
 using Restaurant.Domain.Models.Results;
 
@@ -13,7 +13,7 @@ namespace Restaurant.Application.Features.Business.AuditLogs.Queries.GetAll
         public string? EntityName { get; init; }
 
         /// <summary>Lọc theo userId của người thực hiện.</summary>
-        public int? UserId { get; init; }
+        public long? UserId { get; init; }
 
         /// <summary>Lọc theo action: Created, Updated, Deleted.</summary>
         public string? Action { get; init; }

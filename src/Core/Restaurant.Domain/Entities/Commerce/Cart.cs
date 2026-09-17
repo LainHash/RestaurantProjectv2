@@ -6,7 +6,7 @@ namespace Restaurant.Domain.Entities.Commerce
     public partial class Cart : AuditableEntity
     {
         public string? SessionId { get; private set; }
-        public int? CustomerId { get; private set; }
+        public long? CustomerId { get; private set; }
         public Customer? Customer { get; private set; } = null!;
 
         public ICollection<CartItem> CartItems { get; private set; } = [];
@@ -16,7 +16,7 @@ namespace Restaurant.Domain.Entities.Commerce
     {
         public Cart() { }
 
-        public Cart(int customerId)
+        public Cart(long customerId)
         {
             CustomerId = customerId;
         }

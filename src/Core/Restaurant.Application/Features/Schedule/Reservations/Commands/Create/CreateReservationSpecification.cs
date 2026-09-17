@@ -15,7 +15,7 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                                         .ThenInclude(rt => rt.RestaurantTable));
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             AddCriteria(x => x.Id == id);
         }

@@ -16,7 +16,7 @@ namespace Restaurant.Infrastructure.Repositories.Personnel
             return await _context.Departments.AnyAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
         }
 
-        public async Task<Department?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Department?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Departments.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }

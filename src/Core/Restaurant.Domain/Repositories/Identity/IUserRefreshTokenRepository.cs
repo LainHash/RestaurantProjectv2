@@ -9,7 +9,7 @@ namespace Restaurant.Domain.Repositories.Identity
             CancellationToken cancellationToken = default);
 
         Task RevokeAllByUserIdAsync(
-            int userId,
+            long userId,
             CancellationToken cancellationToken = default);
     }
 }

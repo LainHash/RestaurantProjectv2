@@ -1,9 +1,9 @@
-﻿using Restaurant.Domain.Entities.Guest;
+using Restaurant.Domain.Entities.Guest;
 
 namespace Restaurant.Domain.Repositories.Guest
 {
     public interface IWalletRepository : IRepository<Wallet>
     {
-        Task<Wallet?> FindByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default);
+        Task<Wallet?> FindByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default);
     }
 }

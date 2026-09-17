@@ -5,8 +5,8 @@ namespace Restaurant.Domain.Entities.Schedule
 {
     public class ReservationTable : SoftDeletableEntity
     {
-        public int ReservationId { get; set; }
-        public int RestaurantTableId { get; set; }
+        public long ReservationId { get; set; }
+        public long RestaurantTableId { get; set; }
 
         public Reservation Reservation { get; set; } = null!;
         public RestaurantTable RestaurantTable { get; set; } = null!;

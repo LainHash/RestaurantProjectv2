@@ -11,7 +11,7 @@ namespace Restaurant.Application.Features.Territory.Areas.Commands.Create
             AddInclude(x => x.Branch);
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             AddCriteria(x => x.Id == id);
         }

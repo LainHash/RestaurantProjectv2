@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Repositories.Personnel;
 using Restaurant.Infrastructure.Repositories;
@@ -11,7 +11,7 @@ namespace Restaurant.Infrastructure.Repositories.Personnel
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Employee?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Employee?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Employees
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
@@ -23,7 +23,7 @@ namespace Restaurant.Infrastructure.Repositories.Personnel
                 .FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
         }
 
-        public async Task<Employee?> FindByUserIdAsync(int userId, CancellationToken cancellationToken = default)
+        public async Task<Employee?> FindByUserIdAsync(long userId, CancellationToken cancellationToken = default)
         {
             return await _context.Employees
                 .FirstOrDefaultAsync(x => x.UserId == userId, cancellationToken);

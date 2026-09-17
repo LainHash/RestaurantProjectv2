@@ -12,13 +12,13 @@ namespace Restaurant.Domain.Entities.Personnel
     {
         public string EmployeeCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
-        public int UserId { get; private set; }
+        public long UserId { get; private set; }
         public User User { get; private set; } = null!;
 
-        public int PositionId { get; private set; }
+        public long PositionId { get; private set; }
         public Position Position { get; private set; } = null!;
 
-        public int BranchId { get; private set; }
+        public long BranchId { get; private set; }
         public Branch Branch { get; private set; } = null!;
 
         public DateTime HireDate { get; private set; }
@@ -26,7 +26,7 @@ namespace Restaurant.Domain.Entities.Personnel
 
         public EmployeeStatus Status { get; private set; }
 
-        public int? AvatarImageId { get; private set; }
+        public long? AvatarImageId { get; private set; }
         public Image? AvatarImage { get; private set; } = null!;
         public ICollection<Order> Orders { get; private set; } = [];
     }
@@ -35,25 +35,25 @@ namespace Restaurant.Domain.Entities.Personnel
     {
         public Employee() { }
 
-        public Employee SetUser(int userId)
+        public Employee SetUser(long userId)
         {
             UserId = userId;
             return this;
         }
 
-        public Employee SetPosition(int positionId)
+        public Employee SetPosition(long positionId)
         {
             PositionId = positionId;
             return this;
         }
 
-        public Employee SetAvatar(int imageId)
+        public Employee SetAvatar(long imageId)
         {
             AvatarImageId = imageId;
             return this;
         }
 
-        public Employee SetBranch(int branchId)
+        public Employee SetBranch(long branchId)
         {
             BranchId = branchId;
             return this;

@@ -8,8 +8,7 @@ namespace Restaurant.Domain.Entities.Pricing
         public decimal UnitPrice { get; private set; }
         public string Currency { get; private set; } = null!;
 
-        public int ProductId { get; private set; }
-
+        public long ProductId { get; private set; }
 
         public Product Product { get; private set; } = null!;
     }
@@ -24,13 +23,13 @@ namespace Restaurant.Domain.Entities.Pricing
             Currency = currency;
         }
 
-        public ProductPrice(decimal unitPrice, int productId)
+        public ProductPrice(decimal unitPrice, long productId)
         {
             UnitPrice = unitPrice;
             ProductId = productId;
         }
 
-        public ProductPrice SetProduct(int productId)
+        public ProductPrice SetProduct(long productId)
         {
             ProductId = productId;
             return this;
