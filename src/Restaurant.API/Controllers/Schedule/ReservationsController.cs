@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
+using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
+using Restaurant.Contract.DTOs.Schedule.Reservations;
 
 namespace Restaurant.API.Controllers.Schedule
 {
@@ -28,6 +30,16 @@ namespace Restaurant.API.Controllers.Schedule
         {
             var query = new GetReservationByIdQuery(id);
             var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateReservationRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateReservationCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }
     }

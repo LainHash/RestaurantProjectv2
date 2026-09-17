@@ -3,18 +3,14 @@ using Restaurant.Domain.Enums;
 
 namespace Restaurant.Contract.DTOs.Schedule.Reservations
 {
-    public class ReservationDetailResponse
+    public class CreateReservationRequest
     {
-        public Guid Id { get; set; }
-
-        public string BranchCode { get; set; } = null!;
+        public Guid BranchId { get; set; }
 
         public DateTime ReservationDate { get; set; }
         public TimeSpan ReservationTime { get; set; }
 
         public int GuestCount { get; set; }
-
-        public ReservationStatus Status { get; set; }
 
         public string? Note { get; set; }
 
@@ -26,6 +22,6 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
         public string GuestPhone { get; set; } = null!;
         public string? GuestEmail { get; set; }
 
-        public IEnumerable<ReservationTableResponse> ReservationTables { get; set; } = [];
+        public IEnumerable<CreateReservationTableRequest> ReservationTables { get; set; } = [];
     }
 }

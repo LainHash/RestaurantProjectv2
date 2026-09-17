@@ -5,11 +5,11 @@ using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Schedule
 {
-    public class Reservation : SoftDeletableEntity
+    public partial class Reservation : SoftDeletableEntity
     {
-        public int BranchId { get; set; }
+        public long BranchId { get; set; }
 
-        public int? CustomerId { get; set; }
+        public long? CustomerId { get; set; }
 
         public string GuestName { get; set; } = null!;
         public string GuestPhone { get; set; } = null!;
@@ -31,5 +31,21 @@ namespace Restaurant.Domain.Entities.Schedule
         public Branch Branch { get; set; } = null!;
         public Customer? Customer { get; set; }
         public ICollection<ReservationTable> ReservationTables { get; set; } = [];
+    }
+
+    public partial class Reservation
+    {
+        public Reservation() { }
+
+        public Reservation(long branchId)
+        {
+            BranchId = branchId;
+        }
+
+        public Reservation SetBranch(long branchId)
+        {
+            BranchId = branchId;
+            return this;
+        }
     }
 }

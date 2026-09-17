@@ -15,6 +15,8 @@ namespace Restaurant.Infrastructure.Mapping.Schedule
                 .ForMember(dest => dest.Capacity, opt => opt.MapFrom(src => src.RestaurantTable.Capacity))
                 .ForMember(dest => dest.Shape, opt => opt.MapFrom(src => src.RestaurantTable.Shape))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.RestaurantTable.Status));
+
+            CreateMap<CreateReservationTableRequest, ReservationTable>();
         }
     }
 }

@@ -1,12 +1,16 @@
 ﻿using AutoMapper;
+using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
+using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Schedule;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
 using Restaurant.Domain.Entities.Schedule;
+using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Schedule;
+using Restaurant.Domain.Repositories.Territory;
 using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Schedule
@@ -14,15 +18,21 @@ namespace Restaurant.Infrastructure.Services.Schedule
     internal class ReservationService : IReservationService
     {
         private readonly IReservationRepository _reservationRepository;
+        private readonly IBranchRepository _branchRepository;
 
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public ReservationService(
             IReservationRepository reservationRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork,
+            IBranchRepository branchRepository)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
+            _branchRepository = branchRepository;
         }
 
         public async Task<PageResult<IEnumerable<ReservationResponse>>> GetAllAsync(
@@ -52,6 +62,34 @@ namespace Restaurant.Infrastructure.Services.Schedule
             var response = _mapper.Map<ReservationDetailResponse>(reservation);
             return Result<ReservationDetailResponse>
                 .Succeed(response, Success<Reservation>.Retrieved);
+        }
+
+        public async Task<Result<ReservationDetailResponse>> CreateAsync(
+            CreateReservationCommand command,
+            CreateReservationSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var branch = await _branchRepository.FindByIdAsync(command.Body.BranchId, cancellationToken);
+            if(branch is null)
+            {
+                return Result<ReservationDetailResponse>
+                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var reservation = _mapper.Map<Reservation>(command.Body)
+                .SetBranch(branch.Id);
+            _reservationRepository.Add(reservation);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            specification.ApplyCriteria(reservation.Id);
+
+            var createdReservation = await _reservationRepository
+                .FindAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<ReservationDetailResponse>(createdReservation);
+            return Result<ReservationDetailResponse>
+                .Succeed(response, Success<Reservation>.Created, HttpStatusCode.Created);
         }
     }
 }

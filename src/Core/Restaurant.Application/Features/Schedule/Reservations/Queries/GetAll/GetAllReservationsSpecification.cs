@@ -10,6 +10,8 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll
     {
         public GetAllReservationsSpecification(GetAllReservationsQuery query)
         {
+            AddInclude(x => x.Branch);
+
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
                 AddCriteria(rt =>

@@ -2,18 +2,22 @@
 using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Specifications;
 
-namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetById
+namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
 {
-    public class GetReservationByIdSpecification
+    public class CreateReservationSpecification
         : BaseSpecification<Reservation>
     {
-        public GetReservationByIdSpecification(GetReservationByIdQuery query)
+        public CreateReservationSpecification()
         {
-            AddCriteria(x => x.PublicId == query.Id);
-
             AddInclude(x => x.Branch);
+
             AddIncludeAggregator(x => x.Include(r => r.ReservationTables)
                                         .ThenInclude(rt => rt.RestaurantTable));
+        }
+
+        public void ApplyCriteria(int id)
+        {
+            AddCriteria(x => x.Id == id);
         }
     }
 }

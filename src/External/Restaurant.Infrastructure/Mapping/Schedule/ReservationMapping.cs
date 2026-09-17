@@ -9,11 +9,18 @@ namespace Restaurant.Infrastructure.Mapping.Schedule
         public ReservationMapping()
         {
             CreateMap<Reservation, ReservationResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.BranchCode));
 
             CreateMap<Reservation, ReservationDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
-                .ForMember(dest => dest.ReservationTables, opt => opt.MapFrom(src => src.ReservationTables));
+                .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.BranchCode))
+                .ForMember(dest => dest.ReservationTables, opt => opt
+                    .MapFrom(src => src.ReservationTables));
+
+            CreateMap<CreateReservationRequest, Reservation>()
+                .ForMember(dest => dest.ReservationTables, opt => opt
+                    .MapFrom(src => src.ReservationTables));
         }
     }
 }
