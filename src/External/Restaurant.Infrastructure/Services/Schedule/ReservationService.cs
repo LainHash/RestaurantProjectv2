@@ -5,10 +5,12 @@ using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Schedule;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
+using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
+using Restaurant.Domain.Repositories.Guest;
 using Restaurant.Domain.Repositories.Schedule;
 using Restaurant.Domain.Repositories.Territory;
 using System.Net;
@@ -19,6 +21,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
     {
         private readonly IReservationRepository _reservationRepository;
         private readonly IBranchRepository _branchRepository;
+        private readonly ICustomerRepository _customerRepository;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -27,12 +30,14 @@ namespace Restaurant.Infrastructure.Services.Schedule
             IReservationRepository reservationRepository,
             IMapper mapper,
             IUnitOfWork unitOfWork,
-            IBranchRepository branchRepository)
+            IBranchRepository branchRepository,
+            ICustomerRepository customerRepository)
         {
             _reservationRepository = reservationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _branchRepository = branchRepository;
+            _customerRepository = customerRepository;
         }
 
         public async Task<PageResult<IEnumerable<ReservationResponse>>> GetAllAsync(
@@ -78,6 +83,25 @@ namespace Restaurant.Infrastructure.Services.Schedule
 
             var reservation = _mapper.Map<Reservation>(command.Body)
                 .SetBranch(branch.Id);
+
+            Customer? customer = null;
+            if (command.UserId is not null)
+            {
+                customer = await _customerRepository
+                    .FindFullPersonalProfileAsync(command.UserId.Value, cancellationToken);
+                if (customer is null)
+                {
+                    return Result<ReservationDetailResponse>
+                        .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                }
+            }
+
+            
+            if (customer is not null)
+            {
+                reservation.SetGuest(customer);
+            }
+
             _reservationRepository.Add(reservation);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

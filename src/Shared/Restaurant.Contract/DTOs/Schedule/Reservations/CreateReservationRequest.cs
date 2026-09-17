@@ -18,8 +18,8 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
         public DateTime? CancelledAt { get; set; }
         public string? CancellationReason { get; set; }
 
-        public string GuestName { get; set; } = null!;
-        public string GuestPhone { get; set; } = null!;
+        public string? GuestName { get; set; }
+        public string? GuestPhone { get; set; }
         public string? GuestEmail { get; set; }
 
         public IEnumerable<CreateReservationTableRequest> ReservationTables { get; set; } = [];

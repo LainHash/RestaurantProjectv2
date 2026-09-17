@@ -15,20 +15,6 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                 RuleFor(x => x.Body.BranchId)
                     .NotEmpty().WithMessage("BranchId is required.");
 
-                RuleFor(x => x.Body.GuestName)
-                    .NotEmpty().WithMessage("GuestName is required.")
-                    .MaximumLength(100).WithMessage("GuestName must not exceed 100 characters.");
-
-                RuleFor(x => x.Body.GuestPhone)
-                    .NotEmpty().WithMessage("GuestPhone is required.")
-                    .MaximumLength(20).WithMessage("GuestPhone must not exceed 20 characters.")
-                    .Matches(@"^\+?[0-9]{9,15}$").WithMessage("GuestPhone must be a valid phone number (9-15 digits).");
-
-                RuleFor(x => x.Body.GuestEmail)
-                    .MaximumLength(256).WithMessage("GuestEmail must not exceed 256 characters.")
-                    .EmailAddress().WithMessage("A valid email is required.")
-                    .When(x => !string.IsNullOrWhiteSpace(x.Body.GuestEmail));
-
                 RuleFor(x => x.Body.ReservationDate)
                     .NotEmpty().WithMessage("ReservationDate is required.")
                     .Must(date => date.Date >= DateTime.UtcNow.Date.AddDays(-1))
@@ -54,6 +40,24 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                     .Must(tables => tables.Select(t => t.RestaurantTableId).Distinct().Count() == tables.Count())
                     .WithMessage("Each table can only appear once in a reservation.")
                     .When(x => x.Body.ReservationTables != null && x.Body.ReservationTables.Any());
+
+                When(x => x.UserId == null, () =>
+                {
+
+                    RuleFor(x => x.Body.GuestName)
+                        .NotEmpty().WithMessage("GuestName is required.")
+                        .MaximumLength(100).WithMessage("GuestName must not exceed 100 characters.");
+
+                    RuleFor(x => x.Body.GuestPhone)
+                        .NotEmpty().WithMessage("GuestPhone is required.")
+                        .MaximumLength(20).WithMessage("GuestPhone must not exceed 20 characters.")
+                        .Matches(@"^\+?[0-9]{9,15}$").WithMessage("GuestPhone must be a valid phone number (9-15 digits).");
+
+                    RuleFor(x => x.Body.GuestEmail)
+                        .MaximumLength(256).WithMessage("GuestEmail must not exceed 256 characters.")
+                        .EmailAddress().WithMessage("A valid email is required.")
+                        .When(x => !string.IsNullOrWhiteSpace(x.Body.GuestEmail));
+                });
 
                 RuleForEach(x => x.Body.ReservationTables).ChildRules(table =>
                 {
