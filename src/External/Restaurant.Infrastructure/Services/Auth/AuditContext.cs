@@ -8,7 +8,7 @@ namespace Restaurant.Infrastructure.Services.Auth
     /// </summary>
     internal class AuditContext : IAuditContext
     {
-        public int? UserId { get; set; }
+        public long? UserId { get; set; }
         public string? IpAddress { get; set; }
     }
 }

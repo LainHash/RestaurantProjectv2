@@ -8,8 +8,8 @@ namespace Restaurant.Domain.Entities.Inventory
     {
         public decimal QuantityOnHand { get; private set; }
 
-        public int ProductId { get; private set; }
-        public int BranchId { get; private set; }
+        public long ProductId { get; private set; }
+        public long BranchId { get; private set; }
 
         public Product Product { get; private set; } = null!;
         public Branch Branch { get; private set; } = null!;
@@ -19,7 +19,7 @@ namespace Restaurant.Domain.Entities.Inventory
     {
         public ProductStock() { }
 
-        public ProductStock(int productId, int branchId)
+        public ProductStock(long productId, long branchId)
         {
             ProductId = productId;
             BranchId = branchId;
@@ -30,19 +30,19 @@ namespace Restaurant.Domain.Entities.Inventory
             QuantityOnHand = quantityOnHand;
         }
 
-        public ProductStock SetProduct(int productId)
+        public ProductStock SetProduct(long productId)
         {
             ProductId = productId;
             return this;
         }
 
-        public ProductStock SetBranch(int branchId)
+        public ProductStock SetBranch(long branchId)
         {
             BranchId = branchId;
             return this;
         }
 
-        public ProductStock(decimal quantityOnHand, int productId, int branchId)
+        public ProductStock(decimal quantityOnHand, long productId, long branchId)
         {
             QuantityOnHand = quantityOnHand;
             ProductId = productId;

@@ -1,4 +1,4 @@
-﻿using Restaurant.Contract.DTOs.Business.AuditLogs;
+using Restaurant.Contract.DTOs.Business.AuditLogs;
 using Restaurant.Domain.Models.Results;
 
 namespace Restaurant.Application.Services.Business
@@ -13,7 +13,7 @@ namespace Restaurant.Application.Services.Business
         /// </summary>
         Task<PageResult<IEnumerable<AuditLogResponse>>> GetPagedAsync(
             string? entityName,
-            int? userId,
+            long? userId,
             string? action,
             DateTime? from,
             DateTime? to,

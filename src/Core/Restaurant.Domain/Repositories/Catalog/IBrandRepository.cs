@@ -4,7 +4,7 @@ namespace Restaurant.Domain.Repositories.Catalog
 {
     public interface IBrandRepository : IRepository<Brand>
     {
-        Task<Brand?> FindByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<Brand?> FindByIdAsync(long id, CancellationToken cancellationToken = default);
         Task<Brand?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default);
         Task<Brand?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
 

@@ -5,8 +5,8 @@ namespace Restaurant.Domain.Entities.Sale
 {
     public class OrderDiscount : SoftDeletableEntity
     {
-        public int OrderId { get; private set; }
-        public int DiscountId { get; private set; }
+        public long OrderId { get; private set; }
+        public long DiscountId { get; private set; }
 
         public string DiscountCode { get; private set; } = null!;
         public string DiscountType { get; private set; } = null!;

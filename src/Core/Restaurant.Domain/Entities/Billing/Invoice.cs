@@ -7,7 +7,7 @@ namespace Restaurant.Domain.Entities.Billing
 {
     public partial class Invoice : SoftDeletableEntity
     {
-        public int OrderId { get; private set; }
+        public long OrderId { get; private set; }
 
         public string InvoiceCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 

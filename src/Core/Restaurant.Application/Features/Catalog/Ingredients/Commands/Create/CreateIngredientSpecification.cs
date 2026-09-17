@@ -14,7 +14,7 @@ namespace Restaurant.Application.Features.Catalog.Ingredients.Commands.Create
             AddInclude(p => p.BaseUnit);
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             Criteria = p => p.Id == id;
         }

@@ -18,7 +18,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
 
         public async Task<Product?> FindProductForOrderAsync(
             Guid id,
-            int branchId,
+            long branchId,
             CancellationToken cancellationToken = default)
         {
             return await _context.Products
@@ -30,7 +30,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
 
         public async Task<List<Product>> FindProductsForOrderAsync(
             IEnumerable<Guid> productIds,
-            int branchId,
+            long branchId,
             CancellationToken cancellationToken = default)
         {
             return await _context.Products

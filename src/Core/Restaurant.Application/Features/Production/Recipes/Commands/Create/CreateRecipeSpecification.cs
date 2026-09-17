@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Specifications;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
@@ -17,7 +17,7 @@ namespace Restaurant.Application.Features.Production.Recipes.Commands.Create
                                         .ThenInclude((RecipeIngredient ri) => ri.Unit));
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             Criteria = r => r.Id == id;
         }

@@ -23,7 +23,7 @@ namespace Restaurant.Infrastructure.Repositories.Identity
         }
 
         public async Task RevokeAllByUserIdAsync(
-            int userId,
+            long userId,
             CancellationToken cancellationToken = default)
         {
             await _context.UserRefreshTokens

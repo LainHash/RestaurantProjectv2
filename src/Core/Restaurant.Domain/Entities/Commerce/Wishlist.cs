@@ -6,7 +6,7 @@ namespace Restaurant.Domain.Entities.Commerce
     public partial class Wishlist : AuditableEntity
     {
         public string? SessionId { get; private set; }
-        public int? CustomerId { get; private set; }
+        public long? CustomerId { get; private set; }
         public Customer? Customer { get; private set; } = null!;
 
         public ICollection<WishlistItem> WishlistItems { get; private set; } = [];
@@ -16,7 +16,7 @@ namespace Restaurant.Domain.Entities.Commerce
     {
         public Wishlist() { }
 
-        public Wishlist(int customerId)
+        public Wishlist(long customerId)
         {
             CustomerId = customerId;
         }

@@ -10,7 +10,7 @@ namespace Restaurant.Infrastructure.Repositories.Territory
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Area?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Area?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Areas.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
@@ -20,7 +20,7 @@ namespace Restaurant.Infrastructure.Repositories.Territory
             return await _context.Areas.FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
         }
 
-        public async Task<bool> IsExistingNameAsync(int branchId, string name, CancellationToken cancellationToken = default)
+        public async Task<bool> IsExistingNameAsync(long branchId, string name, CancellationToken cancellationToken = default)
         {
             return await _context.Areas.AnyAsync(x => x.BranchId == branchId && x.Name == name, cancellationToken);
         }

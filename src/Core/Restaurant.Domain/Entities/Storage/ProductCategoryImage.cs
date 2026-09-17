@@ -5,8 +5,8 @@ namespace Restaurant.Domain.Entities.Storage
 {
     public partial class ProductCategoryImage : AuditableEntity
     {
-        public int ProductCategoryId { get; private set; }
-        public int ImageId { get; private set; }
+        public long ProductCategoryId { get; private set; }
+        public long ImageId { get; private set; }
 
         public ProductCategory ProductCategory { get; private set; } = null!;
         public Image Image { get; private set; } = null!;
@@ -16,24 +16,24 @@ namespace Restaurant.Domain.Entities.Storage
     {
         public ProductCategoryImage() { }
 
-        public ProductCategoryImage(int productCategoryId, int imageId)
+        public ProductCategoryImage(long productCategoryId, long imageId)
         {
             ProductCategoryId = productCategoryId;
             ImageId = imageId;
         }
 
-        public static ProductCategoryImage Create(int productCategoryId, int imageId)
+        public static ProductCategoryImage Create(long productCategoryId, long imageId)
         {
             return new ProductCategoryImage(productCategoryId, imageId);
         }
 
-        public ProductCategoryImage SetProductCategory(int productCategoryId)
+        public ProductCategoryImage SetProductCategory(long productCategoryId)
         {
             ProductCategoryId = productCategoryId;
             return this;
         }
 
-        public ProductCategoryImage SetImage(int imageId)
+        public ProductCategoryImage SetImage(long imageId)
         {
             ImageId = imageId;
             return this;

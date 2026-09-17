@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Entities.Identity
 {
     public partial class OtpVerification : AuditableEntity
     {
-        public int UserId { get; private set; }
+        public long UserId { get; private set; }
 
         public OtpPurpose Purpose { get; private set; }
 
@@ -24,7 +24,7 @@ namespace Restaurant.Domain.Entities.Identity
     {
         public OtpVerification() { }
 
-        public OtpVerification(int userId, string codeHash, OtpPurpose otpPurpose)
+        public OtpVerification(long userId, string codeHash, OtpPurpose otpPurpose)
         {
             UserId = userId;
             CodeHash = codeHash;

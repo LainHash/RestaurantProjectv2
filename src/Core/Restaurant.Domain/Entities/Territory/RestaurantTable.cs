@@ -1,11 +1,12 @@
-﻿using Restaurant.Domain.Enums;
+﻿using Restaurant.Domain.Entities.Schedule;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Territory
 {
     public partial class RestaurantTable : SoftDeletableEntity
     {
-        public int AreaId { get; private set; }
+        public long AreaId { get; private set; }
 
         public string TableNumber { get; private set; } = null!;
         public int Capacity { get; private set; }
@@ -23,13 +24,14 @@ namespace Restaurant.Domain.Entities.Territory
         public bool IsActive { get; private set; }
 
         public Area Area { get; private set; } = null!;
+        public ICollection<ReservationTable> ReservationTables { get; private set; } = [];
     }
 
     public partial class RestaurantTable
     {
         public RestaurantTable() { }
 
-        public RestaurantTable SetArea(int areaId)
+        public RestaurantTable SetArea(long areaId)
         {
             AreaId = areaId;
             return this;

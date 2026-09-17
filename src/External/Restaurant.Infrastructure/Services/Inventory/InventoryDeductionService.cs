@@ -10,15 +10,15 @@ namespace Restaurant.Infrastructure.Services.Inventory
     internal class InventoryDeductionService : IInventoryDeductionService
     {
         public Task<Result> DeductInventoryForOrderAsync(
-            int branchId,
+            long branchId,
             IEnumerable<(Product Product, int Quantity)> items,
             CancellationToken cancellationToken = default)
         {
             // 1. Gom nhóm nhu cầu tồn kho cho sản phẩm đóng gói/bán sẵn (StockTracked)
-            var productStockDemands = new Dictionary<int, (ProductStock Stock, string ProductName, int RequiredQuantity)>();
+            var productStockDemands = new Dictionary<long, (ProductStock Stock, string ProductName, int RequiredQuantity)>();
 
             // 2. Gom nhóm nhu cầu tồn kho cho nguyên liệu (MadeToOrder)
-            var ingredientDemands = new Dictionary<int, (Ingredient Ingredient, decimal RequiredAmount)>();
+            var ingredientDemands = new Dictionary<long, (Ingredient Ingredient, decimal RequiredAmount)>();
 
             foreach (var (product, quantity) in items)
             {

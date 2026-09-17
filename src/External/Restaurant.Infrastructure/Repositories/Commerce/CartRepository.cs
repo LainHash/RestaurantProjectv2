@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Repositories.Commerce;
@@ -12,7 +12,7 @@ namespace Restaurant.Infrastructure.Repositories.Commerce
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Cart?> FindByCustomerIdAsync(int customerId, CancellationToken cancellationToken = default)
+        public async Task<Cart?> FindByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default)
         {
             return await _context.Carts
                 .Include(x => x.CartItems)

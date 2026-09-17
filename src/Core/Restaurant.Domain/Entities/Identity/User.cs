@@ -11,7 +11,7 @@ namespace Restaurant.Domain.Entities.Identity
         public string PasswordHash { get; private set; } = string.Empty;
         public bool IsActive { get; private set; }
 
-        public int RoleId { get; private set; }
+        public long RoleId { get; private set; }
 
         public Role Role { get; private set; } = null!;
         public ICollection<OtpVerification> OtpVerifications { get; private set; } = [];
@@ -25,7 +25,7 @@ namespace Restaurant.Domain.Entities.Identity
     {
         public User() { }
 
-        public User(string userName, string email, string passwordHash, int roleId, bool isActive)
+        public User(string userName, string email, string passwordHash, long roleId, bool isActive)
         {
             UserName = userName;
             Email = email;
@@ -34,7 +34,7 @@ namespace Restaurant.Domain.Entities.Identity
             IsActive = isActive;
         }
 
-        public static User CreateForEmployee(string userName, string email, string passwordHash, int roleId)
+        public static User CreateForEmployee(string userName, string email, string passwordHash, long roleId)
         {
             return new User(userName, email, passwordHash, roleId, true);
         }
@@ -45,7 +45,7 @@ namespace Restaurant.Domain.Entities.Identity
             return this;
         }
 
-        public User SetRole(int roleId)
+        public User SetRole(long roleId)
         {
             RoleId = roleId;
             return this;

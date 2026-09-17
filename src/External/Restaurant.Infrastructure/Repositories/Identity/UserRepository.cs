@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Repositories.Identity;
 using Restaurant.Infrastructure.Context;
@@ -18,7 +18,7 @@ namespace Restaurant.Infrastructure.Repositories.Identity
                 .FirstOrDefaultAsync(x => x.Email.ToLower() == email.ToLower(), cancellationToken);
         }
 
-        public async Task<User?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<User?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Users
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);

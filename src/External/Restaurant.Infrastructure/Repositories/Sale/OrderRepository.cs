@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Repositories.Sale;
 using Restaurant.Infrastructure.Context;
@@ -10,7 +10,7 @@ namespace Restaurant.Infrastructure.Repositories.Sale
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Order?> FindWithOrderDetailAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Order?> FindWithOrderDetailAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Orders
                 .Include(x => x.OrderDetails)

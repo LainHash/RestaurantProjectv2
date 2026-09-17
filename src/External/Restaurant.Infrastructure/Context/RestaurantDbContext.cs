@@ -246,7 +246,7 @@ namespace Restaurant.Infrastructure.Context
         private sealed class AuditEntry(EntityEntry dbEntry)
         {
             public EntityEntry DbEntry { get; } = dbEntry;
-            public int? UserId { get; set; }
+            public long? UserId { get; set; }
             public string? IpAddress { get; set; }
             public string EntityName { get; set; } = string.Empty;
             public string EntityId { get; set; } = string.Empty;

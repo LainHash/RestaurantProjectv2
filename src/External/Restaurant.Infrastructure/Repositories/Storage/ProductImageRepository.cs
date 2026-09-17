@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Repositories.Storage;
 using Restaurant.Infrastructure.Context;
@@ -10,13 +10,13 @@ namespace Restaurant.Infrastructure.Repositories.Storage
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<int> CountByProductIdAsync(int productId, CancellationToken cancellationToken = default)
+        public async Task<int> CountByProductIdAsync(long productId, CancellationToken cancellationToken = default)
         {
             return await _context.ProductImages
                 .CountAsync(pi => pi.ProductId == productId, cancellationToken);
         }
 
-        public async Task UnsetPrimaryAsync(int productId, CancellationToken cancellationToken = default)
+        public async Task UnsetPrimaryAsync(long productId, CancellationToken cancellationToken = default)
         {
             // Lấy tất cả Image đang là primary của product này
             var primaryImages = await _context.ProductImages

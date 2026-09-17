@@ -1,9 +1,9 @@
-﻿using Restaurant.Domain.Entities.Identity;
+using Restaurant.Domain.Entities.Identity;
 
 namespace Restaurant.Domain.Repositories.Identity
 {
     public interface IPersonalProfileRepository : IRepository<PersonalProfile>
     {
-        Task<PersonalProfile?> FindByUserAsync(int userId, CancellationToken cancellationToken = default);
+        Task<PersonalProfile?> FindByUserAsync(long userId, CancellationToken cancellationToken = default);
     }
 }

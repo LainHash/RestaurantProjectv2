@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Entities.Catalog;
+using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Specifications;
 
 namespace Restaurant.Application.Features.Catalog.Products.Commands.Create
@@ -13,7 +13,7 @@ namespace Restaurant.Application.Features.Catalog.Products.Commands.Create
             AddInclude(p => p.ProductPrice);
         }
 
-        public void ApplyCriteria(int id)
+        public void ApplyCriteria(long id)
         {
             Criteria = p => p.Id == id;
         }

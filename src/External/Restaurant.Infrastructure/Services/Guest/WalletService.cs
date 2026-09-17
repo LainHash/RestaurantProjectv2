@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Guest;
 using Restaurant.Contract.DTOs.Guest.Wallets;
@@ -47,7 +47,7 @@ namespace Restaurant.Infrastructure.Services.Guest
         }
 
         private async Task<Wallet> GetOrCreateAsync(
-            int customerId,
+            long customerId,
             Func<Wallet> factory,
             CancellationToken cancellationToken = default)
         {

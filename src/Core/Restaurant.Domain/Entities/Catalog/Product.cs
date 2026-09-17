@@ -16,9 +16,9 @@ namespace Restaurant.Domain.Entities.Catalog
         public string? Description { get; private set; }
         public InventoryType InventoryType { get; private set; }
 
-        public int? BrandId { get; private set; }
-        public int CategoryId { get; private set; }
-        public int UnitId { get; private set; }
+        public long? BrandId { get; private set; }
+        public long CategoryId { get; private set; }
+        public long UnitId { get; private set; }
 
         public Brand? Brand { get; private set; }
         public ProductCategory ProductCategory { get; private set; } = null!;
@@ -38,19 +38,19 @@ namespace Restaurant.Domain.Entities.Catalog
 
     public partial class Product
     {
-        public Product SetBrand(int? brandId)
+        public Product SetBrand(long? brandId)
         {
             BrandId = brandId;
             return this;
         }
 
-        public Product SetCategory(int categoryId)
+        public Product SetCategory(long categoryId)
         {
             CategoryId = categoryId;
             return this;
         }
 
-        public Product SetUnit(int unitId)
+        public Product SetUnit(long unitId)
         {
             UnitId = unitId;
             return this;

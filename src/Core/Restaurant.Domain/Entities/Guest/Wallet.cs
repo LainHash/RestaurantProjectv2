@@ -4,7 +4,7 @@ namespace Restaurant.Domain.Entities.Guest
 {
     public partial class Wallet : SoftDeletableEntity
     {
-        public int CustomerId { get; private set; }
+        public long CustomerId { get; private set; }
 
         public decimal Balance { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Restaurant.Domain.Entities.Guest
     public partial class Wallet
     {
         public Wallet() { }
-        public Wallet(int customerId)
+        public Wallet(long customerId)
         {
             CustomerId = customerId;
         }

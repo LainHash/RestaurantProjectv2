@@ -8,12 +8,12 @@ namespace Restaurant.Domain.Repositories.Catalog
 
         Task<Product?> FindProductForOrderAsync(
             Guid id,
-            int branchId,
+            long branchId,
             CancellationToken cancellationToken = default);
 
         Task<List<Product>> FindProductsForOrderAsync(
             IEnumerable<Guid> productIds,
-            int branchId,
+            long branchId,
             CancellationToken cancellationToken = default);
     }
 }

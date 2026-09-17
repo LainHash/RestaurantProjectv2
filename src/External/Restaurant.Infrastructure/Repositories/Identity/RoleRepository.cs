@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Repositories.Identity;
 using Restaurant.Infrastructure.Repositories;
@@ -11,7 +11,7 @@ namespace Restaurant.Infrastructure.Repositories.Identity
     {
         private readonly RestaurantDbContext _context = context;
 
-        public async Task<Role?> FindByIdAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<Role?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
             return await _context.Roles
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);

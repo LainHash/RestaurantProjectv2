@@ -12,9 +12,9 @@ namespace Restaurant.Domain.Entities.Sale
     {
         public string OrderCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
-        public int? CustomerId { get; private set; }
-        public int EmployeeId { get; private set; }
-        public int BranchId { get; private set; }
+        public long? CustomerId { get; private set; }
+        public long EmployeeId { get; private set; }
+        public long BranchId { get; private set; }
 
         public OrderStatus Status { get; private set; }
         public OrderType Type { get; private set; }
@@ -40,9 +40,9 @@ namespace Restaurant.Domain.Entities.Sale
         public Order() { }
 
         public Order(
-            int? customerId,
-            int employeeId,
-            int branchId)
+            long? customerId,
+            long employeeId,
+            long branchId)
         {
             CustomerId = customerId;
             EmployeeId = employeeId;
@@ -51,9 +51,9 @@ namespace Restaurant.Domain.Entities.Sale
         }
 
         public Order(
-            int? customerId,
-            int employeeId,
-            int branchId,
+            long? customerId,
+            long employeeId,
+            long branchId,
             OrderType type,
             string? note)
             : this(customerId, employeeId, branchId)
@@ -63,9 +63,9 @@ namespace Restaurant.Domain.Entities.Sale
         }
 
         public static Order Create(
-            int? customerId,
-            int employeeId,
-            int branchId,
+            long? customerId,
+            long employeeId,
+            long branchId,
             OrderType type,
             string? note)
         {

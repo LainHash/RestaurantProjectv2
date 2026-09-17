@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Entities.Sale
 {
     public partial class OrderPreparation : SoftDeletableEntity
     {
-        public int OrderDetailId { get; private set; }
+        public long OrderDetailId { get; private set; }
         public PreparationStatus Status { get; private set; }
         public DateTime? StartedAt { get; private set; }
         public DateTime? CompletedAt { get; private set; }

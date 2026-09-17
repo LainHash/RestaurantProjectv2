@@ -1,11 +1,11 @@
-﻿namespace Restaurant.Contract.DTOs.Business.AuditLogs
+namespace Restaurant.Contract.DTOs.Business.AuditLogs
 {
     /// <summary>
     /// Response DTO cho một audit log entry.
     /// </summary>
     public record AuditLogResponse(
         long Id,
-        int? UserId,
+        long? UserId,
         string Action,
         string EntityName,
         string EntityId,
