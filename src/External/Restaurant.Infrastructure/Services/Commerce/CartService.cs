@@ -49,18 +49,13 @@ namespace Restaurant.Infrastructure.Services.Commerce
             GetCartSpecification specification,
             CancellationToken cancellationToken = default)
         {
-            if (query.UserId != null)
-            {
-                var resolveResult = await ResolveAuthenticatedCartAsync(
-                    query.UserId.Value, query.SessionId, cancellationToken);
+            var resolveResult = await ResolveCartAsync(
+                query.UserId, query.SessionId, cancellationToken);
 
-                if (!resolveResult.IsSucceed)
-                    return Result<CartResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-            }
-            else
+            if (!resolveResult.IsSucceed)
             {
-                await ResolveGuestCartAsync(query.SessionId!, cancellationToken);
+                return Result<CartResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
 
             var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
@@ -84,23 +79,16 @@ namespace Restaurant.Infrastructure.Services.Commerce
                     .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
             }
 
-            Cart cart;
+            var resolveResult = await ResolveCartAsync(
+                command.UserId, command.SessionId, cancellationToken);
 
-            if (command.UserId != null)
+            if (!resolveResult.IsSucceed)
             {
-                var resolveResult = await ResolveAuthenticatedCartAsync(
-                    command.UserId.Value, command.SessionId, cancellationToken);
-
-                if (!resolveResult.IsSucceed)
-                    return Result<CartResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-
-                cart = resolveResult.Data!;
+                return Result<CartResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
-            else
-            {
-                cart = await ResolveGuestCartAsync(command.SessionId!, cancellationToken);
-            }
+
+            var cart = resolveResult.Data!;
 
             var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == product.Id);
             if (cartItem is null)
@@ -136,23 +124,16 @@ namespace Restaurant.Infrastructure.Services.Commerce
                     .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
             }
 
-            Cart cart;
+            var resolveResult = await ResolveCartAsync(
+                command.UserId, command.SessionId, cancellationToken);
 
-            if (command.UserId != null)
+            if (!resolveResult.IsSucceed)
             {
-                var resolveResult = await ResolveAuthenticatedCartAsync(
-                    command.UserId.Value, command.SessionId, cancellationToken);
-
-                if (!resolveResult.IsSucceed)
-                    return Result<CartResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-
-                cart = resolveResult.Data!;
+                return Result<CartResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
-            else
-            {
-                cart = await ResolveGuestCartAsync(command.SessionId!, cancellationToken);
-            }
+
+            var cart = resolveResult.Data!;
 
             var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == product.Id);
             if (cartItem is null)
@@ -174,6 +155,76 @@ namespace Restaurant.Infrastructure.Services.Commerce
                 .Succeed(response, "Cart Item removed successfully.");
         }
 
+        public async Task<Result<CartResponse>> UpdateItemAsync(
+            UpdateCartItemQuantityCommand command,
+            UpdateCartItemQuantitySpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            if (product is null)
+            {
+                return Result<CartResponse>
+                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var resolveResult = await ResolveCartAsync(
+                command.UserId, command.SessionId, cancellationToken);
+
+            if (!resolveResult.IsSucceed)
+            {
+                return Result<CartResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
+            }
+
+            var cart = resolveResult.Data!;
+
+            var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == product.Id);
+            if (cartItem is null)
+            {
+                cartItem = new CartItem(cart.Id, product.Id);
+                _cartItemRepository.Add(cartItem);
+            }
+            else
+            {
+                cartItem.UpdateQuantity(command.Body.Quantity);
+            }
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
+            if (processedCart is null)
+            {
+                return Result<CartResponse>
+                    .Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<CartResponse>(processedCart);
+            return Result<CartResponse>
+                .Succeed(response, "Cart Item quantity updated successfully.");
+        }
+
+        private async Task<Result<Cart>> ResolveCartAsync(
+            Guid? userId,
+            string? sessionId,
+            CancellationToken cancellationToken)
+        {
+            if (userId != null)
+            {
+                return await ResolveAuthenticatedCartAsync(
+                    userId.Value, sessionId, cancellationToken);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sessionId))
+            {
+                var cart = await ResolveGuestCartAsync(sessionId, cancellationToken);
+                return Result<Cart>
+                    .Succeed(cart, "Resolve guest cart successfully.");
+            }
+
+            return Result<Cart>
+                .Fail("Either UserId or SessionId is required.", HttpStatusCode.BadRequest);
+        }
+
         private async Task<Result<Cart>> ResolveAuthenticatedCartAsync(
             Guid userId,
             string? sessionId,
@@ -186,7 +237,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
                     .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var guestCart = sessionId != null
+            var guestCart = !string.IsNullOrWhiteSpace(sessionId)
                 ? await _cartRepository.FindBySessionIdAsync(sessionId, cancellationToken)
                 : null;
 
@@ -219,8 +270,10 @@ namespace Restaurant.Infrastructure.Services.Commerce
                 }
             }
 
-            return Result<Cart>.Succeed(cart, Success<Cart>.Retrieved);
+            return Result<Cart>
+                .Succeed(cart, Success<Cart>.Retrieved);
         }
+
         private async Task<Cart> ResolveGuestCartAsync(
             string sessionId,
             CancellationToken cancellationToken)
@@ -234,63 +287,6 @@ namespace Restaurant.Infrastructure.Services.Commerce
             }
 
             return cart;
-        }
-
-        public async Task<Result<CartResponse>> UpdateItemAsync(
-            UpdateCartItemQuantityCommand command,
-            UpdateCartItemQuantitySpecification specification,
-            CancellationToken cancellationToken = default)
-        {
-            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
-            if (product is null)
-            {
-                return Result<CartResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            Cart cart;
-
-            if (command.UserId != null)
-            {
-                var resolveResult = await ResolveAuthenticatedCartAsync(
-                    command.UserId.Value, command.SessionId, cancellationToken);
-
-                if (!resolveResult.IsSucceed)
-                {
-                    return Result<CartResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-                }
-
-                cart = resolveResult.Data!;
-            }
-            else
-            {
-                cart = await ResolveGuestCartAsync(command.SessionId!, cancellationToken);
-            }
-
-            var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == product.Id);
-            if (cartItem is null)
-            {
-                cartItem = new CartItem(cart.Id, product.Id);
-                _cartItemRepository.Add(cartItem);
-            }
-            else
-            {
-                cartItem.UpdateQuantity(command.Body.Quantity);
-            }
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
-            if (processedCart is null)
-            {
-                return Result<CartResponse>
-                    .Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
-            }
-
-            var response = _mapper.Map<CartResponse>(processedCart);
-            return Result<CartResponse>
-                .Succeed(response, "Cart Item quantity updated successfully.");
         }
     }
 }
