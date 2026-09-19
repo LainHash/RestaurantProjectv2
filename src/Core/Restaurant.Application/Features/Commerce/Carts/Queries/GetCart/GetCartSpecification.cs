@@ -16,7 +16,7 @@ namespace Restaurant.Application.Features.Commerce.Carts.Queries.GetCart
                 AddIncludeAggregator(x => x.Include(w => w.CartItems)
                                             .ThenInclude(wi => wi.Product));
 
-                AddCriteria(x => x.Customer!.PublicId == query.UserId);
+                AddCriteria(x => x.Customer!.User.PublicId == query.UserId);
             }
             else
             {
