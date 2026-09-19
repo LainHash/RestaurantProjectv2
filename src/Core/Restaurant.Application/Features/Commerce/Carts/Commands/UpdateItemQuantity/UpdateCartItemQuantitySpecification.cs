@@ -26,6 +26,11 @@ namespace Restaurant.Application.Features.Commerce.Carts.Commands.UpdateItemQuan
             AddIncludeAggregator(x => x.Include(w => w.CartItems)
                                         .ThenInclude(wi => wi.Product)
                                         .ThenInclude(p => p.ProductPrice));
+
+            AddIncludeAggregator(x => x.Include(w => w.CartItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductImages)
+                                        .ThenInclude(pi => pi.Image));
         }
     }
 }

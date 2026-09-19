@@ -25,6 +25,11 @@ namespace Restaurant.Application.Features.Commerce.Carts.Commands.RemoveItem
             AddIncludeAggregator(x => x.Include(w => w.CartItems)
                                         .ThenInclude(wi => wi.Product)
                                         .ThenInclude(p => p.ProductPrice));
+
+            AddIncludeAggregator(x => x.Include(w => w.CartItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductImages)
+                                        .ThenInclude(pi => pi.Image));
         }
     }
 }

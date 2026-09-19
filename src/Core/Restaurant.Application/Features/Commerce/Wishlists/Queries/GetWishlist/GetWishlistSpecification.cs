@@ -24,6 +24,11 @@ namespace Restaurant.Application.Features.Commerce.Wishlists.Queries.GetWishlist
             AddIncludeAggregator(x => x.Include(w => w.WishlistItems)
                                         .ThenInclude(wi => wi.Product)
                                         .ThenInclude(p => p.ProductPrice));
+
+            AddIncludeAggregator(x => x.Include(w => w.WishlistItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductImages)
+                                        .ThenInclude(pi => pi.Image));
         }
     }
 }
