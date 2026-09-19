@@ -3,14 +3,17 @@ using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
+using Restaurant.Application.Services.Billing;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
+using Restaurant.Contract.DTOs.Sale.OrderDetails;
 using Restaurant.Contract.DTOs.Sale.Orders;
 using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Sale;
+using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
@@ -28,13 +31,14 @@ namespace Restaurant.Infrastructure.Services.Sale
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
-        private readonly IInvoiceRepository _invoiceRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IProductRepository _productRepository;
         private readonly IRestaurantTableRepository _restaurantTableRepository;
         private readonly IInventoryDeductionService _inventoryDeductionService;
+
+        private readonly IInvoiceService _invoiceService;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -52,7 +56,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             IRestaurantTableRepository restaurantTableRepository,
             IInventoryDeductionService inventoryDeductionService,
             ILogger<OrderService> logger,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceService invoiceService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -65,7 +69,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             _restaurantTableRepository = restaurantTableRepository;
             _inventoryDeductionService = inventoryDeductionService;
             _logger = logger;
-            _invoiceRepository = invoiceRepository;
+            _invoiceService = invoiceService;
         }
 
         public async Task<PageResult<IEnumerable<OrderResponse>>> GetAllAsync(
@@ -148,30 +152,18 @@ namespace Restaurant.Infrastructure.Services.Sale
 
                 if (command.Body.Type == OrderType.DineIn)
                 {
-                    // Table required for DineIn — validate availability
-                    var table = await _restaurantTableRepository
-                        .FindByIdAsync(command.Body.RestaurantTableId!.Value, cancellationToken);
+                    var tableResult = await ResolveAndOccupyTableAsync(
+                        command.Body.RestaurantTableId!.Value,
+                        branch.Id,
+                        cancellationToken);
 
-                    if (table is null)
+                    if (!tableResult.IsSucceed)
                     {
                         return Result<OrderResponse>
-                            .Fail(Error.NotFound("RestaurantTable"), HttpStatusCode.NotFound);
+                            .Fail(tableResult.Message, (HttpStatusCode)tableResult.StatusCode);
                     }
 
-                    if (table.Area is not null && table.Area.BranchId != branch.Id)
-                    {
-                        return Result<OrderResponse>
-                            .Fail("Restaurant table does not belong to the selected branch.", HttpStatusCode.BadRequest);
-                    }
-
-                    if (table.Status != TableStatus.Available)
-                    {
-                        return Result<OrderResponse>
-                            .Fail(Error.Occupied("RestaurantTable"), HttpStatusCode.Conflict);
-                    }
-
-                    table.Occupy();
-                    restaurantTableId = table.Id;
+                    restaurantTableId = tableResult.Data!.Id;
                 }
 
                 // --- Build Order ---
@@ -184,49 +176,18 @@ namespace Restaurant.Infrastructure.Services.Sale
                     command.Body.Note,
                     command.Body.DeliveryAddress);
 
-                // --- Resolve Products & build OrderDetails ---
-                var productIds = command.Body.CreateOrderDetails
-                    .Select(x => x.ProductId)
-                    .Distinct()
-                    .ToList();
+                // --- Process Products, OrderDetails & Reserve Inventory ---
+                var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
+                    order,
+                    branch.Id,
+                    command.Body.CreateOrderDetails,
+                    cancellationToken);
 
-                var products = await _productRepository
-                    .FindProductsForOrderAsync(
-                        productIds,
-                        branch.Id,
-                        cancellationToken);
-
-                var productMap = products.ToDictionary(x => x.PublicId);
-                var orderItems = new List<(Product Product, int Quantity)>();
-
-                foreach (var item in command.Body.CreateOrderDetails)
-                {
-                    if (!productMap.TryGetValue(item.ProductId, out var product))
-                    {
-                        return Result<OrderResponse>
-                            .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
-                    }
-
-                    orderItems.Add((product, item.Quantity));
-
-                    var orderDetail = new OrderDetail(item.Quantity, item.Note)
-                        .SetProduct(product)
-                        .CalculateLineTotal();
-
-                    order.AddOrderDetail(orderDetail);
-                }
-
-                // --- Reserve inventory ---
-                var reserveResult = _inventoryDeductionService
-                    .ReserveInventoryForOrder(branch.Id, orderItems, cancellationToken);
-
-                if (!reserveResult.IsSucceed)
+                if (!orderDetailsResult.IsSucceed)
                 {
                     return Result<OrderResponse>
-                        .Fail(reserveResult.Message, (HttpStatusCode)reserveResult.StatusCode);
+                        .Fail(orderDetailsResult.Message, (HttpStatusCode)orderDetailsResult.StatusCode);
                 }
-
-                order.CalculateTotalAmount();
 
                 _orderRepository.Add(order);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -234,9 +195,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 // --- Create Invoice only for Delivery orders ---
                 if (command.Body.Type == OrderType.Delivery)
                 {
-                    var invoice = new Invoice(order);
-                    _invoiceRepository.Add(invoice);
-                    await _unitOfWork.SaveChangesAsync(cancellationToken);
+                    await _invoiceService.InitializeAsync(order, cancellationToken);
                 }
 
                 await transaction.CommitAsync(cancellationToken);
@@ -255,6 +214,101 @@ namespace Restaurant.Infrastructure.Services.Sale
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
+        }
+
+        private async Task<Result<RestaurantTable>> ResolveAndOccupyTableAsync(
+            Guid tableId,
+            long branchId,
+            CancellationToken cancellationToken)
+        {
+            var table = await _restaurantTableRepository
+                .FindByIdAsync(tableId, cancellationToken);
+
+            if (table is null)
+            {
+                return Result<RestaurantTable>
+                    .Fail(Error.NotFound("RestaurantTable"), HttpStatusCode.NotFound);
+            }
+
+            if (table.Area is not null && table.Area.BranchId != branchId)
+            {
+                return Result<RestaurantTable>
+                    .Fail("Restaurant table does not belong to the selected branch.", HttpStatusCode.BadRequest);
+            }
+
+            if (table.Status != TableStatus.Available)
+            {
+                return Result<RestaurantTable>
+                    .Fail(Error.Occupied("RestaurantTable"), HttpStatusCode.Conflict);
+            }
+
+            table.Occupy();
+            return Result<RestaurantTable>.Succeed(table, "Restaurant table occupied successfully.");
+        }
+
+        private async Task<Result> ProcessOrderDetailsAndInventoryAsync(
+            Order order,
+            long branchId,
+            IEnumerable<CreateOrderDetailRequest> items,
+            CancellationToken cancellationToken)
+        {
+            var detailsResult = await CreateOrderDetailsAsync(order, branchId, items, cancellationToken);
+            if (!detailsResult.IsSucceed)
+            {
+                return Result.Fail(detailsResult.Message, (HttpStatusCode)detailsResult.StatusCode);
+            }
+
+            var reserveResult = _inventoryDeductionService
+                .ReserveInventoryForOrder(branchId, detailsResult.Data!, cancellationToken);
+
+            if (!reserveResult.IsSucceed)
+            {
+                return Result.Fail(reserveResult.Message, (HttpStatusCode)reserveResult.StatusCode);
+            }
+
+            order.CalculateTotalAmount();
+            return Result.Succeed("Order details and inventory processed successfully.");
+        }
+
+        private async Task<Result<List<(Product Product, int Quantity)>>> CreateOrderDetailsAsync(
+            Order order,
+            long branchId,
+            IEnumerable<CreateOrderDetailRequest> items,
+            CancellationToken cancellationToken)
+        {
+            var productIds = items
+                .Select(x => x.ProductId)
+                .Distinct()
+                .ToList();
+
+            var products = await _productRepository
+                .FindProductsForOrderAsync(
+                    productIds,
+                    branchId,
+                    cancellationToken);
+
+            var productMap = products.ToDictionary(x => x.PublicId);
+            var orderItems = new List<(Product Product, int Quantity)>();
+
+            foreach (var item in items)
+            {
+                if (!productMap.TryGetValue(item.ProductId, out var product))
+                {
+                    return Result<List<(Product Product, int Quantity)>>
+                        .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
+                }
+
+                orderItems.Add((product, item.Quantity));
+
+                var orderDetail = new OrderDetail(item.Quantity, item.Note)
+                    .SetProduct(product)
+                    .CalculateLineTotal();
+
+                order.AddOrderDetail(orderDetail);
+            }
+
+            return Result<List<(Product Product, int Quantity)>>
+                .Succeed(orderItems, "Order details created successfully.");
         }
     }
 }

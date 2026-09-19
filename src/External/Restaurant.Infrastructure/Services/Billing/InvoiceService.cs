@@ -2,8 +2,10 @@
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetAll;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetById;
 using Restaurant.Application.Services.Billing;
+using Restaurant.Application.Services.Business;
 using Restaurant.Contract.DTOs.Billing.Invoices;
 using Restaurant.Domain.Entities.Billing;
+using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Billing;
@@ -16,13 +18,16 @@ namespace Restaurant.Infrastructure.Services.Billing
         private readonly IInvoiceRepository _invoiceRepository;
 
         private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
 
         public InvoiceService(
             IInvoiceRepository invoiceRepository,
-            IMapper mapper)
+            IMapper mapper,
+            IUnitOfWork unitOfWork)
         {
             _invoiceRepository = invoiceRepository;
             _mapper = mapper;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<PageResult<IEnumerable<InvoiceResponse>>> GetAllAsync(
@@ -54,5 +59,11 @@ namespace Restaurant.Infrastructure.Services.Billing
                 .Succeed(response, Success.Retrieved("Invoice"));
         }
 
+        public async Task InitializeAsync(Order order, CancellationToken cancellationToken = default)
+        {
+            var invoice = new Invoice(order);
+            _invoiceRepository.Add(invoice);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
     }
 }
