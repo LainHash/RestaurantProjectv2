@@ -5,7 +5,7 @@ namespace Restaurant.Application.Services.Inventory
 {
     public interface IInventoryDeductionService
     {
-        Result DeductInventoryForOrder(
+        Result ReserveInventoryForOrder(
             long branchId,
             IEnumerable<(Product Product, int Quantity)> items,
             CancellationToken cancellationToken = default);

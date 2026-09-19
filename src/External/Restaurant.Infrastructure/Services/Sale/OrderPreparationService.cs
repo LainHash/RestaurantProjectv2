@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancel;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
@@ -10,6 +10,7 @@ using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Sale;
+using Restaurant.Domain.Repositories.Territory;
 using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Sale
@@ -19,6 +20,7 @@ namespace Restaurant.Infrastructure.Services.Sale
         private readonly IOrderPreparationRepository _orderPreparationRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IRestaurantTableRepository _restaurantTableRepository;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -28,13 +30,15 @@ namespace Restaurant.Infrastructure.Services.Sale
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IOrderDetailRepository orderDetailRepository,
-            IOrderRepository orderRepository)
+            IOrderRepository orderRepository,
+            IRestaurantTableRepository restaurantTableRepository)
         {
             _orderPreparationRepository = orderPreparationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
+            _restaurantTableRepository = restaurantTableRepository;
         }
 
         public async Task<Result> PrepareOrderAsync(
@@ -144,6 +148,14 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
                 order.Served();
+
+                // Release table when all items of a DineIn order are served
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -184,10 +196,26 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (allPreparations.All(p => p.Status == PreparationStatus.Cancelled))
             {
                 order.Cancelled();
+
+                // Release table when a DineIn order is fully cancelled
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
             else if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
                 order.Served();
+
+                // Release table when remaining items of a DineIn order are all done
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

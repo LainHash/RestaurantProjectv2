@@ -9,14 +9,15 @@ namespace Restaurant.Infrastructure.Services.Inventory
 {
     internal class InventoryDeductionService : IInventoryDeductionService
     {
-        public Result DeductInventoryForOrder(
+        public Result ReserveInventoryForOrder(
             long branchId,
             IEnumerable<(Product Product, int Quantity)> items,
             CancellationToken cancellationToken = default)
         {
-            var productStockDemands = new Dictionary<long, (ProductStock Stock, string ProductName, int RequiredQuantity)>();
-
-            var ingredientDemands = new Dictionary<long, (Ingredient Ingredient, decimal RequiredAmount)>();
+            // Phase 1: aggregate total demand per stock/ingredient to avoid
+            // partial-reserve state when the same item appears multiple times.
+            var productStockDemands = new Dictionary<long, (ProductStock Stock, string ProductName, decimal RequiredQuantity)>();
+            var ingredientDemands = new Dictionary<long, (IngredientStock Stock, Ingredient Ingredient, decimal RequiredAmount)>();
 
             foreach (var (product, quantity) in items)
             {
@@ -28,7 +29,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
                     if (stock is null)
                     {
                         return Result.Fail(
-                            $"Sản phẩm '{product.Name}' chưa được thiết lập dữ liệu tồn kho tại chi nhánh này.",
+                            $"Product '{product.Name}' does not have stock data configured for this branch.",
                             HttpStatusCode.BadRequest);
                     }
 
@@ -47,7 +48,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
                     if (recipe is null || !recipe.RecipeIngredients.Any())
                     {
                         return Result.Fail(
-                            $"Món '{product.Name}' chưa được cấu hình công thức chế biến (Recipe).",
+                            $"Product '{product.Name}' does not have a recipe configured.",
                             HttpStatusCode.BadRequest);
                     }
 
@@ -56,7 +57,15 @@ namespace Restaurant.Infrastructure.Services.Inventory
                         if (ri.Ingredient is null)
                         {
                             return Result.Fail(
-                                $"Không tìm thấy thông tin nguyên liệu trong công thức của món '{product.Name}'.",
+                                $"A recipe ingredient for product '{product.Name}' could not be resolved.",
+                                HttpStatusCode.BadRequest);
+                        }
+
+                        var ingredientStock = ri.Ingredient.IngredientStocks.FirstOrDefault(s => s.BranchId == branchId);
+                        if (ingredientStock is null)
+                        {
+                            return Result.Fail(
+                                $"Ingredient '{ri.Ingredient.Name}' does not have stock data configured for this branch.",
                                 HttpStatusCode.BadRequest);
                         }
 
@@ -73,45 +82,56 @@ namespace Restaurant.Infrastructure.Services.Inventory
 
                         if (ingredientDemands.TryGetValue(ri.IngredientId, out var existing))
                         {
-                            ingredientDemands[ri.IngredientId] = (ri.Ingredient, existing.RequiredAmount + requiredAmount);
+                            ingredientDemands[ri.IngredientId] = (ingredientStock, ri.Ingredient, existing.RequiredAmount + requiredAmount);
                         }
                         else
                         {
-                            ingredientDemands[ri.IngredientId] = (ri.Ingredient, requiredAmount);
+                            ingredientDemands[ri.IngredientId] = (ingredientStock, ri.Ingredient, requiredAmount);
                         }
                     }
                 }
             }
 
+            // Phase 2: validate available quantity (QuantityOnHand - QuantityReserved) for all items
+            // before mutating anything, to avoid partial-reserve on failure.
             foreach (var (stock, productName, requiredQty) in productStockDemands.Values)
             {
-                if (stock.QuantityOnHand < requiredQty)
+                if (stock.AvailableQuantity < requiredQty)
                 {
                     return Result.Fail(
-                        $"Không đủ tồn kho cho sản phẩm '{productName}'. Tồn hiện tại: {stock.QuantityOnHand}, Yêu cầu: {requiredQty}.",
+                        $"Insufficient stock for product '{productName}'. " +
+                        $"Available: {stock.AvailableQuantity} (On hand: {stock.QuantityOnHand}, Reserved: {stock.QuantityReserved}), " +
+                        $"Required: {requiredQty}.",
                         HttpStatusCode.BadRequest);
                 }
-
-                stock.UpdateQuantity(-requiredQty);
             }
 
-            foreach (var (ingredient, requiredAmount) in ingredientDemands.Values)
+            foreach (var (ingredientStock, ingredient, requiredAmount) in ingredientDemands.Values)
             {
-                var ingredientStock = ingredient.IngredientStocks.FirstOrDefault(s => s.BranchId == branchId);
-                var availableOnHand = ingredientStock?.QuantityOnHand ?? 0m;
                 var unitSymbol = ingredient.BaseUnit?.Symbol ?? string.Empty;
-
-                if (ingredientStock is null || availableOnHand < requiredAmount)
+                if (ingredientStock.AvailableQuantity < requiredAmount)
                 {
                     return Result.Fail(
-                        $"Không đủ nguyên liệu '{ingredient.Name}'. Tồn hiện tại: {availableOnHand} {unitSymbol}, Cần: {requiredAmount} {unitSymbol}.",
+                        $"Insufficient stock for ingredient '{ingredient.Name}'. " +
+                        $"Available: {ingredientStock.AvailableQuantity} {unitSymbol} " +
+                        $"(On hand: {ingredientStock.QuantityOnHand}, Reserved: {ingredientStock.QuantityReserved}), " +
+                        $"Required: {requiredAmount} {unitSymbol}.",
                         HttpStatusCode.BadRequest);
                 }
-
-                ingredientStock.UpdateQuantity(-requiredAmount);
             }
 
-            return Result.Succeed("Cập nhật tồn kho thành công.");
+            // Phase 3: all checks passed — reserve stock (does NOT deduct QuantityOnHand).
+            foreach (var (stock, _, requiredQty) in productStockDemands.Values)
+            {
+                stock.Reserve(requiredQty);
+            }
+
+            foreach (var (ingredientStock, _, requiredAmount) in ingredientDemands.Values)
+            {
+                ingredientStock.Reserve(requiredAmount);
+            }
+
+            return Result.Succeed("Inventory reserved successfully.");
         }
     }
 }

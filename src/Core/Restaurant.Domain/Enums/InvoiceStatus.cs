@@ -5,7 +5,7 @@ namespace Restaurant.Domain.Enums
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum InvoiceStatus
     {
-        Unpaid,
+        Draft,
         PartiallyPaid,
         Paid,
         Cancelled,

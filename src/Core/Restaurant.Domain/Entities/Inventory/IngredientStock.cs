@@ -8,6 +8,7 @@ namespace Restaurant.Domain.Entities.Inventory
     {
         public decimal QuantityOnHand { get; private set; }
         public decimal QuantityReserved { get; private set; }
+        public decimal AvailableQuantity => QuantityOnHand - QuantityReserved;
         public decimal ReorderLevel { get; private set; }
 
         public long IngredientId { get; private set; }
@@ -41,6 +42,16 @@ namespace Restaurant.Domain.Entities.Inventory
         public void UpdateQuantity(decimal amount)
         {
             QuantityOnHand += amount;
+        }
+
+        public void Reserve(decimal amount)
+        {
+            QuantityReserved += amount;
+        }
+
+        public void Release(decimal amount)
+        {
+            QuantityReserved = Math.Max(0, QuantityReserved - amount);
         }
     }
 }

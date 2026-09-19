@@ -1,4 +1,4 @@
-﻿using Restaurant.Contract.DTOs.Sale.OrderDetails;
+using Restaurant.Contract.DTOs.Sale.OrderDetails;
 using Restaurant.Domain.Enums;
 
 namespace Restaurant.Contract.DTOs.Sale.Orders
@@ -8,9 +8,12 @@ namespace Restaurant.Contract.DTOs.Sale.Orders
         public Guid Id { get; set; }
         public string OrderCode { get; set; } = null!;
 
-        public string CustomerCode { get; set; } = null!;
-        public string EmployeeCode { get; set; } = null!;
+        public string? CustomerCode { get; set; }
+        public string? EmployeeCode { get; set; }
         public string BranchCode { get; set; } = null!;
+        public Guid? RestaurantTableId { get; set; }
+        public string? TableNumber { get; set; }
+        public string? DeliveryAddress { get; set; }
 
         public OrderStatus Status { get; set; }
         public OrderType Type { get; set; }

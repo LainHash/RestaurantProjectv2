@@ -40,7 +40,7 @@ namespace Restaurant.Domain.Entities.Billing
             DiscountAmount = discountAmount;
             TaxAmount = taxAmount;
             TotalAmount = totalAmount;
-            Status = InvoiceStatus.Unpaid;
+            Status = InvoiceStatus.Draft;
         }
 
         public Invoice(Order order)
