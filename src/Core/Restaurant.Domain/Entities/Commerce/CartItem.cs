@@ -24,9 +24,9 @@ namespace Restaurant.Domain.Entities.Commerce
             Quantity = 1;
         }
 
-        public void UpdateQuantity(int amount = 1)
+        public void UpdateQuantity(int quantity = 1)
         {
-            Quantity += amount;
+            Quantity = quantity;
         }
     }
 }

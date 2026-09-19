@@ -12,7 +12,6 @@ using System.Security.Claims;
 namespace Restaurant.API.Controllers.Commerce
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = "Customer")]
     [ApiController]
     public class WishlistsController(
         IMediator mediator,

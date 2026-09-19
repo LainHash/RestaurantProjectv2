@@ -47,5 +47,13 @@ namespace Restaurant.Domain.Entities.Schedule
             BranchId = branchId;
             return this;
         }
+
+        public Reservation SetGuest(Customer customer)
+        {
+            GuestName = customer.User.PersonalProfile!.FirstName + " " + customer.User.PersonalProfile!.LastName;
+            GuestPhone = customer.User.PersonalProfile.Phone;
+            GuestEmail = customer.User.Email;
+            return this;
+        }
     }
 }

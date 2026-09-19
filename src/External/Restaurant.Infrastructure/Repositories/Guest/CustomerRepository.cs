@@ -43,5 +43,13 @@ namespace Restaurant.Infrastructure.Repositories.Guest
                 .Include(x => x.Wallet)
                 .FirstOrDefaultAsync(x => x.User.PublicId == userId, cancellationToken);
         }
+
+        public async Task<Customer?> FindFullPersonalProfileAsync(Guid userId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Customers
+                .Include(x => x.User)
+                    .ThenInclude(x => x.PersonalProfile)
+                .FirstOrDefaultAsync(x => x.User.PublicId == userId, cancellationToken);
+        }
     }
 }

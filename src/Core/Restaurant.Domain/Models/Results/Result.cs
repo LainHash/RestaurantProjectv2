@@ -5,8 +5,10 @@ namespace Restaurant.Domain.Models.Results
     public class Result
     {
         public bool IsSucceed { get; protected set; }
-        public string Message { get; protected set; }
+        public string Message { get; protected set; } = null!;
         public int StatusCode { get; protected set; }
+
+        private Result() { }
 
         public Result(bool isSucceed, string message, HttpStatusCode statusCode)
         {
