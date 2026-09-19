@@ -21,6 +21,7 @@ using Restaurant.Application.Services.Territory;
 using Restaurant.Contract.Settings.AuditLog;
 using Restaurant.Contract.Settings.Auth;
 using Restaurant.Contract.Settings.Email;
+using Restaurant.Contract.Settings.Payment;
 using Restaurant.Contract.Settings.Storage;
 using Restaurant.Domain.Repositories;
 using Restaurant.Domain.Repositories.Business;
@@ -182,6 +183,29 @@ namespace Restaurant.Infrastructure
             services.AddScoped<IOrderService, OrderService>();
             services.AddScoped<IOrderPreparationService, OrderPreparationService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
+
+            // ── VNPay ────────────────────────────────────────────────────────
+            services.Configure<VnPaySettings>(options =>
+            {
+                configuration.GetSection(VnPaySettings.SectionName).Bind(options);
+                if (string.IsNullOrEmpty(options.TmnCode))
+                {
+                    options.TmnCode = configuration["vnp_TmnCode"] ?? string.Empty;
+                }
+                if (string.IsNullOrEmpty(options.HashSecret))
+                {
+                    options.HashSecret = configuration["vnp_HashSecret"] ?? string.Empty;
+                }
+                if (string.IsNullOrEmpty(options.BaseUrl))
+                {
+                    options.BaseUrl = configuration["vnp_Url"] ?? string.Empty;
+                }
+                if (string.IsNullOrEmpty(options.ReturnUrl))
+                {
+                    options.ReturnUrl = configuration["vnp_ReturnUrl"] ?? string.Empty;
+                }
+            });
+            services.AddScoped<IVnPayService, VnPayService>();
 
             services.AddScoped<IReservationService, ReservationService>();
 

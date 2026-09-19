@@ -6,5 +6,6 @@ namespace Restaurant.Domain.Repositories.Billing
     {
         Task<bool> HasInvoiceForOrderAsync(long orderId, CancellationToken cancellationToken = default);
         Task<Invoice?> FindByOrderIdAsync(long orderId, CancellationToken cancellationToken = default);
+        Task<Invoice?> FindByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default);
     }
 }

@@ -21,5 +21,16 @@ namespace Restaurant.Infrastructure.Repositories.Billing
             return await _context.Invoices
                 .FirstOrDefaultAsync(x => x.OrderId == orderId, cancellationToken);
         }
+
+        public async Task<Invoice?> FindByPublicIdAsync(Guid publicId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Invoices
+                .Include(x => x.Order)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.OrderPreparation)
+                .Include(x => x.Payments)
+                    .ThenInclude(p => p.PaymentTransactions)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
+        }
     }
 }
