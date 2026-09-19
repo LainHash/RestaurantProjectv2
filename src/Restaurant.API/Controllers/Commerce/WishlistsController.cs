@@ -24,10 +24,11 @@ namespace Restaurant.API.Controllers.Commerce
         public async Task<IActionResult> GetWishlist(CancellationToken cancellationToken)
         {
             var sessionId = Request.Headers["X-Session-Id"].FirstOrDefault();
-            if (sessionId is null)
-                return BadRequest("X-Session-Id header is required.");
 
             var userId = _currentUserService.UserId;
+
+            if (sessionId is null && userId is null)
+                return BadRequest("X-Session-Id header is required.");
 
             var query = new GetWishlistQuery(userId, sessionId);
             var result = await _mediator.Send(query, cancellationToken);
@@ -40,10 +41,11 @@ namespace Restaurant.API.Controllers.Commerce
             CancellationToken cancellationToken)
         {
             var sessionId = Request.Headers["X-Session-Id"].FirstOrDefault();
-            if (sessionId is null)
-                return BadRequest("X-Session-Id header is required.");
 
             var userId = _currentUserService.UserId;
+
+            if (sessionId is null && userId is null)
+                return BadRequest("X-Session-Id header is required.");
 
             var command = new AddWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);
@@ -56,10 +58,11 @@ namespace Restaurant.API.Controllers.Commerce
             CancellationToken cancellationToken)
         {
             var sessionId = Request.Headers["X-Session-Id"].FirstOrDefault();
-            if (sessionId is null)
-                return BadRequest("X-Session-Id header is required.");
 
             var userId = _currentUserService.UserId;
+
+            if (sessionId is null && userId is null)
+                return BadRequest("X-Session-Id header is required.");
 
             var command = new RemoveWishlistItemCommand(userId, sessionId, body);
             var result = await _mediator.Send(command, cancellationToken);

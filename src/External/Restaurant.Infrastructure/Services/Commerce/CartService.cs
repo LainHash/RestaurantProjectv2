@@ -9,13 +9,11 @@ using Restaurant.Contract.DTOs.Commerce.Carts;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Guest;
-using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Domain.Repositories.Commerce;
 using Restaurant.Domain.Repositories.Guest;
-using Restaurant.Domain.Repositories.Identity;
 using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Commerce
@@ -112,7 +110,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             }
             else
             {
-                cartItem.UpdateQuantity();
+                cartItem.UpdateQuantity(cartItem.Quantity + 1);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

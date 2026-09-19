@@ -13,18 +13,18 @@ namespace Restaurant.Application.Features.Commerce.Carts.Commands.RemoveItem
             {
                 AddIncludeAggregator(x => x.Include(w => w.Customer!)
                                             .ThenInclude(c => c!.User));
-                AddIncludeAggregator(x => x.Include(w => w.CartItems)
-                                            .ThenInclude(wi => wi.Product));
 
                 AddCriteria(x => x.Customer!.User.PublicId == command.UserId);
             }
             else
             {
-                AddIncludeAggregator(x => x.Include(w => w.CartItems)
-                                            .ThenInclude(wi => wi.Product));
-
                 AddCriteria(x => x.SessionId == command.SessionId);
             }
+
+
+            AddIncludeAggregator(x => x.Include(w => w.CartItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductPrice));
         }
     }
 }

@@ -13,18 +13,17 @@ namespace Restaurant.Application.Features.Commerce.Wishlists.Commands.AddItem
             {
                 AddIncludeAggregator(x => x.Include(w => w.Customer!)
                                             .ThenInclude(c => c!.User));
-                AddIncludeAggregator(x => x.Include(w => w.WishlistItems)
-                                            .ThenInclude(wi => wi.Product));
 
                 AddCriteria(x => x.Customer!.User.PublicId == command.UserId);
             }
             else
             {
-                AddIncludeAggregator(x => x.Include(w => w.WishlistItems)
-                                            .ThenInclude(wi => wi.Product));
-
                 AddCriteria(x => x.SessionId == command.SessionId);
             }
+
+            AddIncludeAggregator(x => x.Include(w => w.WishlistItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductPrice));
         }
     }
 }
