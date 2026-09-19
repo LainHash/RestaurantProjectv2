@@ -12,9 +12,24 @@ namespace Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancel
             AddCriteria(x => x.OrderDetail.PublicId == command.OrderDetailId);
 
             AddIncludeAggregator(x => x.Include(op => op.OrderDetail)
+                                        .ThenInclude(od => od.Product)
+                                            .ThenInclude(p => p.ProductStocks));
+
+            AddIncludeAggregator(x => x.Include(op => op.OrderDetail)
+                                        .ThenInclude(od => od.Product)
+                                            .ThenInclude(p => p.Recipes)
+                                                .ThenInclude(r => r.RecipeIngredients)
+                                                    .ThenInclude(ri => ri.Ingredient)
+                                                        .ThenInclude(i => i.IngredientStocks));
+
+            AddIncludeAggregator(x => x.Include(op => op.OrderDetail)
                                         .ThenInclude(od => od.Order)
-                                        .ThenInclude(o => o.OrderDetails)
-                                        .ThenInclude(od => od.OrderPreparation));
+                                            .ThenInclude(o => o.OrderDetails)
+                                                .ThenInclude(od => od.OrderPreparation));
+
+            AddIncludeAggregator(x => x.Include(op => op.OrderDetail)
+                                        .ThenInclude(od => od.Order)
+                                            .ThenInclude(o => o.Invoice));
         }
     }
 }

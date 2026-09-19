@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Create;
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Update;
 using Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetById;
@@ -41,7 +41,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IEnumerable<ProductCategoryResponse>>(categories);
             return PageResult<IEnumerable<ProductCategoryResponse>>
-                .Succeed(response, Success<ProductCategory>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Product Category"), totalItems, specification.Skip, specification.Take);
 
         }
 
@@ -53,12 +53,12 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result<ProductCategoryDetailResponse>
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product Category"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<ProductCategoryDetailResponse>(category);
             return Result<ProductCategoryDetailResponse>
-                .Succeed(response, Success<ProductCategory>.Retrieved);
+                .Succeed(response, Success.Retrieved("Product Category"));
         }
 
         public async Task<Result<ProductCategoryResponse>> CreateAsync(
@@ -69,7 +69,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if(category is not null)
             {
                 return Result<ProductCategoryResponse>
-                    .Fail(Error<ProductCategory>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Product Category"), HttpStatusCode.Conflict);
             }
 
             category = _mapper.Map<ProductCategory>(command.Body);
@@ -79,7 +79,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<ProductCategoryResponse>(category);
             return Result<ProductCategoryResponse>
-                .Succeed(response, Success<ProductCategory>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Product Category"), HttpStatusCode.Created);
         }
 
         public async Task<Result<ProductCategoryResponse>> UpdateAsync(
@@ -91,13 +91,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is null)
             {
                 return Result<ProductCategoryResponse>
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product Category"), HttpStatusCode.NotFound);
             }
 
             if(await _categoryRepository.IsExistingNameAsync(command.Body.Name, cancellationToken))
             {
                 return Result<ProductCategoryResponse>
-                    .Fail(Error<ProductCategory>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Product Category"), HttpStatusCode.Conflict);
             }
 
             _mapper.Map(command.Body, category);
@@ -106,7 +106,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<ProductCategoryResponse>(category);
             return Result<ProductCategoryResponse>
-                .Succeed(response, Success<ProductCategory>.Updated, HttpStatusCode.OK);
+                .Succeed(response, Success.Updated("Product Category"), HttpStatusCode.OK);
         }
 
         public async Task<Result> DeleteAsync(
@@ -117,13 +117,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product Category"), HttpStatusCode.NotFound);
             }
 
             if(category.IsDeleted)
             {
                 return Result
-                    .Fail(Error<ProductCategory>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Product Category"), HttpStatusCode.BadRequest);
             }
 
             category.SoftDelete();
@@ -131,7 +131,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<ProductCategory>.Deleted);
+                .Succeed(Success.Deleted("Product Category"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -142,13 +142,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product Category"), HttpStatusCode.NotFound);
             }
 
             if(!category.IsDeleted)
             {
                 return Result
-                    .Fail(Error<ProductCategory>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Product Category"), HttpStatusCode.BadRequest);
             }
 
             category.Restore();
@@ -156,7 +156,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<ProductCategory>.Restored);
+                .Succeed(Success.Restored("Product Category"));
         }
     }
 }

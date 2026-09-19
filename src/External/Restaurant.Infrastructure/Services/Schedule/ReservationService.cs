@@ -50,7 +50,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
 
             var response = _mapper.Map<IEnumerable<ReservationResponse>>(reservations);
             return PageResult<IEnumerable<ReservationResponse>>
-                .Succeed(response, Success<Reservation>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Reservation"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<ReservationDetailResponse>> GetByIdAsync(
@@ -61,12 +61,12 @@ namespace Restaurant.Infrastructure.Services.Schedule
             if(reservation is null)
             {
                 return Result<ReservationDetailResponse>
-                    .Fail(Error<Reservation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Reservation"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<ReservationDetailResponse>(reservation);
             return Result<ReservationDetailResponse>
-                .Succeed(response, Success<Reservation>.Retrieved);
+                .Succeed(response, Success.Retrieved("Reservation"));
         }
 
         public async Task<Result<ReservationDetailResponse>> CreateAsync(
@@ -78,7 +78,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
             if(branch is null)
             {
                 return Result<ReservationDetailResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             var reservation = _mapper.Map<Reservation>(command.Body)
@@ -92,7 +92,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
                 if (customer is null)
                 {
                     return Result<ReservationDetailResponse>
-                        .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
                 }
             }
 
@@ -113,7 +113,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
 
             var response = _mapper.Map<ReservationDetailResponse>(createdReservation);
             return Result<ReservationDetailResponse>
-                .Succeed(response, Success<Reservation>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Reservation"), HttpStatusCode.Created);
         }
     }
 }

@@ -3,14 +3,15 @@ using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
+using Restaurant.Application.Services.Billing;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
+using Restaurant.Contract.DTOs.Sale.OrderDetails;
 using Restaurant.Contract.DTOs.Sale.Orders;
 using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Guest;
-using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
@@ -30,12 +31,14 @@ namespace Restaurant.Infrastructure.Services.Sale
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
-        private readonly IInvoiceRepository _invoiceRepository;
         private readonly ICustomerRepository _customerRepository;
         private readonly IEmployeeRepository _employeeRepository;
         private readonly IBranchRepository _branchRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IRestaurantTableRepository _restaurantTableRepository;
         private readonly IInventoryDeductionService _inventoryDeductionService;
+
+        private readonly IInvoiceService _invoiceService;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -50,9 +53,10 @@ namespace Restaurant.Infrastructure.Services.Sale
             IBranchRepository branchRepository,
             IProductRepository productRepository,
             IOrderDetailRepository orderDetailRepository,
+            IRestaurantTableRepository restaurantTableRepository,
             IInventoryDeductionService inventoryDeductionService,
             ILogger<OrderService> logger,
-            IInvoiceRepository invoiceRepository)
+            IInvoiceService invoiceService)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -62,9 +66,10 @@ namespace Restaurant.Infrastructure.Services.Sale
             _branchRepository = branchRepository;
             _productRepository = productRepository;
             _orderDetailRepository = orderDetailRepository;
+            _restaurantTableRepository = restaurantTableRepository;
             _inventoryDeductionService = inventoryDeductionService;
             _logger = logger;
-            _invoiceRepository = invoiceRepository;
+            _invoiceService = invoiceService;
         }
 
         public async Task<PageResult<IEnumerable<OrderResponse>>> GetAllAsync(
@@ -77,7 +82,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             var response = _mapper.Map<IEnumerable<OrderResponse>>(orders);
             return PageResult<IEnumerable<OrderResponse>>
-                .Succeed(response, Success<Order>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Order"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<OrderResponse>> GetByIdAsync(
@@ -88,13 +93,12 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (order is null)
             {
                 return Result<OrderResponse>
-                    .Fail(Error<Order>.NotFound, HttpStatusCode.NotFound);
-
+                    .Fail(Error.NotFound("Order"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<OrderResponse>(order);
             return Result<OrderResponse>
-                .Succeed(response, Success<Order>.Retrieved);
+                .Succeed(response, Success.Retrieved("Order"));
         }
 
         public async Task<Result<OrderResponse>> CreateAsync(
@@ -106,7 +110,6 @@ namespace Restaurant.Infrastructure.Services.Sale
             try
             {
                 Customer? customer = null;
-
                 if (command.Body.CustomerId is not null)
                 {
                     customer = await _customerRepository
@@ -115,16 +118,8 @@ namespace Restaurant.Infrastructure.Services.Sale
                     if (customer is null)
                     {
                         return Result<OrderResponse>
-                            .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                            .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
                     }
-                }
-
-                var employee = await _employeeRepository
-                    .FindByIdAsync(command.Body.EmployeeId, cancellationToken);
-                if (employee is null)
-                {
-                    return Result<OrderResponse>
-                        .Fail(Error<Employee>.NotFound, HttpStatusCode.NotFound);
                 }
 
                 var branch = await _branchRepository
@@ -132,67 +127,69 @@ namespace Restaurant.Infrastructure.Services.Sale
                 if (branch is null)
                 {
                     return Result<OrderResponse>
-                        .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
+                }
+
+                long? employeeId = null;
+                long? restaurantTableId = null;
+
+                if (command.Body.Type != OrderType.Delivery)
+                {
+                    var employee = await _employeeRepository
+                        .FindByIdAsync(command.Body.EmployeeId!.Value, cancellationToken);
+                    if (employee is null)
+                    {
+                        return Result<OrderResponse>
+                            .Fail(Error.NotFound("Employee"), HttpStatusCode.NotFound);
+                    }
+
+                    employeeId = employee.Id;
+                }
+
+                if (command.Body.Type == OrderType.DineIn)
+                {
+                    var tableResult = await ResolveAndOccupyTableAsync(
+                        command.Body.RestaurantTableId!.Value,
+                        branch.Id,
+                        cancellationToken);
+
+                    if (!tableResult.IsSucceed)
+                    {
+                        return Result<OrderResponse>
+                            .Fail(tableResult.Message, (HttpStatusCode)tableResult.StatusCode);
+                    }
+
+                    restaurantTableId = tableResult.Data!.Id;
                 }
 
                 var order = Order.Create(
                     customer?.Id,
-                    employee.Id,
+                    employeeId,
                     branch.Id,
+                    restaurantTableId,
                     command.Body.Type,
-                    command.Body.Note);
+                    command.Body.Note,
+                    command.Body.DeliveryAddress);
 
-                var productIds = command.Body.CreateOrderDetails
-                    .Select(x => x.ProductId)
-                    .Distinct()
-                    .ToList();
+                var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
+                    order,
+                    branch.Id,
+                    command.Body.CreateOrderDetails,
+                    cancellationToken);
 
-                var products = await _productRepository
-                    .FindProductsForOrderAsync(
-                        productIds,
-                        branch.Id,
-                        cancellationToken);
-
-                var productMap = products.ToDictionary(x => x.PublicId);
-                var orderItems = new List<(Product Product, int Quantity)>();
-
-                foreach (var item in command.Body.CreateOrderDetails)
-                {
-                    if (!productMap.TryGetValue(item.ProductId, out var product))
-                    {
-                        return Result<OrderResponse>
-                            .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
-                    }
-
-                    orderItems.Add((product, item.Quantity));
-
-                    var orderDetail = new OrderDetail(item.Quantity, item.Note)
-                        .SetProduct(product)
-                        .CalculateLineTotal();
-
-                    order.AddOrderDetail(orderDetail);
-                }
-
-                var deductionResult = await _inventoryDeductionService
-                    .DeductInventoryForOrderAsync(branch.Id, orderItems, cancellationToken);
-
-                if (!deductionResult.IsSucceed)
+                if (!orderDetailsResult.IsSucceed)
                 {
                     return Result<OrderResponse>
-                        .Fail(deductionResult.Message, (HttpStatusCode)deductionResult.StatusCode);
+                        .Fail(orderDetailsResult.Message, (HttpStatusCode)orderDetailsResult.StatusCode);
                 }
 
-                order.CalculateTotalAmount();
-
                 _orderRepository.Add(order);
-
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                var invoice = new Invoice(order);
-
-                _invoiceRepository.Add(invoice);
-
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                if (command.Body.Type == OrderType.Delivery)
+                {
+                    await _invoiceService.InitializeAsync(order, cancellationToken);
+                }
 
                 await transaction.CommitAsync(cancellationToken);
 
@@ -201,7 +198,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
                 var response = _mapper.Map<OrderResponse>(createdOrder);
                 return Result<OrderResponse>
-                    .Succeed(response, Success<Order>.Created, HttpStatusCode.Created);
+                    .Succeed(response, Success.Created("Order"), HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
@@ -210,6 +207,178 @@ namespace Restaurant.Infrastructure.Services.Sale
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
+        }
+
+        public async Task<Result<OrderResponse>> AddItemsAsync(
+            Guid orderId,
+            AddOrderItemsRequest request,
+            CreateOrderSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var order = await _orderRepository
+                    .FindWithOrderDetailAsync(orderId, cancellationToken);
+
+                if (order is null)
+                {
+                    return Result<OrderResponse>
+                        .Fail(Error.NotFound("Order"), HttpStatusCode.NotFound);
+                }
+
+                if (order.Status == OrderStatus.Cancelled)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to a cancelled order.", HttpStatusCode.BadRequest);
+                }
+
+                if (order.Status == OrderStatus.Completed)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to a completed order.", HttpStatusCode.BadRequest);
+                }
+
+                if (order.Invoice is not null && order.Invoice.Status == InvoiceStatus.Paid)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to an already paid order.", HttpStatusCode.BadRequest);
+                }
+
+                var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
+                    order,
+                    order.BranchId,
+                    request.OrderDetails,
+                    cancellationToken);
+
+                if (!orderDetailsResult.IsSucceed)
+                {
+                    return Result<OrderResponse>
+                        .Fail(orderDetailsResult.Message, (HttpStatusCode)orderDetailsResult.StatusCode);
+                }
+
+                if (order.Status == OrderStatus.Served)
+                {
+                    order.Preparing();
+                }
+
+                if (order.Invoice is not null && order.Invoice.Status == InvoiceStatus.Draft)
+                {
+                    order.Invoice.UpdateAmounts(order.Subtotal, order.DiscountAmount, order.TaxAmount, order.TotalAmount);
+                }
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+
+                specification.ApplyCriteria(order.Id);
+                var updatedOrder = await _orderRepository.FindAsync(specification, cancellationToken);
+
+                var response = _mapper.Map<OrderResponse>(updatedOrder);
+                return Result<OrderResponse>
+                    .Succeed(response, "Order items added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to add items to order.");
+
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+
+        private async Task<Result<RestaurantTable>> ResolveAndOccupyTableAsync(
+            Guid tableId,
+            long branchId,
+            CancellationToken cancellationToken)
+        {
+            var table = await _restaurantTableRepository
+                .FindByIdAsync(tableId, cancellationToken);
+
+            if (table is null)
+            {
+                return Result<RestaurantTable>
+                    .Fail(Error.NotFound("RestaurantTable"), HttpStatusCode.NotFound);
+            }
+
+            if (table.Area is not null && table.Area.BranchId != branchId)
+            {
+                return Result<RestaurantTable>
+                    .Fail("Restaurant table does not belong to the selected branch.", HttpStatusCode.BadRequest);
+            }
+
+            if (table.Status != TableStatus.Available)
+            {
+                return Result<RestaurantTable>
+                    .Fail(Error.Occupied("RestaurantTable"), HttpStatusCode.Conflict);
+            }
+
+            table.Occupy();
+            return Result<RestaurantTable>.Succeed(table, "Restaurant table occupied successfully.");
+        }
+
+        private async Task<Result> ProcessOrderDetailsAndInventoryAsync(
+            Order order,
+            long branchId,
+            IEnumerable<CreateOrderDetailRequest> items,
+            CancellationToken cancellationToken)
+        {
+            var detailsResult = await CreateOrderDetailsAsync(order, branchId, items, cancellationToken);
+            if (!detailsResult.IsSucceed)
+            {
+                return Result.Fail(detailsResult.Message, (HttpStatusCode)detailsResult.StatusCode);
+            }
+
+            var reserveResult = _inventoryDeductionService
+                .ReserveInventoryForOrder(branchId, detailsResult.Data!, cancellationToken);
+
+            if (!reserveResult.IsSucceed)
+            {
+                return Result.Fail(reserveResult.Message, (HttpStatusCode)reserveResult.StatusCode);
+            }
+
+            order.CalculateTotalAmount();
+            return Result.Succeed("Order details and inventory processed successfully.");
+        }
+
+        private async Task<Result<List<(Product Product, int Quantity)>>> CreateOrderDetailsAsync(
+            Order order,
+            long branchId,
+            IEnumerable<CreateOrderDetailRequest> items,
+            CancellationToken cancellationToken)
+        {
+            var productIds = items
+                .Select(x => x.ProductId)
+                .Distinct()
+                .ToList();
+
+            var products = await _productRepository
+                .FindProductsForOrderAsync(
+                    productIds,
+                    branchId,
+                    cancellationToken);
+
+            var productMap = products.ToDictionary(x => x.PublicId);
+            var orderItems = new List<(Product Product, int Quantity)>();
+
+            foreach (var item in items)
+            {
+                if (!productMap.TryGetValue(item.ProductId, out var product))
+                {
+                    return Result<List<(Product Product, int Quantity)>>
+                        .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
+                }
+
+                orderItems.Add((product, item.Quantity));
+
+                var orderDetail = new OrderDetail(item.Quantity, item.Note)
+                    .SetProduct(product)
+                    .CalculateLineTotal();
+
+                order.AddOrderDetail(orderDetail);
+            }
+
+            return Result<List<(Product Product, int Quantity)>>
+                .Succeed(orderItems, "Order details created successfully.");
         }
     }
 }

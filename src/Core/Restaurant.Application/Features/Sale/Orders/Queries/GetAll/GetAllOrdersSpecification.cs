@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Specifications;
@@ -13,6 +13,7 @@ namespace Restaurant.Application.Features.Sale.Orders.Queries.GetAll
             AddInclude(x => x.Customer);
             AddInclude(x => x.Employee);
             AddInclude(x => x.Branch);
+            AddInclude(x => x.RestaurantTable);
 
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {

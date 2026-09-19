@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Specifications;
 
@@ -12,6 +12,7 @@ namespace Restaurant.Application.Features.Sale.Orders.Queries.GetById
             AddInclude(x => x.Customer);
             AddInclude(x => x.Employee);
             AddInclude(x => x.Branch);
+            AddInclude(x => x.RestaurantTable);
             AddIncludeAggregator(x => x.Include(o => o.OrderDetails)
                                         .ThenInclude(od => od.OrderPreparation));
 

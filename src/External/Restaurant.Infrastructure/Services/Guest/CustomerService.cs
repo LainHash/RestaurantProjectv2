@@ -37,7 +37,7 @@ namespace Restaurant.Infrastructure.Services.Guest
 
             var response = _mapper.Map<IEnumerable<CustomerResponse>>(customers);
             return Result<IEnumerable<CustomerResponse>>
-                .Succeed(response, Success<Customer>.Retrieved);
+                .Succeed(response, Success.Retrieved("Customer"));
         }
 
         public async Task<Result<CustomerResponse>> GetByIdAsync(
@@ -48,12 +48,12 @@ namespace Restaurant.Infrastructure.Services.Guest
             if (customer is null)
             {
                 return Result<CustomerResponse>
-                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<CustomerResponse>(customer);
             return Result<CustomerResponse>
-                .Succeed(response, Success<Customer>.Retrieved);
+                .Succeed(response, Success.Retrieved("Customer"));
         }
 
     }

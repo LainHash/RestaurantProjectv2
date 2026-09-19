@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.DTOs.Pricing.Discounts;
 using Restaurant.Application.Features.Pricing.Discounts.Commands.Claim;
@@ -53,7 +53,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
             return PageResult<IEnumerable<DiscountResponse>>
                 .Succeed(
                 response,
-                Success<Discount>.Retrieved,
+                Success.Retrieved("Discount"),
                 totalItems,
                 specification.Skip,
                 specification.Take);
@@ -70,7 +70,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
 
             var response = _mapper.Map<DiscountResponse>(discount);
             return Result<DiscountResponse>
-                .Succeed(response, Success<Discount>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Discount"), HttpStatusCode.Created);
         }
 
         public async Task<Result<DiscountResponse>> UpdateAsync(
@@ -82,7 +82,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
             if (discount is null)
             {
                 return Result<DiscountResponse>
-                    .Fail(Error<Discount>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Discount"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, discount);
@@ -91,7 +91,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
 
             var response = _mapper.Map<DiscountResponse>(discount);
             return Result<DiscountResponse>
-                .Succeed(response, Success<Discount>.Updated, HttpStatusCode.OK);
+                .Succeed(response, Success.Updated("Discount"), HttpStatusCode.OK);
         }
 
         public async Task<Result> DeleteAsync(
@@ -102,13 +102,13 @@ namespace Restaurant.Infrastructure.Services.Pricing
             if (discount == null)
             {
                 return Result
-                    .Fail(Error<Discount>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Discount"), HttpStatusCode.NotFound);
             }
 
             if (discount.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Discount>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Discount"), HttpStatusCode.BadRequest);
             }
 
             discount.SoftDelete();
@@ -116,7 +116,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Discount>.Deleted);
+                .Succeed(Success.Deleted("Discount"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -127,13 +127,13 @@ namespace Restaurant.Infrastructure.Services.Pricing
             if (discount == null)
             {
                 return Result
-                    .Fail(Error<Discount>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Discount"), HttpStatusCode.NotFound);
             }
 
             if (!discount.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Discount>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Discount"), HttpStatusCode.BadRequest);
             }
 
             discount.Restore();
@@ -141,7 +141,7 @@ namespace Restaurant.Infrastructure.Services.Pricing
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Discount>.Restored);
+                .Succeed(Success.Restored("Discount"));
         }
 
         public async Task<Result> ClaimAsync(
@@ -152,14 +152,14 @@ namespace Restaurant.Infrastructure.Services.Pricing
             if (customer is null)
             {
                 return Result
-                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
             var discount = await _discountRepository.FindByCodeAsync(command.Body.DiscountCode, cancellationToken);
             if (discount is null)
             {
                 return Result
-                    .Fail(Error<Discount>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Discount"), HttpStatusCode.NotFound);
             }
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);

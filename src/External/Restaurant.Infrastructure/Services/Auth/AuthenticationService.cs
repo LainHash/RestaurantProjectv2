@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Restaurant.Application.Features.Auth.Commands.ChangePassword;
@@ -118,7 +118,7 @@ namespace Restaurant.Infrastructure.Services.Auth
                 if (customerRole is null)
                 {
                     return Result<object>
-                        .Fail(Error<Role>.NotFound, HttpStatusCode.InternalServerError);
+                        .Fail(Error.NotFound("Role"), HttpStatusCode.InternalServerError);
                 }
 
                 var user = _mapper.Map<User>(command.Body)
@@ -238,7 +238,7 @@ namespace Restaurant.Infrastructure.Services.Auth
             var user = await _userRepository.FindByIdAsync(userId, cancellationToken);
             if (user is null)
             {
-                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                return Result.Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             var newPasswordHash = _passwordHasher.HashPassword(command.Body.NewPassword);
@@ -257,7 +257,7 @@ namespace Restaurant.Infrastructure.Services.Auth
             var user = await _userRepository.FindByIdAsync(command.UserId, cancellationToken);
             if (user is null || !user.IsActive)
             {
-                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                return Result.Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             if (!_passwordHasher.VerifyPassword(command.Body.OldPassword, user.PasswordHash))

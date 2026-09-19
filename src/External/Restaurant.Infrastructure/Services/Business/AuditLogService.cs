@@ -14,7 +14,6 @@ namespace Restaurant.Infrastructure.Services.Business
             _repository = repository;
         }
 
-        /// <inheritdoc />
         public async Task<PageResult<IEnumerable<AuditLogResponse>>> GetPagedAsync(
             string? entityName,
             long? userId,
@@ -47,7 +46,6 @@ namespace Restaurant.Infrastructure.Services.Business
                 take: pageSize);
         }
 
-        /// <inheritdoc />
         public async Task PurgeOldLogsAsync(int retentionDays, CancellationToken cancellationToken = default)
         {
             var cutoff = DateTime.UtcNow.AddDays(-retentionDays);

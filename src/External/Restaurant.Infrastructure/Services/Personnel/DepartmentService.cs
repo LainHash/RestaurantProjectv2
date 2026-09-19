@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Personnel.Departments.Commands.Create;
 using Restaurant.Application.Features.Personnel.Departments.Commands.Update;
 using Restaurant.Application.Services.Business;
@@ -40,7 +40,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<IEnumerable<DepartmentResponse>>(departments);
             return PageResult<IEnumerable<DepartmentResponse>>
-                .Succeed(response, Success<Department>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Department"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<DepartmentResponse>> GetOneAsync(
@@ -51,12 +51,12 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department == null)
             {
                 return Result<DepartmentResponse>
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<DepartmentResponse>(department);
             return Result<DepartmentResponse>
-                .Succeed(response, Success<Department>.Retrieved);
+                .Succeed(response, Success.Retrieved("Department"));
         }
 
         public async Task<Result<DepartmentResponse>> CreateAsync(
@@ -67,7 +67,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department is not null)
             {
                 return Result<DepartmentResponse>
-                    .Fail(Error<Department>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Department"), HttpStatusCode.Conflict);
             }
 
             department = _mapper.Map<Department>(command.Body);
@@ -77,7 +77,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<DepartmentResponse>(department);
             return Result<DepartmentResponse>
-                .Succeed(response, Success<Department>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Department"), HttpStatusCode.Created);
         }
 
         public async Task<Result<DepartmentResponse>> UpdateAsync(
@@ -89,13 +89,13 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department is null)
             {
                 return Result<DepartmentResponse>
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             if (await _departmentRepository.IsExistingNameAsync(command.Body.Name, cancellationToken))
             {
                 return Result<DepartmentResponse>
-                    .Fail(Error<Department>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Department"), HttpStatusCode.Conflict);
             }
 
             _mapper.Map(command.Body, department);
@@ -104,7 +104,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<DepartmentResponse>(department);
             return Result<DepartmentResponse>
-                .Succeed(response, Success<Department>.Updated, HttpStatusCode.OK);
+                .Succeed(response, Success.Updated("Department"), HttpStatusCode.OK);
         }
 
         public async Task<Result> DeleteAsync(
@@ -115,13 +115,13 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department == null)
             {
                 return Result
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             if (department.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Department>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Department"), HttpStatusCode.BadRequest);
             }
 
             department.SoftDelete();
@@ -129,7 +129,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Department>.Deleted);
+                .Succeed(Success.Deleted("Department"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -140,13 +140,13 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department == null)
             {
                 return Result
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             if (!department.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Department>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Department"), HttpStatusCode.BadRequest);
             }
 
             department.Restore();
@@ -154,7 +154,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Department>.Restored);
+                .Succeed(Success.Restored("Department"));
         }
     }
 }

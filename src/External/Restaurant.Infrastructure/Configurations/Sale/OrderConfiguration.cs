@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Restaurant.Domain.Entities.Sale;
 
@@ -22,8 +22,7 @@ namespace Restaurant.Infrastructure.Configurations.Sale
 
             builder.Property(x => x.CustomerId);
 
-            builder.Property(x => x.EmployeeId)
-                .IsRequired();
+            builder.Property(x => x.EmployeeId);
 
             builder.Property(x => x.BranchId)
                 .IsRequired();
@@ -61,6 +60,11 @@ namespace Restaurant.Infrastructure.Configurations.Sale
             builder.Property(x => x.Note)
                 .HasMaxLength(1000);
 
+            builder.Property(x => x.DeliveryAddress)
+                .HasMaxLength(500);
+
+            builder.Property(x => x.RestaurantTableId);
+
             builder.HasOne(x => x.Customer)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.CustomerId)
@@ -69,7 +73,7 @@ namespace Restaurant.Infrastructure.Configurations.Sale
             builder.HasOne(x => x.Employee)
                 .WithMany(x => x.Orders)
                 .HasForeignKey(x => x.EmployeeId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasOne(x => x.Branch)
                 .WithMany(x => x.Orders)
@@ -80,6 +84,11 @@ namespace Restaurant.Infrastructure.Configurations.Sale
                 .WithOne(x => x.Order)
                 .HasForeignKey(x => x.OrderId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(x => x.RestaurantTable)
+                .WithMany(x => x.Orders)
+                .HasForeignKey(x => x.RestaurantTableId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             builder.HasIndex(x => x.OrderCode)
                 .IsUnique();

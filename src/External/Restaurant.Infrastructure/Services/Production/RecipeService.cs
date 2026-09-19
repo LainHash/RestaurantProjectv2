@@ -58,7 +58,7 @@ namespace Restaurant.Infrastructure.Services.Production
 
             var response = _mapper.Map<IEnumerable<RecipeResponse>>(recipes);
             return Result<IEnumerable<RecipeResponse>>
-                .Succeed(response, Success<Recipe>.Retrieved);
+                .Succeed(response, Success.Retrieved("Recipe"));
         }
 
         public async Task<Result<RecipeResponse>> GetByIdAsync(
@@ -69,12 +69,12 @@ namespace Restaurant.Infrastructure.Services.Production
             if (recipe is null)
             {
                 return Result<RecipeResponse>
-                    .Fail(Error<Recipe>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Recipe"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<RecipeResponse>(recipe);
             return Result<RecipeResponse>
-                .Succeed(response, Success<Recipe>.Retrieved);
+                .Succeed(response, Success.Retrieved("Recipe"));
         }
 
         public async Task<Result<RecipeResponse>> CreateAsync(
@@ -86,7 +86,7 @@ namespace Restaurant.Infrastructure.Services.Production
             if (product is null)
             {
                 return Result<RecipeResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             if (product.InventoryType == InventoryType.StockTracked)
@@ -106,7 +106,7 @@ namespace Restaurant.Infrastructure.Services.Production
 
             var response = _mapper.Map<RecipeResponse>(createdRecipe);
             return Result<RecipeResponse>
-                .Succeed(response, Success<Recipe>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Recipe"), HttpStatusCode.Created);
         }
 
         public async Task<Result<RecipeResponse>> UpdateAsync(
@@ -118,7 +118,7 @@ namespace Restaurant.Infrastructure.Services.Production
             if (product is null)
             {
                 return Result<RecipeResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             if (product.InventoryType == InventoryType.StockTracked)
@@ -131,7 +131,7 @@ namespace Restaurant.Infrastructure.Services.Production
             if (recipe is null)
             {
                 return Result<RecipeResponse>
-                    .Fail(Error<Recipe>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Recipe"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, recipe);
@@ -141,7 +141,7 @@ namespace Restaurant.Infrastructure.Services.Production
 
             var response = _mapper.Map<RecipeResponse>(recipe);
             return Result<RecipeResponse>
-                .Succeed(response, Success<Recipe>.Updated);
+                .Succeed(response, Success.Updated("Recipe"));
         }
 
         public async Task<Result<RecipeResponse>> AddIngredientAsync(
@@ -154,7 +154,7 @@ namespace Restaurant.Infrastructure.Services.Production
             if (recipe is null)
             {
                 return Result<RecipeResponse>
-                    .Fail(Error<Recipe>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Recipe"), HttpStatusCode.NotFound);
             }
 
             foreach (var item in command.Body)
@@ -163,14 +163,14 @@ namespace Restaurant.Infrastructure.Services.Production
                 if (ingredient is null)
                 {
                     return Result<RecipeResponse>
-                        .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
                 }
 
                 var unit = await _unitRepository.FindByIdAsync(item.UnitId, cancellationToken);
                 if (unit is null)
                 {
                     return Result<RecipeResponse>
-                        .Fail(Error<Unit>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Unit"), HttpStatusCode.NotFound);
                 }
 
                 var alreadyExists = recipe.RecipeIngredients.Any(ri => ri.IngredientId == ingredient.Id);
@@ -190,7 +190,7 @@ namespace Restaurant.Infrastructure.Services.Production
             var updatedRecipe = await _recipeRepository.FindAsync(specification, cancellationToken);
 
             var response = _mapper.Map<RecipeResponse>(updatedRecipe);
-            return Result<RecipeResponse>.Succeed(response, Success<Recipe>.Updated);
+            return Result<RecipeResponse>.Succeed(response, Success.Updated("Recipe"));
         }
     }
 }

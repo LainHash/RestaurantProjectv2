@@ -17,9 +17,7 @@ namespace Restaurant.Infrastructure.Repositories.Identity
             return await _context.OtpVerifications
                 .Where(x => x.UserId == userId &&
                             x.Purpose == purpose &&
-                            x.IsAvailable &&
-                            x.UsedAt == null &&
-                            x.ExpiresAt > DateTime.UtcNow)
+                            x.IsAvailable)
                 .FirstOrDefaultAsync(cancellationToken);
         }
     }

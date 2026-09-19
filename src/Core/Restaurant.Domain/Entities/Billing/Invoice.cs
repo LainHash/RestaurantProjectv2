@@ -1,4 +1,4 @@
-﻿using NanoidDotNet;
+using NanoidDotNet;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
@@ -40,7 +40,7 @@ namespace Restaurant.Domain.Entities.Billing
             DiscountAmount = discountAmount;
             TaxAmount = taxAmount;
             TotalAmount = totalAmount;
-            Status = InvoiceStatus.Unpaid;
+            Status = InvoiceStatus.Draft;
         }
 
         public Invoice(Order order)
@@ -48,6 +48,40 @@ namespace Restaurant.Domain.Entities.Billing
         {
             OrderId = order.Id;
             InvoiceDetails = [.. order.OrderDetails.Select(x => new InvoiceDetail(x))];
+        }
+
+        public void Issue()
+        {
+            IssuedAt = DateTime.UtcNow;
+        }
+
+        public void MarkAsPaid(DateTime? paidAt = null)
+        {
+            Status = InvoiceStatus.Paid;
+            PaidAt = paidAt ?? DateTime.UtcNow;
+        }
+
+        public void MarkAsPartiallyPaid()
+        {
+            Status = InvoiceStatus.PartiallyPaid;
+        }
+
+        public void Cancel()
+        {
+            Status = InvoiceStatus.Cancelled;
+        }
+
+        public void UpdateAmounts(decimal subtotal, decimal discountAmount, decimal taxAmount, decimal totalAmount)
+        {
+            Subtotal = subtotal;
+            DiscountAmount = discountAmount;
+            TaxAmount = taxAmount;
+            TotalAmount = totalAmount;
+        }
+
+        public void AddInvoiceDetail(InvoiceDetail invoiceDetail)
+        {
+            InvoiceDetails.Add(invoiceDetail);
         }
     }
 }

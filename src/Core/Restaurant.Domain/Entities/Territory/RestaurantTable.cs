@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Schedule;
+using Restaurant.Domain.Entities.Sale;
+using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
@@ -25,6 +26,7 @@ namespace Restaurant.Domain.Entities.Territory
 
         public Area Area { get; private set; } = null!;
         public ICollection<ReservationTable> ReservationTables { get; private set; } = [];
+        public ICollection<Order> Orders { get; private set; } = [];
     }
 
     public partial class RestaurantTable
@@ -35,6 +37,16 @@ namespace Restaurant.Domain.Entities.Territory
         {
             AreaId = areaId;
             return this;
+        }
+
+        public void Occupy()
+        {
+            Status = TableStatus.Occupied;
+        }
+
+        public void Release()
+        {
+            Status = TableStatus.Available;
         }
     }
 }

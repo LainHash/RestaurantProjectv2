@@ -73,7 +73,7 @@ namespace Restaurant.Infrastructure.Services.Storage
 
             var response = _mapper.Map<IEnumerable<ImageResponse>>(images);
             return PageResult<IEnumerable<ImageResponse>>
-                .Succeed(response, Success<Image>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Image"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<UploadImageResponse>> UploadProductImageAsync(
@@ -84,7 +84,7 @@ namespace Restaurant.Infrastructure.Services.Storage
             if (product is null)
             {
                 return Result<UploadImageResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var currentCount = await _productImageRepository.CountByProductIdAsync(product.Id, cancellationToken);
@@ -180,7 +180,7 @@ namespace Restaurant.Infrastructure.Services.Storage
                     if (customer is null)
                     {
                         return Result
-                            .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                            .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
                     }
 
                     customer.SetAvatar(image.Id);
@@ -191,7 +191,7 @@ namespace Restaurant.Infrastructure.Services.Storage
                     if (employee is null)
                     {
                         return Result
-                            .Fail(Error<Employee>.NotFound, HttpStatusCode.NotFound);
+                            .Fail(Error.NotFound("Employee"), HttpStatusCode.NotFound);
                     }
 
                     employee.SetAvatar(image.Id);

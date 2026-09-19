@@ -1,4 +1,4 @@
-﻿using NanoidDotNet;
+using NanoidDotNet;
 using Restaurant.Domain.Entities.Billing;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Personnel;
@@ -13,8 +13,9 @@ namespace Restaurant.Domain.Entities.Sale
         public string OrderCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
         public long? CustomerId { get; private set; }
-        public long EmployeeId { get; private set; }
+        public long? EmployeeId { get; private set; }
         public long BranchId { get; private set; }
+        public long? RestaurantTableId { get; private set; }
 
         public OrderStatus Status { get; private set; }
         public OrderType Type { get; private set; }
@@ -26,11 +27,13 @@ namespace Restaurant.Domain.Entities.Sale
         public decimal TotalAmount { get; private set; }
 
         public string? Note { get; private set; }
+        public string? DeliveryAddress { get; private set; }
 
-        public Customer Customer { get; private set; } = null!;
-        public Employee Employee { get; private set; } = null!;
+        public Customer? Customer { get; private set; } = null!;
+        public Employee? Employee { get; private set; } = null!;
         public Branch Branch { get; private set; } = null!;
         public Invoice Invoice { get; private set; } = null!;
+        public RestaurantTable? RestaurantTable { get; private set; } = null!;
         public ICollection<OrderDetail> OrderDetails { get; private set; } = [];
         public ICollection<OrderDiscount> OrderDiscounts { get; private set; } = [];
     }
@@ -64,13 +67,24 @@ namespace Restaurant.Domain.Entities.Sale
 
         public static Order Create(
             long? customerId,
-            long employeeId,
+            long? employeeId,
             long branchId,
+            long? restaurantTableId,
             OrderType type,
-            string? note)
+            string? note,
+            string? deliveryAddress = null)
         {
-            var order = new Order(customerId, employeeId, branchId, type, note);
-            return order;
+            return new Order
+            {
+                CustomerId = customerId,
+                EmployeeId = employeeId,
+                BranchId = branchId,
+                RestaurantTableId = restaurantTableId,
+                Type = type,
+                Note = note,
+                DeliveryAddress = deliveryAddress,
+                Status = OrderStatus.Pending
+            };
         }
 
         public void Preparing()
@@ -100,7 +114,9 @@ namespace Restaurant.Domain.Entities.Sale
 
         public void CalculateSubtotal()
         {
-            Subtotal = OrderDetails.Sum(x => x.LineTotal);
+            Subtotal = OrderDetails
+                .Where(x => x.OrderPreparation == null || x.OrderPreparation.Status != PreparationStatus.Cancelled)
+                .Sum(x => x.LineTotal);
         }
 
         public void CalculateTotalAmount()

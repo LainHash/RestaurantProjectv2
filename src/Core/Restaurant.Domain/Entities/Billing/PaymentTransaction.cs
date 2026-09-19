@@ -1,4 +1,4 @@
-﻿using Restaurant.Domain.Enums;
+using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
 
 namespace Restaurant.Domain.Entities.Billing
@@ -20,5 +20,43 @@ namespace Restaurant.Domain.Entities.Billing
         public DateTime? CompletedAt { get; private set; }
 
         public Payment Payment { get; private set; } = null!;
+
+        public PaymentTransaction() { }
+
+        public PaymentTransaction(
+            long paymentId,
+            string provider,
+            string transactionCode,
+            decimal amount,
+            string? requestData = null)
+        {
+            PaymentId = paymentId;
+            Provider = provider;
+            TransactionCode = transactionCode;
+            Amount = amount;
+            RequestData = requestData;
+            Status = PaymentTransactionStatus.Pending;
+        }
+
+        public void Success(string responseData, DateTime? completedAt = null)
+        {
+            Status = PaymentTransactionStatus.Success;
+            ResponseData = responseData;
+            CompletedAt = completedAt ?? DateTime.UtcNow;
+        }
+
+        public void Failed(string responseData, DateTime? completedAt = null)
+        {
+            Status = PaymentTransactionStatus.Failed;
+            ResponseData = responseData;
+            CompletedAt = completedAt ?? DateTime.UtcNow;
+        }
+
+        public void Cancelled(string responseData, DateTime? completedAt = null)
+        {
+            Status = PaymentTransactionStatus.Cancelled;
+            ResponseData = responseData;
+            CompletedAt = completedAt ?? DateTime.UtcNow;
+        }
     }
 }

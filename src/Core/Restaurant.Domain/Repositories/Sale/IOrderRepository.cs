@@ -5,5 +5,6 @@ namespace Restaurant.Domain.Repositories.Sale
     public interface IOrderRepository : IRepository<Order>
     {
         Task<Order?> FindWithOrderDetailAsync(long id, CancellationToken cancellationToken = default);
+        Task<Order?> FindWithOrderDetailAsync(Guid publicId, CancellationToken cancellationToken = default);
     }
 }

@@ -40,7 +40,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (user is null)
             {
                 return Result
-                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             if (!user.IsActive)
@@ -75,7 +75,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if(personalProfile is null)
             {
                 return Result<PersonalProfileResponse>
-                    .Fail(Error<PersonalProfile>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Personal Profile"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, personalProfile);
@@ -84,7 +84,7 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             var response = _mapper.Map<PersonalProfileResponse>(personalProfile);
             return Result<PersonalProfileResponse>
-                .Succeed(response, Success<PersonalProfile>.Updated);
+                .Succeed(response, Success.Updated("Personal Profile"));
         }
     }
 }

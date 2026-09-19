@@ -1,4 +1,5 @@
 using FluentValidation;
+using Restaurant.Domain.Enums;
 
 namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
 {
@@ -12,24 +13,46 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
 
             When(x => x.Body != null, () =>
             {
-                RuleFor(x => x.Body.EmployeeId)
-                    .NotEmpty().WithMessage("EmployeeId is required.");
-
+                // BranchId — always required
                 RuleFor(x => x.Body.BranchId)
                     .NotEmpty().WithMessage("BranchId is required.");
 
-                RuleFor(x => x.Body.CustomerId)
-                    .Must(id => id != Guid.Empty)
-                    .When(x => x.Body.CustomerId.HasValue)
-                    .WithMessage("CustomerId must not be empty.");
-
+                // Type — always required
                 RuleFor(x => x.Body.Type)
                     .IsInEnum().WithMessage("Invalid order type.");
 
+                // EmployeeId — required for DineIn and TakeAway, not for Delivery
+                RuleFor(x => x.Body.EmployeeId)
+                    .NotEmpty().WithMessage("EmployeeId is required for dine-in and take-away orders.")
+                    .When(x => x.Body.Type != OrderType.Delivery);
+
+                // RestaurantTableId — required only for DineIn
+                RuleFor(x => x.Body.RestaurantTableId)
+                    .NotEmpty().WithMessage("RestaurantTableId is required for dine-in orders.")
+                    .When(x => x.Body.Type == OrderType.DineIn);
+
+                // CustomerId — required for Delivery, optional otherwise (validate non-empty if provided)
+                RuleFor(x => x.Body.CustomerId)
+                    .NotEmpty().WithMessage("CustomerId is required for delivery orders.")
+                    .When(x => x.Body.Type == OrderType.Delivery);
+
+                RuleFor(x => x.Body.CustomerId)
+                    .Must(id => id != Guid.Empty)
+                    .When(x => x.Body.Type != OrderType.Delivery && x.Body.CustomerId.HasValue)
+                    .WithMessage("CustomerId must not be empty.");
+
+                // DeliveryAddress — required for Delivery
+                RuleFor(x => x.Body.DeliveryAddress)
+                    .NotEmpty().WithMessage("DeliveryAddress is required for delivery orders.")
+                    .MaximumLength(500).WithMessage("DeliveryAddress must not exceed 500 characters.")
+                    .When(x => x.Body.Type == OrderType.Delivery);
+
+                // Note — optional, max length
                 RuleFor(x => x.Body.Note)
                     .MaximumLength(1000).WithMessage("Note must not exceed 1000 characters.")
                     .When(x => !string.IsNullOrEmpty(x.Body.Note));
 
+                // Order details — always required
                 RuleFor(x => x.Body.CreateOrderDetails)
                     .NotEmpty().WithMessage("Order must contain at least one order detail.");
 

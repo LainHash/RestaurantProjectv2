@@ -59,11 +59,14 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             var processedWishlist = await _wishlistRepository.FindAsync(specification, cancellationToken);
             if (processedWishlist is null)
-                return Result<WishlistResponse>.Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+            {
+                return Result<WishlistResponse>
+                    .Fail(Error.NotFound("Wishlist"), HttpStatusCode.NotFound);
+            }
 
             var response = _mapper.Map<WishlistResponse>(processedWishlist);
             return Result<WishlistResponse>
-                .Succeed(response, Success<Wishlist>.Retrieved);
+                .Succeed(response, Success.Retrieved("Wishlist"));
         }
 
         public async Task<Result<WishlistResponse>> AddItemAsync(
@@ -76,7 +79,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (product is null)
             {
                 return Result<WishlistResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var resolveResult = await ResolveWishlistAsync(
@@ -103,12 +106,12 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (processedWishlist is null)
             {
                 return Result<WishlistResponse>
-                    .Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Wishlist"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<WishlistResponse>(processedWishlist);
             return Result<WishlistResponse>
-                .Succeed(response, Success<WishlistItem>.Added);
+                .Succeed(response, Success.Added("Wishlist Item"));
         }
 
         public async Task<Result<WishlistResponse>> RemoveItemAsync(
@@ -121,7 +124,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (product is null)
             {
                 return Result<WishlistResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var resolveResult = await ResolveWishlistAsync(
@@ -151,12 +154,12 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (processedWishlist is null)
             {
                 return Result<WishlistResponse>
-                    .Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Wishlist"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<WishlistResponse>(processedWishlist);
             return Result<WishlistResponse>
-                .Succeed(response, Success<WishlistItem>.Deleted);
+                .Succeed(response, Success.Deleted("Wishlist Item"));
         }
 
         private async Task<Result<Wishlist>> ResolveWishlistAsync(
@@ -190,7 +193,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (customer is null)
             {
                 return Result<Wishlist>
-                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
             var guestWishlist = !string.IsNullOrWhiteSpace(sessionId)
@@ -227,7 +230,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
                 }
             }
 
-            return Result<Wishlist>.Succeed(wishlist, Success<Wishlist>.Retrieved);
+            return Result<Wishlist>.Succeed(wishlist, Success.Retrieved("Wishlist"));
         }
 
         private async Task<Wishlist> ResolveGuestWishlistAsync(

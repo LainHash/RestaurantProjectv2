@@ -4,12 +4,14 @@ using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Serve;
 using Restaurant.Application.Services.Business;
+using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Sale;
+using Restaurant.Domain.Repositories.Territory;
 using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Sale
@@ -19,6 +21,8 @@ namespace Restaurant.Infrastructure.Services.Sale
         private readonly IOrderPreparationRepository _orderPreparationRepository;
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IOrderRepository _orderRepository;
+        private readonly IRestaurantTableRepository _restaurantTableRepository;
+        private readonly IInventoryDeductionService _inventoryDeductionService;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -28,13 +32,17 @@ namespace Restaurant.Infrastructure.Services.Sale
             IMapper mapper,
             IUnitOfWork unitOfWork,
             IOrderDetailRepository orderDetailRepository,
-            IOrderRepository orderRepository)
+            IOrderRepository orderRepository,
+            IRestaurantTableRepository restaurantTableRepository,
+            IInventoryDeductionService inventoryDeductionService)
         {
             _orderPreparationRepository = orderPreparationRepository;
             _mapper = mapper;
             _unitOfWork = unitOfWork;
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
+            _restaurantTableRepository = restaurantTableRepository;
+            _inventoryDeductionService = inventoryDeductionService;
         }
 
         public async Task<Result> PrepareOrderAsync(
@@ -46,7 +54,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Order Preparation"), HttpStatusCode.NotFound);
             }
 
             if(orderPreparation.Status == PreparationStatus.Cancelled)
@@ -89,7 +97,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             var order = orderPreparation.OrderDetail.Order;
@@ -122,7 +130,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
@@ -144,6 +152,14 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
                 order.Served();
+
+                // Release table when all items of a DineIn order are served
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -161,7 +177,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             if (orderPreparation.Status == PreparationStatus.Served)
@@ -176,18 +192,59 @@ namespace Restaurant.Infrastructure.Services.Sale
                     .Fail("Order preparation is already cancelled.", HttpStatusCode.Conflict);
             }
 
+            var order = orderPreparation.OrderDetail.Order;
+            if (order.Invoice != null && order.Invoice.Status == InvoiceStatus.Paid)
+            {
+                return Result
+                    .Fail("Cannot cancel items from an order that has already been paid.", HttpStatusCode.Conflict);
+            }
+
             orderPreparation.Cancelled();
 
-            var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
-            var allPreparations = order!.OrderDetails.Select(od => od.OrderPreparation).ToList();
+            // Release reserved inventory for this cancelled item
+            _inventoryDeductionService.ReleaseReservedInventoryForOrder(
+                order.BranchId,
+                [(orderPreparation.OrderDetail.Product, orderPreparation.OrderDetail.Quantity)],
+                cancellationToken);
+
+            // Recalculate order subtotal and total amount (cancelled items excluded)
+            order.CalculateSubtotal();
+            order.CalculateTotalAmount();
+
+            // Synchronize draft invoice if present
+            if (order.Invoice != null && order.Invoice.Status == InvoiceStatus.Draft)
+            {
+                order.Invoice.UpdateAmounts(order.Subtotal, order.DiscountAmount, order.TaxAmount, order.TotalAmount);
+            }
+
+            var allPreparations = order.OrderDetails
+                .Select(od => od.OrderPreparation)
+                .Where(p => p != null)
+                .ToList();
 
             if (allPreparations.All(p => p.Status == PreparationStatus.Cancelled))
             {
                 order.Cancelled();
+
+                // Release table when a DineIn order is fully cancelled
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
             else if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
                 order.Served();
+
+                // Release table when remaining items of a DineIn order are all done
+                if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
+                {
+                    var table = await _restaurantTableRepository
+                        .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
+                    table?.Release();
+                }
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

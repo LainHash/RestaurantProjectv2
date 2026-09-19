@@ -14,7 +14,16 @@ namespace Restaurant.Infrastructure.Repositories.Sale
         {
             return await _context.Orders
                 .Include(x => x.OrderDetails)
+                .Include(x => x.Invoice)
                 .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        }
+
+        public async Task<Order?> FindWithOrderDetailAsync(Guid publicId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Orders
+                .Include(x => x.OrderDetails)
+                .Include(x => x.Invoice)
+                .FirstOrDefaultAsync(x => x.PublicId == publicId, cancellationToken);
         }
     }
 }

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Catalog.Ingredients.Commands.Create;
 using Restaurant.Application.Features.Catalog.Ingredients.Commands.Update;
 using Restaurant.Application.Services.Business;
@@ -51,7 +51,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IEnumerable<IngredientResponse>>(ingredients);
             return PageResult<IEnumerable<IngredientResponse>>
-                .Succeed(response, Success<Ingredient>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Ingredient"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<IngredientResponse>> GetByIdAsync(
@@ -62,12 +62,12 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (ingredient is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<IngredientResponse>(ingredient);
             return Result<IngredientResponse>
-                .Succeed(response, Success<Ingredient>.Retrieved);
+                .Succeed(response, Success.Retrieved("Ingredient"));
         }
 
         public async Task<Result<IngredientResponse>> CreateAsync(
@@ -79,7 +79,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("IngredientCategory"), HttpStatusCode.NotFound);
             }
 
             Brand? brand = null;
@@ -90,7 +90,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 if (brand is null)
                 {
                     return Result<IngredientResponse>
-                        .Fail(Error<Brand>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Brand"), HttpStatusCode.NotFound);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (unit is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<Unit>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Unit"), HttpStatusCode.NotFound);
             }
 
             var ingredient = _mapper.Map<Ingredient>(request)
@@ -114,7 +114,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IngredientResponse>(createdIngredient);
             return Result<IngredientResponse>
-                .Succeed(response, Success<Ingredient>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Ingredient"), HttpStatusCode.Created);
         }
 
         public async Task<Result<IngredientResponse>> UpdateAsync(
@@ -126,7 +126,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("IngredientCategory"), HttpStatusCode.NotFound);
             }
 
             Brand? brand = null;
@@ -137,7 +137,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 if (brand is null)
                 {
                     return Result<IngredientResponse>
-                        .Fail(Error<Brand>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Brand"), HttpStatusCode.NotFound);
                 }
             }
 
@@ -145,14 +145,14 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (unit is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<Unit>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Unit"), HttpStatusCode.NotFound);
             }
 
             var ingredient = await _ingredientRepository.FindAsync(specification, cancellationToken);
             if (ingredient is null)
             {
                 return Result<IngredientResponse>
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(request, ingredient)
@@ -166,7 +166,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IngredientResponse>(updatedIngredient);
             return Result<IngredientResponse>
-                .Succeed(response, Success<Ingredient>.Updated);
+                .Succeed(response, Success.Updated("Ingredient"));
         }
 
         public async Task<Result> DeleteAsync(
@@ -177,13 +177,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (ingredient is null)
             {
                 return Result
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
             }
 
             if (ingredient.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Ingredient>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Ingredient"), HttpStatusCode.BadRequest);
             }
 
             ingredient.SoftDelete();
@@ -191,7 +191,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Ingredient>.Deleted);
+                .Succeed(Success.Deleted("Ingredient"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -202,13 +202,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (ingredient is null)
             {
                 return Result
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
             }
 
             if (!ingredient.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Ingredient>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Ingredient"), HttpStatusCode.BadRequest);
             }
 
             ingredient.Restore();
@@ -216,7 +216,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Ingredient>.Restored);
+                .Succeed(Success.Restored("Ingredient"));
         }
     }
 }

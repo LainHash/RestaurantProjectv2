@@ -1,19 +1,40 @@
-﻿namespace Restaurant.Domain.Models.Messages
+namespace Restaurant.Domain.Models.Messages
 {
-    public static class Error<TEntity> where TEntity : class
+    public static class Error
     {
-        public readonly static string NotFound = $"{typeof(TEntity).Name} is not found.";
+        public static string NotFound(string name)
+        {
+            return $"{name} is not found.";
+        }
 
-        public readonly static string NotYetDeleted = $"{typeof(TEntity).Name} has not yet been deleted.";
+        public static string NotYetDeleted(string name)
+        {
+            return $"{name} has not yet been deleted.";
+        }
 
-        public readonly static string AlreadyDeleted = $"{typeof(TEntity).Name}has already been deleted.";
+        public static string AlreadyDeleted(string name)
+        {
+            return $"{name} was already deleted.";
+        }
 
-        public readonly static string AlreadyAdded = $"{typeof(TEntity).Name} has already been added.";
+        public static string AlreadyAdded(string name)
+        {
+            return $"{name} has already been added.";
+        }
 
-        public readonly static string OutOfStock = $"{typeof(TEntity).Name} has run out of stock.";
+        public static string OutOfStock(string name)
+        {
+            return $"{name} has run out of stock.";
+        }
 
-        public readonly static string Occupied = $"{typeof(TEntity).Name} was occupied.";
+        public static string Occupied(string name)
+        {
+            return $"{name} was occupied.";
+        }
 
-        public readonly static string ExistedName = $"{typeof(TEntity).Name} with this name is already existed.";
+        public static string ExistedName(string name)
+        {
+            return $"{name} with this name is already existed.";
+        }
     }
 }
