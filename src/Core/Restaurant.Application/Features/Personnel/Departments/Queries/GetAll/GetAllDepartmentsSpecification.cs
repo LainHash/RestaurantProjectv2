@@ -21,17 +21,17 @@ namespace Restaurant.Application.Features.Personnel.Departments.Queries.GetAll
 
             switch (query.SortField)
             {
-                case SortField.CreatedAt:
-                    if (query.Direction == SortDirection.Asc)
-                        ApplyOrderBy(d => d.CreatedAt);
-                    else
-                        ApplyOrderByDescending(d => d.CreatedAt);
-                    break;
-                case SortField.Name:
-                    if (query.Direction == SortDirection.Asc)
+                case "name":
+                    if (query.IsAscending)
                         ApplyOrderBy(d => d.Name);
                     else
                         ApplyOrderByDescending(d => d.Name);
+                    break;
+                default:
+                    if (query.IsAscending)
+                        ApplyOrderBy(d => d.CreatedAt);
+                    else
+                        ApplyOrderByDescending(d => d.CreatedAt);
                     break;
             }
 

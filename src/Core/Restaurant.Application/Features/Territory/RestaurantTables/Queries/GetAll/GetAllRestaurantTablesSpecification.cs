@@ -25,11 +25,17 @@ namespace Restaurant.Application.Features.Territory.RestaurantTables.Queries.Get
 
             switch (query.SortField)
             {
-                case SortField.Capacity:
-                    if (query.Direction == SortDirection.Asc)
+                case "capacity":
+                    if (query.IsAscending)
                         ApplyOrderBy(p => p.Capacity);
                     else
                         ApplyOrderByDescending(p => p.Capacity);
+                    break;
+                default:
+                    if (query.IsAscending)
+                        ApplyOrderBy(p => p.CreatedAt);
+                    else
+                        ApplyOrderByDescending(p => p.CreatedAt);
                     break;
             }
 

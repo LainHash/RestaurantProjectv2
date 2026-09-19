@@ -27,17 +27,17 @@ namespace Restaurant.Application.Features.Billing.Invoices.Queries.GetAll
 
             switch (query.SortField)
             {
-                case SortField.CreatedAt:
-                    if (query.Direction == SortDirection.Asc)
-                        ApplyOrderBy(p => p.CreatedAt);
-                    else
-                        ApplyOrderByDescending(p => p.CreatedAt);
-                    break;
-                case SortField.Price:
-                    if (query.Direction == SortDirection.Asc)
+                case "price":
+                    if (query.IsAscending)
                         ApplyOrderBy(p => p.TotalAmount);
                     else
                         ApplyOrderByDescending(p => p.TotalAmount);
+                    break;
+                default:
+                    if (query.IsAscending)
+                        ApplyOrderBy(p => p.CreatedAt);
+                    else
+                        ApplyOrderByDescending(p => p.CreatedAt);
                     break;
             }
 

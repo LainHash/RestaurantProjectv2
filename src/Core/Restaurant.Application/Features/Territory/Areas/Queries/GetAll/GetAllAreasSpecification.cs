@@ -26,23 +26,23 @@ namespace Restaurant.Application.Features.Territory.Areas.Queries.GetAll
 
             switch (query.SortField)
             {
-                case SortField.Name:
-                    if (query.Direction == SortDirection.Asc)
+                case "name":
+                    if (query.IsAscending)
                         ApplyOrderBy(a => a.Name);
                     else
                         ApplyOrderByDescending(a => a.Name);
                     break;
-                case SortField.CreatedAt:
-                    if (query.Direction == SortDirection.Asc)
-                        ApplyOrderBy(a => a.CreatedAt);
-                    else
-                        ApplyOrderByDescending(a => a.CreatedAt);
-                    break;
-                default:
-                    if (query.Direction == SortDirection.Asc)
+                case "display_order":
+                    if (query.IsAscending)
                         ApplyOrderBy(a => a.DisplayOrder);
                     else
                         ApplyOrderByDescending(a => a.DisplayOrder);
+                    break;
+                default:
+                    if (query.IsAscending)
+                        ApplyOrderBy(a => a.CreatedAt);
+                    else
+                        ApplyOrderByDescending(a => a.CreatedAt);
                     break;
             }
 
