@@ -1,6 +1,7 @@
 using AutoMapper;
 using Restaurant.Application.Features.Commerce.Carts.Commands.AddItem;
 using Restaurant.Application.Features.Commerce.Carts.Commands.RemoveItem;
+using Restaurant.Application.Features.Commerce.Carts.Commands.UpdateItemQuantity;
 using Restaurant.Application.Features.Commerce.Carts.Queries.GetCart;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Commerce;
@@ -172,7 +173,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             var response = _mapper.Map<CartResponse>(processedCart);
             return Result<CartResponse>
-                .Succeed(response, Success<CartItem>.Deleted);
+                .Succeed(response, "Cart Item removed successfully.");
         }
 
         private async Task<Result<Cart>> ResolveAuthenticatedCartAsync(
@@ -183,7 +184,8 @@ namespace Restaurant.Infrastructure.Services.Commerce
             var customer = await _customerRepository.FindByUserIdAsync(userId, cancellationToken);
             if (customer is null)
             {
-                return Result<Cart>.Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                return Result<Cart>
+                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
             }
 
             var guestCart = sessionId != null
@@ -234,6 +236,63 @@ namespace Restaurant.Infrastructure.Services.Commerce
             }
 
             return cart;
+        }
+
+        public async Task<Result<CartResponse>> UpdateItemAsync(
+            UpdateCartItemQuantityCommand command,
+            UpdateCartItemQuantitySpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            if (product is null)
+            {
+                return Result<CartResponse>
+                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            Cart cart;
+
+            if (command.UserId != null)
+            {
+                var resolveResult = await ResolveAuthenticatedCartAsync(
+                    command.UserId.Value, command.SessionId, cancellationToken);
+
+                if (!resolveResult.IsSucceed)
+                {
+                    return Result<CartResponse>
+                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
+                }
+
+                cart = resolveResult.Data!;
+            }
+            else
+            {
+                cart = await ResolveGuestCartAsync(command.SessionId!, cancellationToken);
+            }
+
+            var cartItem = cart.CartItems.FirstOrDefault(x => x.ProductId == product.Id);
+            if (cartItem is null)
+            {
+                cartItem = new CartItem(cart.Id, product.Id);
+                _cartItemRepository.Add(cartItem);
+            }
+            else
+            {
+                cartItem.UpdateQuantity(command.Body.Quantity);
+            }
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
+            if (processedCart is null)
+            {
+                return Result<CartResponse>
+                    .Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<CartResponse>(processedCart);
+            return Result<CartResponse>
+                .Succeed(response, "Cart Item quantity updated successfully.");
         }
     }
 }
