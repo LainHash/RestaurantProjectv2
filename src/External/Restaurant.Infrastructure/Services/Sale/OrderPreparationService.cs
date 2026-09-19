@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Cancel;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
@@ -46,7 +46,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             if(orderPreparation.Status == PreparationStatus.Cancelled)
@@ -89,7 +89,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             var order = orderPreparation.OrderDetail.Order;
@@ -122,7 +122,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
@@ -161,7 +161,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error<OrderPreparation>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
             }
 
             if (orderPreparation.Status == PreparationStatus.Served)

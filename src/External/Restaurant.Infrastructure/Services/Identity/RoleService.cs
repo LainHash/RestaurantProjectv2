@@ -41,7 +41,7 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             var response = _mapper.Map<IEnumerable<RoleResponse>>(roles);
             return Result<IEnumerable<RoleResponse>>
-                .Succeed(response, Success<Role>.Retrieved);
+                .Succeed(response, Success.Retrieved("Role"));
         }
 
         public async Task<Result<RoleResponse>> GetByIdAsync(
@@ -52,12 +52,12 @@ namespace Restaurant.Infrastructure.Services.Identity
             if(role is null)
             {
                 return Result<RoleResponse>
-                    .Fail(Error<Role>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Role"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<RoleResponse>(role);
             return Result<RoleResponse>
-                .Succeed(response, Success<Role>.Retrieved);
+                .Succeed(response, Success.Retrieved("Role"));
         }
 
         public async Task<Result<RoleResponse>> CreateAsync(
@@ -73,7 +73,7 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             var response = _mapper.Map<RoleResponse>(createdRole);
             return Result<RoleResponse>
-                .Succeed(response, Success<Role>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Role"), HttpStatusCode.Created);
         }
 
         public async Task<Result<RoleResponse>> UpdateAsync(
@@ -85,7 +85,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (role is null)
             {
                 return Result<RoleResponse>
-                    .Fail(Error<Role>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Role"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, role);
@@ -94,7 +94,7 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             var response = _mapper.Map<RoleResponse>(role);
             return Result<RoleResponse>
-                .Succeed(response, Success<Role>.Updated);
+                .Succeed(response, Success.Updated("Role"));
         }
 
         public async Task<Result> DeleteAsync(
@@ -105,17 +105,17 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (role is null)
             {
                 return Result
-                    .Fail(Error<Role>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Role"), HttpStatusCode.NotFound);
             }
 
             if (role.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Role>.AlreadyDeleted);
+                    .Fail(Error.AlreadyDeleted("Role"));
             }
 
             return Result
-                .Succeed(Success<Role>.Deleted);
+                .Succeed(Success.Deleted("Role"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -126,17 +126,17 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (role is null)
             {
                 return Result
-                    .Fail(Error<Role>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Role"), HttpStatusCode.NotFound);
             }
 
             if (!role.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Role>.NotYetDeleted);
+                    .Fail(Error.NotYetDeleted("Role"));
             }
 
             return Result
-                .Succeed(Success<Role>.Restored);
+                .Succeed(Success.Restored("Role"));
         }
     }
 }

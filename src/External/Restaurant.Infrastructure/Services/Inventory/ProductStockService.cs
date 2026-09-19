@@ -49,7 +49,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
             if (product is null)
             {
                 return Result<ProductStockResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             if (product.InventoryType == InventoryType.MadeToOrder)
@@ -62,7 +62,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
             if (branch is null)
             {
                 return Result<ProductStockResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             var productStock = await GetOrCreateAsync(
@@ -84,7 +84,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
 
             var response = _mapper.Map<ProductStockResponse>(productStock);
             return Result<ProductStockResponse>
-                .Succeed(response, Success<ProductStock>.Updated);
+                .Succeed(response, Success.Updated("ProductStock"));
         }
 
         private async Task<ProductStock> InitializeAsync(

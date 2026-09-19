@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ForgotPassword;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.ResendVerification;
 using Restaurant.Application.Features.Identity.OtpVerifications.Commands.VerifyEmail;
@@ -80,7 +80,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (user is null)
             {
                 return Result
-                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             if (user.IsActive)
@@ -89,7 +89,8 @@ namespace Restaurant.Infrastructure.Services.Identity
                     .Fail("Account is already active.", HttpStatusCode.Conflict);
             }
 
-            var verification = await _otpVerificationRepository.FindActiveAsync(user.Id, OtpPurpose.EmailVerification, cancellationToken);
+            var verification = await _otpVerificationRepository
+                .FindActiveAsync(user.Id, OtpPurpose.EmailVerification, cancellationToken);
 
             if (verification is null)
             {
@@ -140,7 +141,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (user is null)
             {
                 return Result
-                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             if (user.IsActive)
@@ -191,7 +192,8 @@ namespace Restaurant.Infrastructure.Services.Identity
             var user = await _userRepository.FindByEmailAsync(command.Body.Email, cancellationToken);
             if (user is null)
             {
-                return Result.Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                return Result
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             // Invalidate any existing active OTP for this purpose
@@ -233,7 +235,7 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (user is null)
             {
                 return Result<VerifyPasswordResetOtpResponse>
-                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             var verification = await _otpVerificationRepository

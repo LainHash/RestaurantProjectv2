@@ -48,7 +48,7 @@ namespace Restaurant.Infrastructure.Services.Identity
 
             var response = _mapper.Map<IEnumerable<UserResponse>>(users);
             return PageResult<IEnumerable<UserResponse>>
-                .Succeed(response, Success<User>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("User"), totalItems, specification.Skip, specification.Take);
 
         }
 
@@ -60,12 +60,12 @@ namespace Restaurant.Infrastructure.Services.Identity
             if (user is null)
             {
                 return Result<UserDetailResponse>
-                    .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<UserDetailResponse>(user);
             return Result<UserDetailResponse>
-                .Succeed(response, Success<User>.Retrieved);
+                .Succeed(response, Success.Retrieved("User"));
         }
 
         public async Task<Result> CreateForEmployeeAsync(

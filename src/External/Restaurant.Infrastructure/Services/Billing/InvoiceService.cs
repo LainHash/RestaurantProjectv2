@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetAll;
 using Restaurant.Application.Features.Billing.Invoices.Queries.GetById;
 using Restaurant.Application.Services.Billing;
@@ -35,7 +35,7 @@ namespace Restaurant.Infrastructure.Services.Billing
 
             var response = _mapper.Map<IEnumerable<InvoiceResponse>>(invoices);
             return PageResult<IEnumerable<InvoiceResponse>>
-                .Succeed(response, Success<Invoice>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Invoice"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<InvoiceResponse>> GetByIdAsync(
@@ -46,12 +46,12 @@ namespace Restaurant.Infrastructure.Services.Billing
             if (invoice is null)
             {
                 return Result<InvoiceResponse>
-                    .Fail(Error<Invoice>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Invoice"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<InvoiceResponse>(invoice);
             return Result<InvoiceResponse>
-                .Succeed(response, Success<Invoice>.Retrieved);
+                .Succeed(response, Success.Retrieved("Invoice"));
         }
 
     }

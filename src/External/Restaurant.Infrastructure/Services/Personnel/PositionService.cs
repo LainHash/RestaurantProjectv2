@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Personnel.Positions.Commands.Create;
 using Restaurant.Application.Features.Personnel.Positions.Commands.Update;
 using Restaurant.Application.Features.Personnel.Positions.Queries.GetAll;
@@ -43,7 +43,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<IEnumerable<PositionResponse>>(positions);
             return Result<IEnumerable<PositionResponse>>
-                .Succeed(response, Success<Position>.Retrieved);
+                .Succeed(response, Success.Retrieved("Position"));
         }
 
         public async Task<Result<PositionResponse>> GetByIdAsync(
@@ -54,12 +54,12 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if(position is null)
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<PositionResponse>(position);
             return Result<PositionResponse>
-                .Succeed(response, Success<Position>.Retrieved);
+                .Succeed(response, Success.Retrieved("Position"));
         }
 
         public async Task<Result<PositionResponse>> CreateAsync(
@@ -70,14 +70,14 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (department is null)
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             var existing = await _positionRepository.FindByNameAsync(command.Body.Name, cancellationToken);
             if (existing is not null)
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Position>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Position"), HttpStatusCode.Conflict);
             }
 
             var position = _mapper.Map<Position>(command.Body);
@@ -92,7 +92,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<PositionResponse>(created);
             return Result<PositionResponse>
-                .Succeed(response, Success<Position>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Position"), HttpStatusCode.Created);
         }
 
         public async Task<Result<PositionResponse>> UpdateAsync(
@@ -104,7 +104,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (position is null)
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
             }
 
             // Validate name uniqueness (allow keeping same name on self)
@@ -112,14 +112,14 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (nameExists && !string.Equals(position.Name, command.Body.Name, StringComparison.OrdinalIgnoreCase))
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Position>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Position"), HttpStatusCode.Conflict);
             }
 
             var department = await _departmentRepository.FindByIdAsync(command.Body.DepartmentId, cancellationToken);
             if (department is null)
             {
                 return Result<PositionResponse>
-                    .Fail(Error<Department>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Department"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, position);
@@ -133,7 +133,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<PositionResponse>(updated);
             return Result<PositionResponse>
-                .Succeed(response, Success<Position>.Updated, HttpStatusCode.OK);
+                .Succeed(response, Success.Updated("Position"), HttpStatusCode.OK);
         }
 
         public async Task<Result> DeleteAsync(
@@ -144,20 +144,20 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (position is null)
             {
                 return Result
-                    .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
             }
 
             if (position.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Position>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Position"), HttpStatusCode.BadRequest);
             }
 
             position.SoftDelete();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Position>.Deleted);
+                .Succeed(Success.Deleted("Position"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -168,20 +168,20 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (position is null)
             {
                 return Result
-                    .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
             }
 
             if (!position.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Position>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Position"), HttpStatusCode.BadRequest);
             }
 
             position.Restore();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Position>.Restored);
+                .Succeed(Success.Restored("Position"));
         }
     }
 }

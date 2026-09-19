@@ -44,7 +44,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<IEnumerable<RestaurantTableResponse>>(restaurantTables);
             return PageResult<IEnumerable<RestaurantTableResponse>>
-                .Succeed(response, Success<RestaurantTable>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("RestaurantTable"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<RestaurantTableResponse>> GetByIdAsync(
@@ -55,12 +55,12 @@ namespace Restaurant.Infrastructure.Services.Territory
             if(restaurantTable is null)
             {
                 return Result<RestaurantTableResponse>
-                    .Fail(Error<RestaurantTable>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("RestaurantTable"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<RestaurantTableResponse>(restaurantTable);
             return Result<RestaurantTableResponse>
-                .Succeed(response, Success<RestaurantTable>.Retrieved);
+                .Succeed(response, Success.Retrieved("RestaurantTable"));
         }
 
         public async Task<Result<RestaurantTableResponse>> CreateAsync(
@@ -72,7 +72,7 @@ namespace Restaurant.Infrastructure.Services.Territory
             if(area is null)
             {
                 return Result<RestaurantTableResponse>
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             if (await _restaurantTableRepository.IsExistingTableNumberAsync(command.Body.TableNumber, cancellationToken))
@@ -93,7 +93,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<RestaurantTableResponse>(createdRestaurantTable);
             return Result<RestaurantTableResponse>
-                .Succeed(response, Success<RestaurantTable>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("RestaurantTable"), HttpStatusCode.Created);
         }
 
         public async Task<Result<RestaurantTableResponse>> UpdateAsync(
@@ -105,7 +105,7 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (area is null)
             {
                 return Result<RestaurantTableResponse>
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             if (await _restaurantTableRepository.IsExistingTableNumberAsync(command.Body.TableNumber, cancellationToken))
@@ -118,7 +118,7 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (restaurantTable is null)
             {
                 return Result<RestaurantTableResponse>
-                    .Fail(Error<RestaurantTable>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("RestaurantTable"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(command.Body, restaurantTable);
@@ -128,7 +128,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<RestaurantTableResponse>(restaurantTable);
             return Result<RestaurantTableResponse>
-                .Succeed(response, Success<RestaurantTable>.Updated);
+                .Succeed(response, Success.Updated("RestaurantTable"));
         }
     }
 }

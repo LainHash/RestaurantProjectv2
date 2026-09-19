@@ -40,7 +40,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<IEnumerable<BranchResponse>>(branches);
             return PageResult<IEnumerable<BranchResponse>>
-                .Succeed(response, Success<Branch>.Retrieved, totalItem, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Branch"), totalItem, specification.Skip, specification.Take);
         }
 
         public async Task<Result<BranchDetailResponse>> GetByIdAsync(
@@ -51,12 +51,12 @@ namespace Restaurant.Infrastructure.Services.Territory
             if(branch is null)
             {
                 return Result<BranchDetailResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<BranchDetailResponse>(branch);
             return Result<BranchDetailResponse>
-                .Succeed(response, Success<Branch>.Retrieved);
+                .Succeed(response, Success.Retrieved("Branch"));
         }
     }
 }

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Inventory.IngredientStocks.Commands.UpdateQuantity;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Inventory;
@@ -47,21 +47,21 @@ namespace Restaurant.Infrastructure.Services.Inventory
             if (ingredient is null)
             {
                 return Result<IngredientStockResponse>
-                    .Fail(Error<Ingredient>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
             }
 
             var branch = await _branchRepository.FindByIdAsync(command.BranchId, cancellationToken);
             if (branch is null)
             {
                 return Result<IngredientStockResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             var ingredientStock = await _ingredientStockRepository.FindAsync(specification, cancellationToken);
             if (ingredientStock is null)
             {
                 return Result<IngredientStockResponse>
-                    .Fail(Error<IngredientStock>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient Stock"), HttpStatusCode.NotFound);
             }
 
             if (ingredientStock.QuantityOnHand - command.Body.Amount < 0)
@@ -76,7 +76,7 @@ namespace Restaurant.Infrastructure.Services.Inventory
 
             var response = _mapper.Map<IngredientStockResponse>(ingredientStock);
             return Result<IngredientStockResponse>
-                .Succeed(response, Success<IngredientStock>.Updated);
+                .Succeed(response, Success.Updated("IngredientStock"));
         }
     }
 }

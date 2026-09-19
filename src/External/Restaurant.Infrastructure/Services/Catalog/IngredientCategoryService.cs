@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Catalog.IngredientCategories.Commands.Create;
 using Restaurant.Application.Features.Catalog.IngredientCategories.Commands.Update;
 using Restaurant.Application.Services.Business;
@@ -40,7 +40,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IEnumerable<IngredientCategoryResponse>>(categories);
             return PageResult<IEnumerable<IngredientCategoryResponse>>
-                .Succeed(response, Success<IngredientCategory>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("IngredientCategory"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<IngredientCategoryResponse>> GetOneAsync(
@@ -51,12 +51,12 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result<IngredientCategoryResponse>
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("IngredientCategory"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<IngredientCategoryResponse>(category);
             return Result<IngredientCategoryResponse>
-                .Succeed(response, Success<IngredientCategory>.Retrieved);
+                .Succeed(response, Success.Retrieved("IngredientCategory"));
         }
 
         public async Task<Result<IngredientCategoryResponse>> CreateAsync(
@@ -67,7 +67,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is not null)
             {
                 return Result<IngredientCategoryResponse>
-                    .Fail(Error<IngredientCategory>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail("Ingredient Category with this name already exist.", HttpStatusCode.Conflict);
             }
 
             category = _mapper.Map<IngredientCategory>(command.Body);
@@ -77,7 +77,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IngredientCategoryResponse>(category);
             return Result<IngredientCategoryResponse>
-                .Succeed(response, Success<IngredientCategory>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Ingredient Category"), HttpStatusCode.Created);
         }
 
         public async Task<Result<IngredientCategoryResponse>> UpdateAsync(
@@ -89,13 +89,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is null)
             {
                 return Result<IngredientCategoryResponse>
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient Category"), HttpStatusCode.NotFound);
             }
 
             if (await _categoryRepository.IsExistingNameAsync(command.Body.Name, cancellationToken))
             {
                 return Result<IngredientCategoryResponse>
-                    .Fail(Error<IngredientCategory>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail("Ingredient Category with this name already exist.", HttpStatusCode.Conflict);
             }
 
             _mapper.Map(command.Body, category);
@@ -104,7 +104,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IngredientCategoryResponse>(category);
             return Result<IngredientCategoryResponse>
-                .Succeed(response, Success<IngredientCategory>.Updated, HttpStatusCode.OK);
+                .Succeed(response, Success.Updated("Ingredient Category"), HttpStatusCode.OK);
         }
 
         public async Task<Result> DeleteAsync(
@@ -115,13 +115,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient Category"), HttpStatusCode.NotFound);
             }
 
             if (category.IsDeleted)
             {
                 return Result
-                    .Fail(Error<IngredientCategory>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Ingredient Category"), HttpStatusCode.BadRequest);
             }
 
             category.SoftDelete();
@@ -129,7 +129,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<IngredientCategory>.Deleted);
+                .Succeed(Success.Deleted("Ingredient Category"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -140,13 +140,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category == null)
             {
                 return Result
-                    .Fail(Error<IngredientCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Ingredient Category"), HttpStatusCode.NotFound);
             }
 
             if (!category.IsDeleted)
             {
                 return Result
-                    .Fail(Error<IngredientCategory>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Ingredient Category"), HttpStatusCode.BadRequest);
             }
 
             category.Restore();
@@ -154,7 +154,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<IngredientCategory>.Restored);
+                .Succeed(Success.Restored("Ingredient Category"));
         }
     }
 }

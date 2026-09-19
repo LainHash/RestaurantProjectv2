@@ -54,7 +54,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IEnumerable<ProductResponse>>(products);
             return PageResult<IEnumerable<ProductResponse>>
-                .Succeed(response, Success<Product>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Product"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<ProductDetailResponse>> GetByIdAsync(
@@ -65,12 +65,12 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if(product is null)
             {
                 return Result<ProductDetailResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<ProductDetailResponse>(product);
             return Result<ProductDetailResponse>
-                .Succeed(response, Success<Product>.Retrieved);
+                .Succeed(response, Success.Retrieved("Product"));
         }
 
         public async Task<Result<ProductResponse>> CreateAsync(
@@ -82,7 +82,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if(category is null)
             {
                 return Result<ProductResponse>
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("ProductCategory"), HttpStatusCode.NotFound);
             }
 
             Brand? brand = null;
@@ -93,7 +93,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 if (brand is null)
                 {
                     return Result<ProductResponse>
-                        .Fail(Error<Brand>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Brand"), HttpStatusCode.NotFound);
                 }
             }
 
@@ -101,7 +101,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (unit is null)
             {
                 return Result<ProductResponse>
-                    .Fail(Error<Unit>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Unit"), HttpStatusCode.NotFound);
             }
 
             var product = _mapper.Map<Product>(request)
@@ -118,7 +118,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             
             var response = _mapper.Map<ProductResponse>(createdProduct);
             return Result<ProductResponse>
-                .Succeed(response, Success<Product>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Product"), HttpStatusCode.Created);
         }
 
         public async Task<Result<ProductResponse>> UpdateAsync(
@@ -130,7 +130,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (category is null)
             {
                 return Result<ProductResponse>
-                    .Fail(Error<ProductCategory>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("ProductCategory"), HttpStatusCode.NotFound);
             }
 
             Brand? brand = null;
@@ -141,7 +141,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 if (brand is null)
                 {
                     return Result<ProductResponse>
-                        .Fail(Error<Brand>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Brand"), HttpStatusCode.NotFound);
                 }
             }
 
@@ -149,14 +149,14 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (unit is null)
             {
                 return Result<ProductResponse>
-                    .Fail(Error<Unit>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Unit"), HttpStatusCode.NotFound);
             }
 
             var product = await _productRepository.FindAsync(specification, cancellationToken);
             if(product is null)
             {
                 return Result<ProductResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             _mapper.Map(request, product)
@@ -170,7 +170,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<ProductResponse>(updatedProduct);
             return Result<ProductResponse>
-                .Succeed(response, Success<Product>.Updated);
+                .Succeed(response, Success.Updated("Product"));
         }
 
         public async Task<Result> DeleteAsync(
@@ -181,13 +181,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (product is null)
             {
                 return Result
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             if (product.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Product>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Product"), HttpStatusCode.BadRequest);
             }
 
             product.SoftDelete();
@@ -195,7 +195,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Product>.Deleted);
+                .Succeed(Success.Deleted("Product"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -206,13 +206,13 @@ namespace Restaurant.Infrastructure.Services.Catalog
             if (product is null)
             {
                 return Result
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             if (!product.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Product>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Product"), HttpStatusCode.BadRequest);
             }
 
             product.Restore();
@@ -220,7 +220,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result
-                .Succeed(Success<Product>.Restored);
+                .Succeed(Success.Restored("Product"));
         }
     }
 }

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Restaurant.Application.Features.Territory.Areas.Commands.Create;
 using Restaurant.Application.Features.Territory.Areas.Commands.Update;
 using Restaurant.Application.Features.Territory.Areas.Queries.GetAll;
@@ -43,7 +43,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<IEnumerable<AreaResponse>>(areas);
             return PageResult<IEnumerable<AreaResponse>>
-                .Succeed(response, Success<Area>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Area"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<AreaDetailResponse>> GetByIdAsync(
@@ -54,12 +54,12 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (area is null)
             {
                 return Result<AreaDetailResponse>
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<AreaDetailResponse>(area);
             return Result<AreaDetailResponse>
-                .Succeed(response, Success<Area>.Retrieved);
+                .Succeed(response, Success.Retrieved("Area"));
         }
 
         public async Task<Result<AreaResponse>> CreateAsync(
@@ -71,13 +71,13 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (branch is null)
             {
                 return Result<AreaResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             if (await _areaRepository.IsExistingNameAsync(branch.Id, command.Body.Name, cancellationToken))
             {
                 return Result<AreaResponse>
-                    .Fail(Error<Area>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Area"), HttpStatusCode.Conflict);
             }
 
             var area = _mapper.Map<Area>(command.Body)
@@ -91,7 +91,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<AreaResponse>(createdArea);
             return Result<AreaResponse>
-                .Succeed(response, Success<Area>.Created, HttpStatusCode.Created);
+                .Succeed(response, Success.Created("Area"), HttpStatusCode.Created);
         }
 
         public async Task<Result<AreaResponse>> UpdateAsync(
@@ -103,21 +103,21 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (branch is null)
             {
                 return Result<AreaResponse>
-                    .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
             }
 
             var area = await _areaRepository.FindAsync(specification, cancellationToken);
             if (area is null)
             {
                 return Result<AreaResponse>
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             var nameExists = await _areaRepository.IsExistingNameAsync(branch.Id, command.Body.Name, cancellationToken);
             if (nameExists && !string.Equals(area.Name, command.Body.Name, StringComparison.OrdinalIgnoreCase))
             {
                 return Result<AreaResponse>
-                    .Fail(Error<Area>.ExistedName, HttpStatusCode.Conflict);
+                    .Fail(Error.ExistedName("Area"), HttpStatusCode.Conflict);
             }
 
             _mapper.Map(command.Body, area);
@@ -127,7 +127,7 @@ namespace Restaurant.Infrastructure.Services.Territory
 
             var response = _mapper.Map<AreaResponse>(area);
             return Result<AreaResponse>
-                .Succeed(response, Success<Area>.Updated);
+                .Succeed(response, Success.Updated("Area"));
         }
 
         public async Task<Result> DeleteAsync(
@@ -138,19 +138,19 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (area is null)
             {
                 return Result
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             if (area.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Area>.AlreadyDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.AlreadyDeleted("Area"), HttpStatusCode.BadRequest);
             }
 
             area.SoftDelete();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Succeed(Success<Area>.Deleted);
+            return Result.Succeed(Success.Deleted("Area"));
         }
 
         public async Task<Result> RestoreAsync(
@@ -161,19 +161,19 @@ namespace Restaurant.Infrastructure.Services.Territory
             if (area is null)
             {
                 return Result
-                    .Fail(Error<Area>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Area"), HttpStatusCode.NotFound);
             }
 
             if (!area.IsDeleted)
             {
                 return Result
-                    .Fail(Error<Area>.NotYetDeleted, HttpStatusCode.BadRequest);
+                    .Fail(Error.NotYetDeleted("Area"), HttpStatusCode.BadRequest);
             }
 
             area.Restore();
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Succeed(Success<Area>.Restored);
+            return Result.Succeed(Success.Restored("Area"));
         }
     }
 }

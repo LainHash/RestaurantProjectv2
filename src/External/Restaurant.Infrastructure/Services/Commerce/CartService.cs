@@ -60,11 +60,11 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
             if (processedCart is null)
-                return Result<CartResponse>.Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+                return Result<CartResponse>.Fail(Error.NotFound("Cart"), HttpStatusCode.NotFound);
 
             var response = _mapper.Map<CartResponse>(processedCart);
             return Result<CartResponse>
-                .Succeed(response, Success<Cart>.Retrieved);
+                .Succeed(response, Success.Retrieved("Cart"));
         }
 
         public async Task<Result<CartResponse>> AddItemAsync(
@@ -76,7 +76,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (product is null)
             {
                 return Result<CartResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var resolveResult = await ResolveCartAsync(
@@ -105,11 +105,11 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
             if (processedCart is null)
-                return Result<CartResponse>.Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+                return Result<CartResponse>.Fail(Error.NotFound("Cart"), HttpStatusCode.NotFound);
 
             var response = _mapper.Map<CartResponse>(processedCart);
             return Result<CartResponse>
-                .Succeed(response, Success<CartItem>.Added);
+                .Succeed(response, Success.Added("Cart Item"));
         }
 
         public async Task<Result<CartResponse>> RemoveItemAsync(
@@ -121,7 +121,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (product is null)
             {
                 return Result<CartResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var resolveResult = await ResolveCartAsync(
@@ -148,7 +148,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             var processedCart = await _cartRepository.FindAsync(specification, cancellationToken);
             if (processedCart is null)
-                return Result<CartResponse>.Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+                return Result<CartResponse>.Fail(Error.NotFound("Cart"), HttpStatusCode.NotFound);
 
             var response = _mapper.Map<CartResponse>(processedCart);
             return Result<CartResponse>
@@ -164,7 +164,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (product is null)
             {
                 return Result<CartResponse>
-                    .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
             }
 
             var resolveResult = await ResolveCartAsync(
@@ -195,7 +195,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (processedCart is null)
             {
                 return Result<CartResponse>
-                    .Fail(Error<Cart>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Cart"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<CartResponse>(processedCart);
@@ -234,7 +234,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             if (customer is null)
             {
                 return Result<Cart>
-                    .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
             var guestCart = !string.IsNullOrWhiteSpace(sessionId)
@@ -271,7 +271,7 @@ namespace Restaurant.Infrastructure.Services.Commerce
             }
 
             return Result<Cart>
-                .Succeed(cart, Success<Cart>.Retrieved);
+                .Succeed(cart, Success.Retrieved("Cart"));
         }
 
         private async Task<Cart> ResolveGuestCartAsync(

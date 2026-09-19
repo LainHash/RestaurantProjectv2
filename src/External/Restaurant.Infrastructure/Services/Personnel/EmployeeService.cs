@@ -54,7 +54,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
 
             var response = _mapper.Map<IEnumerable<EmployeeResponse>>(employees);
             return Result<IEnumerable<EmployeeResponse>>
-                .Succeed(response, Success<Employee>.Retrieved);
+                .Succeed(response, Success.Retrieved("Employee"));
         }
 
         public async Task<Result<EmployeeResponse>> GetByIdAsync(
@@ -65,12 +65,12 @@ namespace Restaurant.Infrastructure.Services.Personnel
             if (employee is null)
             {
                 return Result<EmployeeResponse>
-                    .Fail(Error<Employee>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Employee"), HttpStatusCode.NotFound);
             }
 
             var response = _mapper.Map<EmployeeResponse>(employee);
             return Result<EmployeeResponse>
-                .Succeed(response, Success<Employee>.Retrieved);
+                .Succeed(response, Success.Retrieved("Employee"));
         }
 
         public async Task<Result<EmployeeResponse>> CreateAsync(
@@ -85,21 +85,21 @@ namespace Restaurant.Infrastructure.Services.Personnel
                 if(user is null)
                 {
                     return Result<EmployeeResponse>
-                        .Fail(Error<User>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
                 }
 
                 var position = await _positionRepository.FindByIdAsync(command.Body.PositionId, cancellationToken);
                 if(position is null)
                 {
                     return Result<EmployeeResponse>
-                        .Fail(Error<Position>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
                 }
 
                 var branch = await _branchRepository.FindByIdAsync(command.Body.BranchId, cancellationToken);
                 if(branch is null)
                 {
                     return Result<EmployeeResponse>
-                        .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
                 }
 
                 var employee = _mapper.Map<Employee>(command.Body)
@@ -118,7 +118,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
                 var createdEmployee = await _employeeRepository.FindAsync(specification, cancellationToken);
                 var response = _mapper.Map<EmployeeResponse>(createdEmployee);
                 return Result<EmployeeResponse>
-                    .Succeed(response, Success<Employee>.Created, HttpStatusCode.Created);
+                    .Succeed(response, Success.Created("Employee"), HttpStatusCode.Created);
             }
             catch
             {

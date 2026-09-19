@@ -1,16 +1,40 @@
-﻿namespace Restaurant.Domain.Models.Messages
+namespace Restaurant.Domain.Models.Messages
 {
-    public static class Success<TEntity> where TEntity : class
+    public static class Success
     {
-        public readonly static string Retrieved = $"{typeof(TEntity).Name} was retrived successfully.";
+        public static string Retrieved(string name)
+        {
+            return $"{name} was retrieved successfully.";
+        }
 
-        public readonly static string Created = $"{typeof(TEntity).Name} was created successfully.";
-        public readonly static string Updated = $"{typeof(TEntity).Name} was updated successfully.";
+        public static string Created(string name)
+        {
+            return $"{name} was created successfully.";
+        }
 
-        public readonly static string Deleted = $"{typeof(TEntity).Name} was deleted successfully.";
-        public readonly static string Restored = $"{typeof(TEntity).Name} was restored successfully.";
+        public static string Updated(string name)
+        {
+            return $"{name} was updated successfully.";
+        }
 
-        public readonly static string Uploaded = $"{typeof(TEntity).Name} was uploaded successfully.";
-        public readonly static string Added = $"{typeof(TEntity).Name} was added successfully.";
+        public static string Restored(string name)
+        {
+            return $"{name} was restored successfully.";
+        }
+
+        public static string Deleted(string name)
+        {
+            return $"{name} was deleted successfully.";
+        }
+
+        public static string Uploaded(string name)
+        {
+            return $"{name} was uploaded successfully.";
+        }
+
+        public static string Added(string name)
+        {
+            return $"{name} was added successfully.";
+        }
     }
 }

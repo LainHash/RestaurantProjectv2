@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
@@ -77,7 +77,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             var response = _mapper.Map<IEnumerable<OrderResponse>>(orders);
             return PageResult<IEnumerable<OrderResponse>>
-                .Succeed(response, Success<Order>.Retrieved, totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Order"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<OrderResponse>> GetByIdAsync(
@@ -88,13 +88,13 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (order is null)
             {
                 return Result<OrderResponse>
-                    .Fail(Error<Order>.NotFound, HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Order"), HttpStatusCode.NotFound);
 
             }
 
             var response = _mapper.Map<OrderResponse>(order);
             return Result<OrderResponse>
-                .Succeed(response, Success<Order>.Retrieved);
+                .Succeed(response, Success.Retrieved("Order"));
         }
 
         public async Task<Result<OrderResponse>> CreateAsync(
@@ -115,7 +115,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                     if (customer is null)
                     {
                         return Result<OrderResponse>
-                            .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
+                            .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
                     }
                 }
 
@@ -124,7 +124,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 if (employee is null)
                 {
                     return Result<OrderResponse>
-                        .Fail(Error<Employee>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Employee"), HttpStatusCode.NotFound);
                 }
 
                 var branch = await _branchRepository
@@ -132,7 +132,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 if (branch is null)
                 {
                     return Result<OrderResponse>
-                        .Fail(Error<Branch>.NotFound, HttpStatusCode.NotFound);
+                        .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
                 }
 
                 var order = Order.Create(
@@ -161,7 +161,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                     if (!productMap.TryGetValue(item.ProductId, out var product))
                     {
                         return Result<OrderResponse>
-                            .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
+                            .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);
                     }
 
                     orderItems.Add((product, item.Quantity));
@@ -201,7 +201,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
                 var response = _mapper.Map<OrderResponse>(createdOrder);
                 return Result<OrderResponse>
-                    .Succeed(response, Success<Order>.Created, HttpStatusCode.Created);
+                    .Succeed(response, Success.Created("Order"), HttpStatusCode.Created);
             }
             catch (Exception ex)
             {
