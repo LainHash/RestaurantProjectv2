@@ -7,6 +7,8 @@ namespace Restaurant.Domain.Entities.Inventory
     public partial class ProductStock : SoftDeletableEntity
     {
         public decimal QuantityOnHand { get; private set; }
+        public decimal QuantityReserved { get; private set; }
+        public decimal ReorderLevel { get; private set; }
 
         public long ProductId { get; private set; }
         public long BranchId { get; private set; }

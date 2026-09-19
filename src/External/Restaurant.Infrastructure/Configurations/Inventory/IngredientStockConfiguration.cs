@@ -23,6 +23,16 @@ namespace Restaurant.Infrastructure.Configurations.Inventory
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
 
+            builder.Property(x => x.QuantityReserved)
+                .IsRequired()
+                .HasDefaultValue(0)
+                .HasColumnType("decimal(18,2)");
+
+            builder.Property(x => x.ReorderLevel)
+                .IsRequired()
+                .HasDefaultValue(0)
+                .HasColumnType("decimal(18,2)");
+
             builder.HasIndex(x => new { x.BranchId, x.IngredientId })
                 .IsUnique();
 

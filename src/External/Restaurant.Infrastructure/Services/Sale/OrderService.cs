@@ -173,8 +173,8 @@ namespace Restaurant.Infrastructure.Services.Sale
                     order.AddOrderDetail(orderDetail);
                 }
 
-                var deductionResult = await _inventoryDeductionService
-                    .DeductInventoryForOrderAsync(branch.Id, orderItems, cancellationToken);
+                var deductionResult = _inventoryDeductionService
+                    .DeductInventoryForOrder(branch.Id, orderItems, cancellationToken);
 
                 if (!deductionResult.IsSucceed)
                 {

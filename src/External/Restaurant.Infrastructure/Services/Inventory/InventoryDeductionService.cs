@@ -9,15 +9,13 @@ namespace Restaurant.Infrastructure.Services.Inventory
 {
     internal class InventoryDeductionService : IInventoryDeductionService
     {
-        public Task<Result> DeductInventoryForOrderAsync(
+        public Result DeductInventoryForOrder(
             long branchId,
             IEnumerable<(Product Product, int Quantity)> items,
             CancellationToken cancellationToken = default)
         {
-            // 1. Gom nhóm nhu cầu tồn kho cho sản phẩm đóng gói/bán sẵn (StockTracked)
             var productStockDemands = new Dictionary<long, (ProductStock Stock, string ProductName, int RequiredQuantity)>();
 
-            // 2. Gom nhóm nhu cầu tồn kho cho nguyên liệu (MadeToOrder)
             var ingredientDemands = new Dictionary<long, (Ingredient Ingredient, decimal RequiredAmount)>();
 
             foreach (var (product, quantity) in items)
@@ -29,9 +27,9 @@ namespace Restaurant.Infrastructure.Services.Inventory
                     var stock = product.ProductStocks.FirstOrDefault(s => s.BranchId == branchId);
                     if (stock is null)
                     {
-                        return Task.FromResult(Result.Fail(
+                        return Result.Fail(
                             $"Sản phẩm '{product.Name}' chưa được thiết lập dữ liệu tồn kho tại chi nhánh này.",
-                            HttpStatusCode.BadRequest));
+                            HttpStatusCode.BadRequest);
                     }
 
                     if (productStockDemands.TryGetValue(product.Id, out var existing))
@@ -48,21 +46,20 @@ namespace Restaurant.Infrastructure.Services.Inventory
                     var recipe = product.Recipes.FirstOrDefault();
                     if (recipe is null || !recipe.RecipeIngredients.Any())
                     {
-                        return Task.FromResult(Result.Fail(
+                        return Result.Fail(
                             $"Món '{product.Name}' chưa được cấu hình công thức chế biến (Recipe).",
-                            HttpStatusCode.BadRequest));
+                            HttpStatusCode.BadRequest);
                     }
 
                     foreach (var ri in recipe.RecipeIngredients)
                     {
                         if (ri.Ingredient is null)
                         {
-                            return Task.FromResult(Result.Fail(
+                            return Result.Fail(
                                 $"Không tìm thấy thông tin nguyên liệu trong công thức của món '{product.Name}'.",
-                                HttpStatusCode.BadRequest));
+                                HttpStatusCode.BadRequest);
                         }
 
-                        // Tính hệ số quy đổi đơn vị về BaseUnit của nguyên liệu
                         decimal conversionFactor = 1m;
                         if (ri.UnitId != ri.Ingredient.BaseUnitId &&
                             ri.Ingredient.BaseUnit is not null &&
@@ -86,20 +83,18 @@ namespace Restaurant.Infrastructure.Services.Inventory
                 }
             }
 
-            // 3. Kiểm tra tính khả dụng & trừ tồn kho thành phẩm (StockTracked)
             foreach (var (stock, productName, requiredQty) in productStockDemands.Values)
             {
                 if (stock.QuantityOnHand < requiredQty)
                 {
-                    return Task.FromResult(Result.Fail(
+                    return Result.Fail(
                         $"Không đủ tồn kho cho sản phẩm '{productName}'. Tồn hiện tại: {stock.QuantityOnHand}, Yêu cầu: {requiredQty}.",
-                        HttpStatusCode.BadRequest));
+                        HttpStatusCode.BadRequest);
                 }
 
                 stock.UpdateQuantity(-requiredQty);
             }
 
-            // 4. Kiểm tra tính khả dụng & trừ tồn kho nguyên liệu (MadeToOrder)
             foreach (var (ingredient, requiredAmount) in ingredientDemands.Values)
             {
                 var ingredientStock = ingredient.IngredientStocks.FirstOrDefault(s => s.BranchId == branchId);
@@ -108,15 +103,15 @@ namespace Restaurant.Infrastructure.Services.Inventory
 
                 if (ingredientStock is null || availableOnHand < requiredAmount)
                 {
-                    return Task.FromResult(Result.Fail(
+                    return Result.Fail(
                         $"Không đủ nguyên liệu '{ingredient.Name}'. Tồn hiện tại: {availableOnHand} {unitSymbol}, Cần: {requiredAmount} {unitSymbol}.",
-                        HttpStatusCode.BadRequest));
+                        HttpStatusCode.BadRequest);
                 }
 
                 ingredientStock.UpdateQuantity(-requiredAmount);
             }
 
-            return Task.FromResult(Result.Succeed("Cập nhật tồn kho thành công."));
+            return Result.Succeed("Cập nhật tồn kho thành công.");
         }
     }
 }
