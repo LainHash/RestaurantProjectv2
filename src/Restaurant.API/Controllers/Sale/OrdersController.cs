@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
+using Restaurant.Application.Features.Sale.Orders.Commands.AddItems;
 using Restaurant.Application.Features.Sale.Orders.Commands.Create;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
@@ -41,6 +42,17 @@ namespace Restaurant.API.Controllers.Sale
             CancellationToken cancellationToken)
         {
             var command = new CreateOrderCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpPost("{id}/items")]
+        public async Task<IActionResult> AddItems(
+            [FromRoute] Guid id,
+            [FromBody] AddOrderItemsRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new AddOrderItemsCommand(id, body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

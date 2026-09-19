@@ -209,6 +209,83 @@ namespace Restaurant.Infrastructure.Services.Sale
             }
         }
 
+        public async Task<Result<OrderResponse>> AddItemsAsync(
+            Guid orderId,
+            AddOrderItemsRequest request,
+            CreateOrderSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                var order = await _orderRepository
+                    .FindWithOrderDetailAsync(orderId, cancellationToken);
+
+                if (order is null)
+                {
+                    return Result<OrderResponse>
+                        .Fail(Error.NotFound("Order"), HttpStatusCode.NotFound);
+                }
+
+                if (order.Status == OrderStatus.Cancelled)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to a cancelled order.", HttpStatusCode.BadRequest);
+                }
+
+                if (order.Status == OrderStatus.Completed)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to a completed order.", HttpStatusCode.BadRequest);
+                }
+
+                if (order.Invoice is not null && order.Invoice.Status == InvoiceStatus.Paid)
+                {
+                    return Result<OrderResponse>
+                        .Fail("Cannot add items to an already paid order.", HttpStatusCode.BadRequest);
+                }
+
+                var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
+                    order,
+                    order.BranchId,
+                    request.OrderDetails,
+                    cancellationToken);
+
+                if (!orderDetailsResult.IsSucceed)
+                {
+                    return Result<OrderResponse>
+                        .Fail(orderDetailsResult.Message, (HttpStatusCode)orderDetailsResult.StatusCode);
+                }
+
+                if (order.Status == OrderStatus.Served)
+                {
+                    order.Preparing();
+                }
+
+                if (order.Invoice is not null && order.Invoice.Status == InvoiceStatus.Draft)
+                {
+                    order.Invoice.UpdateAmounts(order.Subtotal, order.DiscountAmount, order.TaxAmount, order.TotalAmount);
+                }
+
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+
+                specification.ApplyCriteria(order.Id);
+                var updatedOrder = await _orderRepository.FindAsync(specification, cancellationToken);
+
+                var response = _mapper.Map<OrderResponse>(updatedOrder);
+                return Result<OrderResponse>
+                    .Succeed(response, "Order items added successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to add items to order.");
+
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+
         private async Task<Result<RestaurantTable>> ResolveAndOccupyTableAsync(
             Guid tableId,
             long branchId,

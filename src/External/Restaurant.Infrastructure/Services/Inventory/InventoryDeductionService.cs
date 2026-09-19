@@ -133,5 +133,79 @@ namespace Restaurant.Infrastructure.Services.Inventory
 
             return Result.Succeed("Inventory reserved successfully.");
         }
+
+        public Result ReleaseReservedInventoryForOrder(
+            long branchId,
+            IEnumerable<(Product Product, int Quantity)> items,
+            CancellationToken cancellationToken = default)
+        {
+            var productStockDemands = new Dictionary<long, (ProductStock Stock, decimal RequiredQuantity)>();
+            var ingredientDemands = new Dictionary<long, (IngredientStock Stock, decimal RequiredAmount)>();
+
+            foreach (var (product, quantity) in items)
+            {
+                if (quantity <= 0) continue;
+
+                if (product.InventoryType == InventoryType.StockTracked)
+                {
+                    var stock = product.ProductStocks.FirstOrDefault(s => s.BranchId == branchId);
+                    if (stock is null) continue;
+
+                    if (productStockDemands.TryGetValue(product.Id, out var existing))
+                    {
+                        productStockDemands[product.Id] = (stock, existing.RequiredQuantity + quantity);
+                    }
+                    else
+                    {
+                        productStockDemands[product.Id] = (stock, quantity);
+                    }
+                }
+                else if (product.InventoryType == InventoryType.MadeToOrder)
+                {
+                    var recipe = product.Recipes.FirstOrDefault();
+                    if (recipe is null || !recipe.RecipeIngredients.Any()) continue;
+
+                    foreach (var ri in recipe.RecipeIngredients)
+                    {
+                        if (ri.Ingredient is null) continue;
+
+                        var ingredientStock = ri.Ingredient.IngredientStocks.FirstOrDefault(s => s.BranchId == branchId);
+                        if (ingredientStock is null) continue;
+
+                        decimal conversionFactor = 1m;
+                        if (ri.UnitId != ri.Ingredient.BaseUnitId &&
+                            ri.Ingredient.BaseUnit is not null &&
+                            ri.Ingredient.BaseUnit.ConversionRate > 0)
+                        {
+                            var recipeUnitRate = ri.Unit?.ConversionRate ?? 1m;
+                            conversionFactor = recipeUnitRate / ri.Ingredient.BaseUnit.ConversionRate;
+                        }
+
+                        decimal requiredAmount = quantity * ri.Quantity * conversionFactor;
+
+                        if (ingredientDemands.TryGetValue(ri.IngredientId, out var existing))
+                        {
+                            ingredientDemands[ri.IngredientId] = (ingredientStock, existing.RequiredAmount + requiredAmount);
+                        }
+                        else
+                        {
+                            ingredientDemands[ri.IngredientId] = (ingredientStock, requiredAmount);
+                        }
+                    }
+                }
+            }
+
+            foreach (var (stock, requiredQty) in productStockDemands.Values)
+            {
+                stock.Release(requiredQty);
+            }
+
+            foreach (var (ingredientStock, requiredAmount) in ingredientDemands.Values)
+            {
+                ingredientStock.Release(requiredAmount);
+            }
+
+            return Result.Succeed("Reserved inventory released successfully.");
+        }
     }
 }

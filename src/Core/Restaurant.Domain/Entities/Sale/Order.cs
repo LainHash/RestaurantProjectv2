@@ -114,7 +114,9 @@ namespace Restaurant.Domain.Entities.Sale
 
         public void CalculateSubtotal()
         {
-            Subtotal = OrderDetails.Sum(x => x.LineTotal);
+            Subtotal = OrderDetails
+                .Where(x => x.OrderPreparation == null || x.OrderPreparation.Status != PreparationStatus.Cancelled)
+                .Sum(x => x.LineTotal);
         }
 
         public void CalculateTotalAmount()

@@ -4,6 +4,7 @@ using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Prepare;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Ready;
 using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Serve;
 using Restaurant.Application.Services.Business;
+using Restaurant.Application.Services.Inventory;
 using Restaurant.Application.Services.Sale;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Enums;
@@ -21,6 +22,7 @@ namespace Restaurant.Infrastructure.Services.Sale
         private readonly IOrderDetailRepository _orderDetailRepository;
         private readonly IOrderRepository _orderRepository;
         private readonly IRestaurantTableRepository _restaurantTableRepository;
+        private readonly IInventoryDeductionService _inventoryDeductionService;
 
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
@@ -31,7 +33,8 @@ namespace Restaurant.Infrastructure.Services.Sale
             IUnitOfWork unitOfWork,
             IOrderDetailRepository orderDetailRepository,
             IOrderRepository orderRepository,
-            IRestaurantTableRepository restaurantTableRepository)
+            IRestaurantTableRepository restaurantTableRepository,
+            IInventoryDeductionService inventoryDeductionService)
         {
             _orderPreparationRepository = orderPreparationRepository;
             _mapper = mapper;
@@ -39,6 +42,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             _orderDetailRepository = orderDetailRepository;
             _orderRepository = orderRepository;
             _restaurantTableRepository = restaurantTableRepository;
+            _inventoryDeductionService = inventoryDeductionService;
         }
 
         public async Task<Result> PrepareOrderAsync(
@@ -188,10 +192,35 @@ namespace Restaurant.Infrastructure.Services.Sale
                     .Fail("Order preparation is already cancelled.", HttpStatusCode.Conflict);
             }
 
+            var order = orderPreparation.OrderDetail.Order;
+            if (order.Invoice != null && order.Invoice.Status == InvoiceStatus.Paid)
+            {
+                return Result
+                    .Fail("Cannot cancel items from an order that has already been paid.", HttpStatusCode.Conflict);
+            }
+
             orderPreparation.Cancelled();
 
-            var order = await _orderRepository.FindWithOrderDetailAsync(orderPreparation.OrderDetail.Order.Id, cancellationToken);
-            var allPreparations = order!.OrderDetails.Select(od => od.OrderPreparation).ToList();
+            // Release reserved inventory for this cancelled item
+            _inventoryDeductionService.ReleaseReservedInventoryForOrder(
+                order.BranchId,
+                [(orderPreparation.OrderDetail.Product, orderPreparation.OrderDetail.Quantity)],
+                cancellationToken);
+
+            // Recalculate order subtotal and total amount (cancelled items excluded)
+            order.CalculateSubtotal();
+            order.CalculateTotalAmount();
+
+            // Synchronize draft invoice if present
+            if (order.Invoice != null && order.Invoice.Status == InvoiceStatus.Draft)
+            {
+                order.Invoice.UpdateAmounts(order.Subtotal, order.DiscountAmount, order.TaxAmount, order.TotalAmount);
+            }
+
+            var allPreparations = order.OrderDetails
+                .Select(od => od.OrderPreparation)
+                .Where(p => p != null)
+                .ToList();
 
             if (allPreparations.All(p => p.Status == PreparationStatus.Cancelled))
             {

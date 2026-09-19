@@ -70,5 +70,18 @@ namespace Restaurant.Domain.Entities.Billing
         {
             Status = InvoiceStatus.Cancelled;
         }
+
+        public void UpdateAmounts(decimal subtotal, decimal discountAmount, decimal taxAmount, decimal totalAmount)
+        {
+            Subtotal = subtotal;
+            DiscountAmount = discountAmount;
+            TaxAmount = taxAmount;
+            TotalAmount = totalAmount;
+        }
+
+        public void AddInvoiceDetail(InvoiceDetail invoiceDetail)
+        {
+            InvoiceDetails.Add(invoiceDetail);
+        }
     }
 }
