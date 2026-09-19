@@ -22,8 +22,8 @@ namespace Restaurant.Application.Features.Territory.Branches.Queries.GetAll
 
             switch (query.SortField)
             {
-                case SortField.CreatedAt:
-                    if (query.Direction == SortDirection.Asc)
+                default:
+                    if (query.IsAscending)
                         ApplyOrderBy(p => p.CreatedAt);
                     else
                         ApplyOrderByDescending(p => p.CreatedAt);

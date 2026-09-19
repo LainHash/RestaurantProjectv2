@@ -109,6 +109,16 @@ app.MapGet("/api/routes", (IEnumerable<EndpointDataSource> endpointSources) =>
     });
 });
 
+app.MapGet("/", () =>
+{
+    return Results.Ok(new
+    {
+        success = true,
+        message = "API is running",
+        version = "1.0.0"
+    });
+});
+
 app.MapControllers();
 
 app.Run();

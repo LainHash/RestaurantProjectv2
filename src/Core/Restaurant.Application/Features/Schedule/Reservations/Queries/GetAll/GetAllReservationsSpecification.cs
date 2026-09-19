@@ -32,20 +32,23 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll
 
             switch (query.SortField)
             {
-                case SortField.Capacity:
-                    if (query.Direction == SortDirection.Asc)
+                case "default":
+                    if (query.IsAscending)
                         ApplyOrderBy(p => p.GuestCount);
                     else
                         ApplyOrderByDescending(p => p.GuestCount);
                     break;
-                case SortField.ReservationDate:
-                    if (query.Direction == SortDirection.Asc)
+                case "date":
+                    if (query.IsAscending)
                         ApplyOrderBy(p => p.ReservationDate);
                     else
                         ApplyOrderByDescending(p => p.ReservationDate);
                     break;
                 default:
-                    ApplyOrderByDescending(p => p.ReservationDate);
+                    if (query.IsAscending)
+                        ApplyOrderBy(p => p.CreatedAt);
+                    else
+                        ApplyOrderByDescending(p => p.CreatedAt);
                     break;
             }
 

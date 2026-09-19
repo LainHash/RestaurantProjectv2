@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
-using System.Net;
 using Restaurant.Domain.Models.Results;
+using System.Net;
 
 namespace Restaurant.Application.Behaviors
 {
@@ -39,18 +39,19 @@ namespace Restaurant.Application.Behaviors
             var responseType = typeof(TResponse);
 
             if (responseType.IsGenericType &&
-                responseType.GetGenericTypeDefinition() == typeof(Result))
+                responseType.GetGenericTypeDefinition() == typeof(Result<>))
             {
                 var failMethod = responseType.GetMethod(
-                    nameof(Result.Fail),
+                    nameof(Result<>.Fail),
                     [typeof(string), typeof(HttpStatusCode)]);
 
                 if (failMethod != null)
                     return (TResponse)failMethod.Invoke(null, [message, HttpStatusCode.UnprocessableEntity])!;
             }
 
-            if (typeof(Result).IsAssignableFrom(responseType))
-                return (TResponse)(object)Result.Fail(message, HttpStatusCode.UnprocessableEntity);
+            if (typeof(Result<>).IsAssignableFrom(responseType))
+                return (TResponse)(object)Result<object>
+                    .Fail(message, HttpStatusCode.UnprocessableEntity);
 
             throw new ValidationException(failures);
         }

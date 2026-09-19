@@ -13,18 +13,22 @@ namespace Restaurant.Application.Features.Commerce.Carts.Queries.GetCart
             {
                 AddIncludeAggregator(x => x.Include(w => w.Customer!)
                                             .ThenInclude(c => c!.User));
-                AddIncludeAggregator(x => x.Include(w => w.CartItems)
-                                            .ThenInclude(wi => wi.Product));
 
-                AddCriteria(x => x.Customer!.PublicId == query.UserId);
+                AddCriteria(x => x.Customer!.User.PublicId == query.UserId);
             }
             else
             {
-                AddIncludeAggregator(x => x.Include(w => w.CartItems)
-                                            .ThenInclude(wi => wi.Product));
-
                 AddCriteria(x => x.SessionId == query.SessionId);
             }
+
+            AddIncludeAggregator(x => x.Include(w => w.CartItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductPrice));
+
+            AddIncludeAggregator(x => x.Include(w => w.CartItems)
+                                        .ThenInclude(wi => wi.Product)
+                                        .ThenInclude(p => p.ProductImages)
+                                        .ThenInclude(pi => pi.Image));
         }
     }
 }

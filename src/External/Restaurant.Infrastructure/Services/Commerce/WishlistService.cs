@@ -13,7 +13,6 @@ using Restaurant.Domain.Models.Results;
 using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Domain.Repositories.Commerce;
 using Restaurant.Domain.Repositories.Guest;
-using Restaurant.Domain.Repositories.Identity;
 using System.Net;
 
 namespace Restaurant.Infrastructure.Services.Commerce
@@ -49,20 +48,13 @@ namespace Restaurant.Infrastructure.Services.Commerce
             GetWishlistSpecification specification,
             CancellationToken cancellationToken = default)
         {
-            if (query.UserId != null)
-            {
-                var resolveResult = await ResolveAuthenticatedWishlistAsync(
-                    query.UserId.Value, query.SessionId, cancellationToken);
+            var resolveResult = await ResolveWishlistAsync(
+                query.UserId, query.SessionId, cancellationToken);
 
-                if (!resolveResult.IsSucceed)
-                {
-                    return Result<WishlistResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-                }
-            }
-            else
+            if (!resolveResult.IsSucceed)
             {
-                await ResolveGuestWishlistAsync(query.SessionId, cancellationToken);
+                return Result<WishlistResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
 
             var processedWishlist = await _wishlistRepository.FindAsync(specification, cancellationToken);
@@ -79,32 +71,24 @@ namespace Restaurant.Infrastructure.Services.Commerce
             AddWishlistItemSpecification specification,
             CancellationToken cancellationToken = default)
         {
-            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            var product = await _productRepository
+                .FindByIdAsync(command.Body.ProductId, cancellationToken);
             if (product is null)
             {
                 return Result<WishlistResponse>
                     .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
             }
 
-            Wishlist wishlist;
+            var resolveResult = await ResolveWishlistAsync(
+                command.UserId, command.SessionId, cancellationToken);
 
-            if (command.UserId != null)
+            if (!resolveResult.IsSucceed)
             {
-                var resolveResult = await ResolveAuthenticatedWishlistAsync(
-                    command.UserId.Value, command.SessionId, cancellationToken);
-
-                if (!resolveResult.IsSucceed)
-                {
-                    return Result<WishlistResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-                }
-
-                wishlist = resolveResult.Data!;
+                return Result<WishlistResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
-            else
-            {
-                wishlist = await ResolveGuestWishlistAsync(command.SessionId, cancellationToken);
-            }
+
+            var wishlist = resolveResult.Data!;
 
             if (!wishlist.WishlistItems.Any(x => x.ProductId == product.Id))
             {
@@ -114,9 +98,13 @@ namespace Restaurant.Infrastructure.Services.Commerce
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
 
-            var processedWishlist = await _wishlistRepository.FindAsync(specification, cancellationToken);
+            var processedWishlist = await _wishlistRepository
+                .FindAsync(specification, cancellationToken);
             if (processedWishlist is null)
-                return Result<WishlistResponse>.Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+            {
+                return Result<WishlistResponse>
+                    .Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+            }
 
             var response = _mapper.Map<WishlistResponse>(processedWishlist);
             return Result<WishlistResponse>
@@ -128,30 +116,24 @@ namespace Restaurant.Infrastructure.Services.Commerce
             RemoveWishlistItemSpecification specification,
             CancellationToken cancellationToken = default)
         {
-            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            var product = await _productRepository
+                .FindByIdAsync(command.Body.ProductId, cancellationToken);
             if (product is null)
             {
                 return Result<WishlistResponse>
                     .Fail(Error<Product>.NotFound, HttpStatusCode.NotFound);
             }
 
-            Wishlist wishlist;
+            var resolveResult = await ResolveWishlistAsync(
+                command.UserId, command.SessionId, cancellationToken);
 
-            if (command.UserId != null)
+            if (!resolveResult.IsSucceed)
             {
-                var resolveResult = await ResolveAuthenticatedWishlistAsync(
-                    command.UserId.Value, command.SessionId, cancellationToken);
-
-                if (!resolveResult.IsSucceed)
-                    return Result<WishlistResponse>
-                        .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
-
-                wishlist = resolveResult.Data!;
+                return Result<WishlistResponse>
+                    .Fail(resolveResult.Message, (HttpStatusCode)resolveResult.StatusCode);
             }
-            else
-            {
-                wishlist = await ResolveGuestWishlistAsync(command.SessionId, cancellationToken);
-            }
+
+            var wishlist = resolveResult.Data!;
 
             var wishlistItem = wishlist.WishlistItems.FirstOrDefault(x => x.ProductId == product.Id);
             if (wishlistItem is null)
@@ -164,18 +146,44 @@ namespace Restaurant.Infrastructure.Services.Commerce
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            var processedWishlist = await _wishlistRepository.FindAsync(specification, cancellationToken);
+            var processedWishlist = await _wishlistRepository
+                .FindAsync(specification, cancellationToken);
             if (processedWishlist is null)
-                return Result<WishlistResponse>.Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+            {
+                return Result<WishlistResponse>
+                    .Fail(Error<Wishlist>.NotFound, HttpStatusCode.NotFound);
+            }
 
             var response = _mapper.Map<WishlistResponse>(processedWishlist);
             return Result<WishlistResponse>
                 .Succeed(response, Success<WishlistItem>.Deleted);
         }
 
+        private async Task<Result<Wishlist>> ResolveWishlistAsync(
+            Guid? userId,
+            string? sessionId,
+            CancellationToken cancellationToken)
+        {
+            if (userId != null)
+            {
+                return await ResolveAuthenticatedWishlistAsync(
+                    userId.Value, sessionId, cancellationToken);
+            }
+
+            if (!string.IsNullOrWhiteSpace(sessionId))
+            {
+                var wishlist = await ResolveGuestWishlistAsync(sessionId, cancellationToken);
+                return Result<Wishlist>
+                    .Succeed(wishlist, "Resolve guest wishlist successfully.");
+            }
+
+            return Result<Wishlist>
+                .Fail("Either UserId or SessionId is required.", HttpStatusCode.BadRequest);
+        }
+
         private async Task<Result<Wishlist>> ResolveAuthenticatedWishlistAsync(
             Guid userId,
-            string sessionId,
+            string? sessionId,
             CancellationToken cancellationToken)
         {
             var customer = await _customerRepository.FindByUserIdAsync(userId, cancellationToken);
@@ -185,8 +193,10 @@ namespace Restaurant.Infrastructure.Services.Commerce
                     .Fail(Error<Customer>.NotFound, HttpStatusCode.NotFound);
             }
 
-            var guestWishlist = await _wishlistRepository
-                .FindBySessionIdAsync(sessionId, cancellationToken);
+            var guestWishlist = !string.IsNullOrWhiteSpace(sessionId)
+                ? await _wishlistRepository.FindBySessionIdAsync(sessionId, cancellationToken)
+                : null;
+
             var customerWishlist = await _wishlistRepository
                 .FindByCustomerIdAsync(customer.Id, cancellationToken);
 
