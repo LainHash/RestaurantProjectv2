@@ -366,7 +366,8 @@ FodyWeavers.xsd
 src/External/Restaurant.Infrastructure/Migrations
 *.xlsx#
 .dotnet
-.temp.txt
+*.temp.txt
+*.temp.md
 src/External/Restaurant.Seeding/Data/*
 *.xlsx.bak
 AGENT.md

@@ -109,7 +109,6 @@ namespace Restaurant.Infrastructure.Services.Sale
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
-                // --- Resolve Customer (optional for DineIn/TakeAway, required for Delivery) ---
                 Customer? customer = null;
                 if (command.Body.CustomerId is not null)
                 {
@@ -123,7 +122,6 @@ namespace Restaurant.Infrastructure.Services.Sale
                     }
                 }
 
-                // --- Resolve Branch ---
                 var branch = await _branchRepository
                     .FindByIdAsync(command.Body.BranchId, cancellationToken);
                 if (branch is null)
@@ -132,13 +130,11 @@ namespace Restaurant.Infrastructure.Services.Sale
                         .Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
                 }
 
-                // --- Type-specific: Employee & Table ---
                 long? employeeId = null;
                 long? restaurantTableId = null;
 
                 if (command.Body.Type != OrderType.Delivery)
                 {
-                    // Employee required for DineIn / TakeAway
                     var employee = await _employeeRepository
                         .FindByIdAsync(command.Body.EmployeeId!.Value, cancellationToken);
                     if (employee is null)
@@ -166,7 +162,6 @@ namespace Restaurant.Infrastructure.Services.Sale
                     restaurantTableId = tableResult.Data!.Id;
                 }
 
-                // --- Build Order ---
                 var order = Order.Create(
                     customer?.Id,
                     employeeId,
@@ -176,7 +171,6 @@ namespace Restaurant.Infrastructure.Services.Sale
                     command.Body.Note,
                     command.Body.DeliveryAddress);
 
-                // --- Process Products, OrderDetails & Reserve Inventory ---
                 var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
                     order,
                     branch.Id,
@@ -192,7 +186,6 @@ namespace Restaurant.Infrastructure.Services.Sale
                 _orderRepository.Add(order);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                // --- Create Invoice only for Delivery orders ---
                 if (command.Body.Type == OrderType.Delivery)
                 {
                     await _invoiceService.InitializeAsync(order, cancellationToken);

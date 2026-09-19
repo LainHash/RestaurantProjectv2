@@ -50,7 +50,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             if (orderPreparation == null)
             {
                 return Result
-                    .Fail(Error.NotFound("OrderPreparation"), HttpStatusCode.NotFound);
+                    .Fail(Error.NotFound("Order Preparation"), HttpStatusCode.NotFound);
             }
 
             if(orderPreparation.Status == PreparationStatus.Cancelled)
