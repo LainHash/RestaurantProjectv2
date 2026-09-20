@@ -11,9 +11,11 @@ namespace Restaurant.Domain.Repositories.Catalog
             long branchId,
             CancellationToken cancellationToken = default);
 
-        Task<List<Product>> FindProductsForOrderAsync(
+        Task<IEnumerable<Product>> FindProductsForOrderAsync(
             IEnumerable<Guid> productIds,
             long branchId,
             CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<Product>> FindPopularProductsAsync(int limit = 10, CancellationToken cancellationToken = default);
     }
 }

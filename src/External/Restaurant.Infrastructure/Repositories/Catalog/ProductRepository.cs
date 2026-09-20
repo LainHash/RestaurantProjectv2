@@ -28,7 +28,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
                 .FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
         }
 
-        public async Task<List<Product>> FindProductsForOrderAsync(
+        public async Task<IEnumerable<Product>> FindProductsForOrderAsync(
             IEnumerable<Guid> productIds,
             long branchId,
             CancellationToken cancellationToken = default)
@@ -50,6 +50,24 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
                             .ThenInclude(i => i.IngredientStocks
                                 .Where(s => s.BranchId == branchId))
                 .Where(x => productIds.Contains(x.PublicId))
+                .ToListAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<Product>> FindPopularProductsAsync(int limit = 10, CancellationToken cancellationToken = default)
+        {
+            return await _context.Products
+                .Include(p => p.ProductPrice)
+                .Include(p => p.ProductCategory)
+                .Include(p => p.Brand)
+                .Include(p => p.Unit)
+                .Include(p => p.ProductImages)
+                    .ThenInclude(pi => pi.Image)
+                .Include(p => p.OrderDetails)
+                    .ThenInclude(od => od.Order)
+                .OrderByDescending(p => p.OrderDetails
+                                        .Where(od => od.Order.Status == OrderStatus.Confirmed)
+                                        .Sum(od => od.Quantity))
+                .Take(limit)
                 .ToListAsync(cancellationToken);
         }
     }
