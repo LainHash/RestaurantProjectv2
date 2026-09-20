@@ -7,6 +7,7 @@ using Restaurant.Application.Features.Catalog.Products.Commands.Delete;
 using Restaurant.Application.Features.Catalog.Products.Commands.Restore;
 using Restaurant.Application.Features.Catalog.Products.Commands.Update;
 using Restaurant.Application.Features.Catalog.Products.Queries.GetAll;
+using Restaurant.Application.Features.Catalog.Products.Queries.GetAllPopular;
 using Restaurant.Application.Features.Catalog.Products.Queries.GetById;
 using Restaurant.Application.Features.Inventory.ProductStocks.Commands.UpdateQuantity;
 using Restaurant.Application.Features.Storage.Images.Commands.Upload;
@@ -26,6 +27,16 @@ namespace Restaurant.API.Controllers.Catalog
         [HttpGet]
         public async Task<IActionResult> GetAll(
             [FromQuery] GetAllProductsQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetAllPopular(
+            [FromQuery] GetAllPopularProductsQuery query,
             CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(query, cancellationToken);

@@ -20,6 +20,12 @@ namespace Restaurant.Domain.Specifications
 
         public Expression<Func<TEntity, object>>? OrderByDescending { get; private set; }
 
+        public List<Expression<Func<TEntity, object>>> ThenBy { get; }
+            = new();
+
+        public List<Expression<Func<TEntity, object>>> ThenByDescending { get; }
+            = new();
+
         public int Skip { get; private set; }
 
         public int Take { get; private set; }
@@ -68,6 +74,16 @@ namespace Restaurant.Domain.Specifications
         protected void ApplyOrderByDescending(Expression<Func<TEntity, object>> orderByDescending)
         {
             OrderByDescending = orderByDescending;
+        }
+
+        protected void ApplyThenBy(Expression<Func<TEntity, object>> thenBy)
+        {
+            ThenBy.Add(thenBy);
+        }
+
+        protected void ApplyThenByDescending(Expression<Func<TEntity, object>> thenByDescending)
+        {
+            ThenByDescending.Add(thenByDescending);
         }
 
         protected void ApplyPaging(int page, int pageSize)

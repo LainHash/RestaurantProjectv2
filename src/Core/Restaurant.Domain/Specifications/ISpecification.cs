@@ -12,6 +12,9 @@ namespace Restaurant.Domain.Specifications
         Expression<Func<TEntity, object>>? OrderBy { get; }
         Expression<Func<TEntity, object>>? OrderByDescending { get; }
 
+        List<Expression<Func<TEntity, object>>> ThenBy { get; }
+        List<Expression<Func<TEntity, object>>> ThenByDescending { get; }
+
         int Skip { get; }
         int Take { get; }
         bool IsPagingEnabled { get; }

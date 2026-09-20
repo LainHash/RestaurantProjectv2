@@ -43,11 +43,21 @@ namespace Restaurant.Infrastructure.Specifications
 
             if (spec.OrderBy != null)
             {
-                query = query.OrderBy(spec.OrderBy);
+                var orderedQuery = query.OrderBy(spec.OrderBy);
+
+                orderedQuery = spec.ThenBy.Aggregate(orderedQuery, (current, thenBy) => current.ThenBy(thenBy));
+                orderedQuery = spec.ThenByDescending.Aggregate(orderedQuery, (current, thenByDesc) => current.ThenByDescending(thenByDesc));
+
+                query = orderedQuery;
             }
             else if (spec.OrderByDescending != null)
             {
-                query = query.OrderByDescending(spec.OrderByDescending);
+                var orderedQuery = query.OrderByDescending(spec.OrderByDescending);
+
+                orderedQuery = spec.ThenBy.Aggregate(orderedQuery, (current, thenBy) => current.ThenBy(thenBy));
+                orderedQuery = spec.ThenByDescending.Aggregate(orderedQuery, (current, thenByDesc) => current.ThenByDescending(thenByDesc));
+
+                query = orderedQuery;
             }
 
             if (applyPaging && spec.IsPagingEnabled)
