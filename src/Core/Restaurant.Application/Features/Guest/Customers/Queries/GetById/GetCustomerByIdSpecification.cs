@@ -14,6 +14,7 @@ namespace Restaurant.Application.Features.Guest.Customers.Queries.GetById
                                         .ThenInclude(u => u.Role));
             AddIncludeAggregator(x => x.Include(c => c.User)
                                         .ThenInclude(u => u.PersonalProfile));
+            AddInclude(x => x.Wallet!);
 
             AddCriteria(x => x.PublicId == query.Id);
         }

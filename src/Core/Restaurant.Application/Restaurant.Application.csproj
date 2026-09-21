@@ -7,6 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Features\Guest\Wallets\**" />
+	  <EmbeddedResource Remove="Features\Guest\Wallets\**" />
+	  <None Remove="Features\Guest\Wallets\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="FluentValidation" Version="12.1.1" />
 		<PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
 		<PackageReference Include="MediatR" Version="14.2.0" />
@@ -21,7 +27,6 @@
 	<ItemGroup>
 	  <Folder Include="Features\Auth\Commands\Logout\" />
 	  <Folder Include="Features\Auth\Commands\RefreshToken\" />
-	  <Folder Include="Features\Guest\Wallets\Queries\" />
 	  <Folder Include="Features\Inventory\IngredientStocks\Queries\" />
 	  <Folder Include="Features\Inventory\ProductStocks\Queries\" />
 	  <Folder Include="Features\Sale\OrderPreparations\Commands\Ready\" />

@@ -22,24 +22,24 @@ namespace Restaurant.API.Controllers.Guest
         private readonly IMediator _mediator = mediator;
         private readonly ICurrentUserService _currentUserService = currentUserService;
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] GetAllCustomersQuery query,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllCustomersQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetOne(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var query = new GetCustomerByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetCustomerByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
         [HttpPost("user/images")]
         [Consumes("multipart/form-data")]
@@ -60,20 +60,20 @@ namespace Restaurant.API.Controllers.Guest
             return this.ToActionResult(result);
         }
 
-        //[HttpPost("user/discounts/claim")]
-        //public async Task<IActionResult> ClaimDiscount(
-        //    [FromBody] ClaimDiscountRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var userId = _currentUserService.PublicId;
-        //    if (userId is null)
-        //    {
-        //        return Unauthorized();
-        //    }
+        [HttpPost("user/discounts/claim")]
+        public async Task<IActionResult> ClaimDiscount(
+            [FromBody] ClaimDiscountRequest body,
+            CancellationToken cancellationToken)
+        {
+            var userId = _currentUserService.UserId;
+            if (userId is null)
+            {
+                return Unauthorized();
+            }
 
-        //    var command = new ClaimDiscountCommand(userId.Value, body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+            var command = new ClaimDiscountCommand(userId.Value, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }

@@ -1,8 +1,4 @@
-﻿using Restaurant.Contract.DTOs.Guest.Wallets;
-using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
-using Restaurant.Contract.DTOs.Identity.Users;
-
-namespace Restaurant.Contract.DTOs.Guest.Customers
+﻿namespace Restaurant.Contract.DTOs.Guest.Customers
 {
     public class CustomerResponse
     {   

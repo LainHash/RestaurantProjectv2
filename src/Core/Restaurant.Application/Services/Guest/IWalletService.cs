@@ -1,6 +1,4 @@
-﻿using Restaurant.Contract.DTOs.Guest.Wallets;
-using Restaurant.Domain.Entities.Guest;
-using Restaurant.Domain.Models.Results;
+﻿using Restaurant.Domain.Entities.Guest;
 
 namespace Restaurant.Application.Services.Guest
 {
