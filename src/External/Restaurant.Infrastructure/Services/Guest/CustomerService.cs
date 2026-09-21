@@ -43,14 +43,14 @@ namespace Restaurant.Infrastructure.Services.Guest
                 .Succeed(response, Success.Retrieved("Customer"));
         }
 
-        public async Task<Result<CustomerResponse>> GetByIdAsync(
+        public async Task<Result<CustomerDetailResponse>> GetByIdAsync(
             GetCustomerByIdSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var customer = await _customerRepository.FindAsync(specification, cancellationToken);
             if (customer is null)
             {
-                return Result<CustomerResponse>
+                return Result<CustomerDetailResponse>
                     .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
@@ -59,8 +59,8 @@ namespace Restaurant.Infrastructure.Services.Guest
                 await WalletInitializeAsync(() => new Wallet(customer.Id), cancellationToken);
             }
 
-            var response = _mapper.Map<CustomerResponse>(customer);
-            return Result<CustomerResponse>
+            var response = _mapper.Map<CustomerDetailResponse>(customer);
+            return Result<CustomerDetailResponse>
                 .Succeed(response, Success.Retrieved("Customer"));
         }
 
