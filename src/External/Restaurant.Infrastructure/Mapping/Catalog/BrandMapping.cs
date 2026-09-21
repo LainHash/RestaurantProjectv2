@@ -9,7 +9,8 @@ namespace Restaurant.Infrastructure.Mapping.Catalog
         public BrandMapping()
         {
             CreateMap<Brand, BrandResponse>()
-                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.BrandImages));
 
             CreateMap<Brand, BrandDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))

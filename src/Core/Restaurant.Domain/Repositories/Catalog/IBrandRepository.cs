@@ -9,5 +9,7 @@ namespace Restaurant.Domain.Repositories.Catalog
         Task<Brand?> FindByNameAsync(string name, CancellationToken cancellationToken = default);
 
         Task<bool> IsExistingNameAsync(string name, CancellationToken cancellationToken = default);
+
+        Task<IEnumerable<Brand>> ToListWithImagesAsync(CancellationToken cancellationToken = default);
     }
 }

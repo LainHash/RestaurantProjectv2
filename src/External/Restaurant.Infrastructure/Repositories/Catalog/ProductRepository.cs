@@ -53,7 +53,9 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<IEnumerable<Product>> FindPopularProductsAsync(int limit = 10, CancellationToken cancellationToken = default)
+        public async Task<IEnumerable<Product>> ToListPopularProductsAsync(
+            int limit = 10,
+            CancellationToken cancellationToken = default)
         {
             return await _context.Products
                 .Include(p => p.ProductPrice)
@@ -65,7 +67,7 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
                 .Include(p => p.OrderDetails)
                     .ThenInclude(od => od.Order)
                 .OrderByDescending(p => p.OrderDetails
-                                        .Where(od => od.Order.Status == OrderStatus.Confirmed)
+                                        .Where(od => od.Order.Status == OrderStatus.Completed)
                                         .Sum(od => od.Quantity))
                 .Take(limit)
                 .ToListAsync(cancellationToken);
