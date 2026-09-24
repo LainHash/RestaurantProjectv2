@@ -19,36 +19,36 @@ namespace Restaurant.API.Controllers.Identity
     {
         private readonly IMediator _mediator = mediator;
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] GetAllUsersQuery query,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllUsersQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var query = new GetUserByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetUserByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize]
-        //[HttpPost("create-employee-accounts")]
-        //public async Task<IActionResult> CreateForEmployee(
-        //    [FromBody] CreateUsersForEmployeeRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CreateUsersForEmployeeCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize]
+        [HttpPost("create-employee-accounts")]
+        public async Task<IActionResult> CreateForEmployee(
+            [FromBody] CreateUsersForEmployeeRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateUsersForEmployeeCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }
