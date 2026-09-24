@@ -11,5 +11,7 @@ namespace Restaurant.Contract.DTOs.General
         public IEnumerable<ProductCategoryResponse> ProductCategories { get; set; } = [];
         public IEnumerable<BrandResponse> Brands { get; set; } = [];
         public IEnumerable<BranchResponse> Branches { get; set; } = [];
+        public int WishlistItemCount { get; set; }
+        public int CartItemCount { get; set; }
     }
 }

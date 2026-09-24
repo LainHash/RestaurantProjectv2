@@ -71,5 +71,10 @@ namespace Restaurant.Infrastructure.Repositories
 
             return await query.AnyAsync(cancellationToken);
         }
+
+        public async Task<int> CountAsync(CancellationToken cancellationToken = default)
+        {
+            return await Entity.CountAsync(cancellationToken);
+        }
     }
 }
