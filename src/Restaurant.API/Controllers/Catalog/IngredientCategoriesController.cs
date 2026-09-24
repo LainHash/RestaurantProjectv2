@@ -18,70 +18,70 @@ namespace Restaurant.API.Controllers.Catalog
     {
         private readonly IMediator _mediator = mediator;
 
-        //[AllowAnonymous]
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] GetAllIngredientCategoriesQuery query,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [AllowAnonymous]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllIngredientCategoriesQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[AllowAnonymous]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetById(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var query = new GetIngredientCategoryByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [AllowAnonymous]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetIngredientCategoryByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin,InventoryManager")]
-        //[HttpPost]
-        //public async Task<IActionResult> Create(
-        //    [FromBody] CreateIngredientCategoryRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CreateIngredientCategoryCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin,InventoryManager")]
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateIngredientCategoryRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateIngredientCategoryCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin,InventoryManager")]
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(
-        //    [FromRoute] Guid id,
-        //    [FromBody] UpdateIngredientCategoryRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new UpdateIngredientCategoryCommand(id, body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin,InventoryManager")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id,
+            [FromBody] UpdateIngredientCategoryRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateIngredientCategoryCommand(id, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new DeleteIngredientCategoryCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteIngredientCategoryCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpPatch("{id}/restore")]
-        //public async Task<IActionResult> Restore(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new RestoreIngredientCategoryCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("{id}/restore")]
+        public async Task<IActionResult> Restore(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new RestoreIngredientCategoryCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }

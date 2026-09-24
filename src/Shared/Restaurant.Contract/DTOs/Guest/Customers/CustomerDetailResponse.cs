@@ -1,4 +1,5 @@
-﻿using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
+﻿using Restaurant.Contract.DTOs.Guest.Wallets;
+using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
 using Restaurant.Contract.DTOs.Identity.Users;
 
 namespace Restaurant.Contract.DTOs.Guest.Customers
@@ -12,5 +13,6 @@ namespace Restaurant.Contract.DTOs.Guest.Customers
 
         public UserResponse User { get; set; } = null!;
         public PersonalProfileResponse PersonalProfile { get; set; } = null!;
+        public WalletResponse Wallet { get; set; } = null!;
     }
 }

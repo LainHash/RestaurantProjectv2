@@ -46,6 +46,8 @@ using Restaurant.Infrastructure.Services.Storage;
 using Restaurant.Infrastructure.Services.Territory;
 using Restaurant.Application.Services.Schedule;
 using Restaurant.Infrastructure.Services.Schedule;
+using Restaurant.Application.Services.General;
+using Restaurant.Infrastructure.Services.General;
 
 namespace Restaurant.Infrastructure
 {
@@ -134,6 +136,8 @@ namespace Restaurant.Infrastructure
                     };
                 });
             }
+            // ── General ──────────────────────────────────────────────────────
+            services.AddScoped<IHomeService, HomeService>();
 
             // ── Services ─────────────────────────────────────────────────────
             services.AddScoped<IDataImporter, ExcelImporter>();

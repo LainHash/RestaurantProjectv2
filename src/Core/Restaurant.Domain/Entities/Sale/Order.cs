@@ -87,27 +87,32 @@ namespace Restaurant.Domain.Entities.Sale
             };
         }
 
-        public void Preparing()
+        public void Confirm()
+        {
+            Status = OrderStatus.Confirmed;
+        }
+
+        public void Prepare()
         {
             Status = OrderStatus.Preparing;
         }
 
-        public void Served()
+        public void Serve()
         {
             Status = OrderStatus.Served;
         }
 
-        public void Delivering()
+        public void Deliver()
         {
             Status = OrderStatus.Delivering;
         }
 
-        public void Completed()
+        public void Complete()
         {
             Status = OrderStatus.Completed;
         }
 
-        public void Cancelled()
+        public void Cancel()
         {
             Status = OrderStatus.Cancelled;
         }

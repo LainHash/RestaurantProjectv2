@@ -39,49 +39,49 @@ namespace Restaurant.API.Controllers.Catalog
             return this.ToActionResult(result);
         }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpPost]
-        //public async Task<IActionResult> Create(
-        //    [FromBody] CreateBrandRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CreateBrandCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateBrandRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateBrandCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(
-        //    [FromRoute] Guid id,
-        //    [FromBody] UpdateBrandRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new UpdateBrandCommand(id, body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id,
+            [FromBody] UpdateBrandRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateBrandCommand(id, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new DeleteBrandCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteBrandCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpPatch("{id}/restore")]
-        //public async Task<IActionResult> Restore(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new RestoreBrandCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpPatch("{id}/restore")]
+        public async Task<IActionResult> Restore(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new RestoreBrandCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }

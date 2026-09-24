@@ -25,5 +25,21 @@ namespace Restaurant.Infrastructure.Repositories.Commerce
                 .Include(x => x.CartItems)
                 .FirstOrDefaultAsync(x => x.SessionId == sessionId, cancellationToken);
         }
+
+        public async Task<Cart?> FindWithItemsByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Carts
+                .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(x => x.CustomerId == customerId, cancellationToken);
+        }
+
+        public async Task<Cart?> FindWithItemsBySessionIdAsync(string sessionId, CancellationToken cancellationToken = default)
+        {
+            return await _context.Carts
+                .Include(x => x.CartItems)
+                    .ThenInclude(x => x.Product)
+                .FirstOrDefaultAsync(x => x.SessionId == sessionId, cancellationToken);
+        }
     }
 }

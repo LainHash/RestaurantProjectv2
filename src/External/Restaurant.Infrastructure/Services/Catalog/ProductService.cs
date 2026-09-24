@@ -2,6 +2,7 @@
 using CloudinaryDotNet.Core;
 using Restaurant.Application.Features.Catalog.Products.Commands.Create;
 using Restaurant.Application.Features.Catalog.Products.Commands.Update;
+using Restaurant.Application.Features.Catalog.Products.Queries.GetAllPopular;
 using Restaurant.Application.Features.Catalog.Products.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Catalog;
@@ -54,7 +55,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             var response = _mapper.Map<IEnumerable<ProductResponse>>(products);
             return PageResult<IEnumerable<ProductResponse>>
-                .Succeed(response, Success.Retrieved("Product"), totalItems, specification.Skip, specification.Take);
+                .Succeed(response, Success.Retrieved("Products"), totalItems, specification.Skip, specification.Take);
         }
 
         public async Task<Result<ProductDetailResponse>> GetByIdAsync(
@@ -221,6 +222,21 @@ namespace Restaurant.Infrastructure.Services.Catalog
 
             return Result
                 .Succeed(Success.Restored("Product"));
+        }
+
+        public async Task<PageResult<IEnumerable<PopularProductResponse>>> GetAllPopularAsync(
+            GetAllPopularProductsSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var totalItems = await _productRepository
+                .CountAsync(specification, cancellationToken);
+
+            var products = await _productRepository
+                .ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<PopularProductResponse>>(products);
+            return PageResult<IEnumerable<PopularProductResponse>>
+                .Succeed(response, Success.Retrieved("Popular Products"), totalItems, specification.Skip, specification.Take);
         }
     }
 }

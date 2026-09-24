@@ -13,22 +13,34 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
 
         public async Task<bool> IsExistingNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            return await _context.ProductCategories.AnyAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
+            return await _context.ProductCategories
+                .AnyAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
         }
 
         public async Task<ProductCategory?> FindByIdAsync(long id, CancellationToken cancellationToken = default)
         {
-            return await _context.ProductCategories.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+            return await _context.ProductCategories
+                .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
         }
 
         public async Task<ProductCategory?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.ProductCategories.FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
+            return await _context.ProductCategories
+                .FirstOrDefaultAsync(x => x.PublicId == id, cancellationToken);
         }
 
         public async Task<ProductCategory?> FindByNameAsync(string name, CancellationToken cancellationToken = default)
         {
-            return await _context.ProductCategories.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
+            return await _context.ProductCategories
+                .FirstOrDefaultAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
+        }
+
+        public async Task<IEnumerable<ProductCategory>> ToListWithImagesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.ProductCategories
+                .Include(pc => pc.ProductCategoryImages)
+                    .ThenInclude(pci => pci.Image)
+                .ToListAsync(cancellationToken);
         }
     }
 }

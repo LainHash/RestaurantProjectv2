@@ -11,7 +11,7 @@ namespace Restaurant.Application.Services.Guest
             GetAllCustomersSpecification specification,
             CancellationToken cancellationToken = default);
 
-        Task<Result<CustomerResponse>> GetByIdAsync(
+        Task<Result<CustomerDetailResponse>> GetByIdAsync(
             GetCustomerByIdSpecification specification,
             CancellationToken cancellationToken = default);
     }

@@ -78,7 +78,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             if (order.Status == OrderStatus.Confirmed)
             {
-                order.Preparing();
+                order.Prepare();
             }
             orderPreparation.Preparing();
 
@@ -151,7 +151,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             var allPreparations = order.OrderDetails.Select(od => od.OrderPreparation).ToList();
             if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
-                order.Served();
+                order.Serve();
 
                 // Release table when all items of a DineIn order are served
                 if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
@@ -224,7 +224,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             if (allPreparations.All(p => p.Status == PreparationStatus.Cancelled))
             {
-                order.Cancelled();
+                order.Cancel();
 
                 // Release table when a DineIn order is fully cancelled
                 if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
@@ -236,7 +236,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             }
             else if (allPreparations.All(p => p.Status == PreparationStatus.Served || p.Status == PreparationStatus.Cancelled))
             {
-                order.Served();
+                order.Serve();
 
                 // Release table when remaining items of a DineIn order are all done
                 if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)

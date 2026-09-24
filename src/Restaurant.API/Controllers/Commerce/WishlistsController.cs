@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Commerce.Wishlists.Commands.AddItem;
+using Restaurant.Application.Features.Commerce.Wishlists.Commands.MoveAllToCart;
 using Restaurant.Application.Features.Commerce.Wishlists.Commands.RemoveItem;
 using Restaurant.Application.Features.Commerce.Wishlists.Queries.GetWishlist;
 using Restaurant.Application.Services.Auth;
@@ -65,6 +66,21 @@ namespace Restaurant.API.Controllers.Commerce
                 return BadRequest("X-Session-Id header is required.");
 
             var command = new RemoveWishlistItemCommand(userId, sessionId, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [HttpPost("move-all-to-cart")]
+        public async Task<IActionResult> MoveAllToCart(CancellationToken cancellationToken)
+        {
+            var sessionId = Request.Headers["X-Session-Id"].FirstOrDefault();
+
+            var userId = _currentUserService.UserId;
+
+            if (sessionId is null && userId is null)
+                return BadRequest("X-Session-Id header is required.");
+
+            var command = new MoveAllToCartCommand(userId, sessionId);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

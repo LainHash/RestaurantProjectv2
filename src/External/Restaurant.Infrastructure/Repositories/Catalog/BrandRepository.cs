@@ -30,5 +30,13 @@ namespace Restaurant.Infrastructure.Repositories.Catalog
         {
             return await _context.Brands.FirstOrDefaultAsync(x => EF.Functions.ILike(x.Name, name), cancellationToken);
         }
+
+        public async Task<IEnumerable<Brand>> ToListWithImagesAsync(CancellationToken cancellationToken = default)
+        {
+            return await _context.Brands
+                .Include(b => b.BrandImages)
+                    .ThenInclude(bi => bi.Image)
+                .ToListAsync(cancellationToken);
+        }
     }
 }

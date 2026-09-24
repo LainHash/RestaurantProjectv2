@@ -6,5 +6,7 @@ namespace Restaurant.Domain.Repositories.Commerce
     {
         Task<Cart?> FindByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default);
         Task<Cart?> FindBySessionIdAsync(string sessionId, CancellationToken cancellationToken = default);
+        Task<Cart?> FindWithItemsByCustomerIdAsync(long customerId, CancellationToken cancellationToken = default);
+        Task<Cart?> FindWithItemsBySessionIdAsync(string sessionId, CancellationToken cancellationToken = default);
     }
 }

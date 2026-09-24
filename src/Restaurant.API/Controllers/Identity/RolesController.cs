@@ -19,70 +19,70 @@ namespace Restaurant.API.Controllers.Identity
     {
         private readonly IMediator _mediator = mediator;
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpGet]
-        //public async Task<IActionResult> GetAll(
-        //    [FromQuery] GetAllRolesQuery query,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllRolesQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin,Admin")]
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetOne(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var query = new GetRoleByIdQuery(id);
-        //    var result = await _mediator.Send(query, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetRoleByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin")]
-        //[HttpPost]
-        //public async Task<IActionResult> Create(
-        //    [FromBody] CreateRoleRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new CreateRoleCommand(body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateRoleRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateRoleCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin")]
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(
-        //    [FromRoute] Guid id,
-        //    [FromBody] UpdateRoleRequest body,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new UpdateRoleCommand(id, body);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id,
+            [FromBody] UpdateRoleRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateRoleCommand(id, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin")]
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> Delete(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new DeleteRoleCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new DeleteRoleCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
 
-        //[Authorize(Roles = "SuperAdmin")]
-        //[HttpPatch("{id}/restore")]
-        //public async Task<IActionResult> Restore(
-        //    [FromRoute] Guid id,
-        //    CancellationToken cancellationToken)
-        //{
-        //    var command = new RestoreRoleCommand(id);
-        //    var result = await _mediator.Send(command, cancellationToken);
-        //    return this.ToActionResult(result);
-        //}
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPatch("{id}/restore")]
+        public async Task<IActionResult> Restore(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var command = new RestoreRoleCommand(id);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
     }
 }
