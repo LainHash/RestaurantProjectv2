@@ -88,7 +88,7 @@ namespace Restaurant.Application.Features.Billing.Payments.Commands.HandleIpn
 
                     if (allPreparationsDone)
                     {
-                        order.Completed();
+                        order.Complete();
 
                         // Release table if DineIn order
                         if (order.Type == OrderType.DineIn && order.RestaurantTableId.HasValue)
@@ -97,6 +97,10 @@ namespace Restaurant.Application.Features.Billing.Payments.Commands.HandleIpn
                                 .FindByIdAsync(order.RestaurantTableId.Value, cancellationToken);
                             table?.Release();
                         }
+                    }
+                    else
+                    {
+                        order.Confirm();
                     }
                 }
             }

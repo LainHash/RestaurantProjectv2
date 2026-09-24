@@ -1,4 +1,5 @@
 using Restaurant.Application.Features.Sale.Orders.Commands.Create;
+using Restaurant.Application.Features.Sale.Orders.Commands.CreateFromCart;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetAll;
 using Restaurant.Application.Features.Sale.Orders.Queries.GetById;
 using Restaurant.Contract.DTOs.Sale.Orders;
@@ -18,6 +19,11 @@ namespace Restaurant.Application.Services.Sale
 
         Task<Result<OrderResponse>> CreateAsync(
             CreateOrderCommand command,
+            CreateOrderSpecification specification,
+            CancellationToken cancellationToken = default);
+
+        Task<Result<OrderResponse>> CreateFromCartAsync(
+            CreateOrderFromCartCommand command,
             CreateOrderSpecification specification,
             CancellationToken cancellationToken = default);
 

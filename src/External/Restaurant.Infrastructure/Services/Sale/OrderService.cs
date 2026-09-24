@@ -17,8 +17,11 @@ using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
+using Restaurant.Application.Features.Sale.Orders.Commands.CreateFromCart;
+using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Repositories.Billing;
 using Restaurant.Domain.Repositories.Catalog;
+using Restaurant.Domain.Repositories.Commerce;
 using Restaurant.Domain.Repositories.Guest;
 using Restaurant.Domain.Repositories.Personnel;
 using Restaurant.Domain.Repositories.Sale;
@@ -37,6 +40,7 @@ namespace Restaurant.Infrastructure.Services.Sale
         private readonly IProductRepository _productRepository;
         private readonly IRestaurantTableRepository _restaurantTableRepository;
         private readonly IInventoryDeductionService _inventoryDeductionService;
+        private readonly ICartRepository _cartRepository;
 
         private readonly IInvoiceService _invoiceService;
 
@@ -56,7 +60,8 @@ namespace Restaurant.Infrastructure.Services.Sale
             IRestaurantTableRepository restaurantTableRepository,
             IInventoryDeductionService inventoryDeductionService,
             ILogger<OrderService> logger,
-            IInvoiceService invoiceService)
+            IInvoiceService invoiceService,
+            ICartRepository cartRepository)
         {
             _orderRepository = orderRepository;
             _mapper = mapper;
@@ -70,6 +75,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             _inventoryDeductionService = inventoryDeductionService;
             _logger = logger;
             _invoiceService = invoiceService;
+            _cartRepository = cartRepository;
         }
 
         public async Task<PageResult<IEnumerable<OrderResponse>>> GetAllAsync(
@@ -209,6 +215,104 @@ namespace Restaurant.Infrastructure.Services.Sale
             }
         }
 
+        public async Task<Result<OrderResponse>> CreateFromCartAsync(
+            CreateOrderFromCartCommand command,
+            CreateOrderSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
+            try
+            {
+                Customer? customer = null;
+                Cart? cart = null;
+
+                if (command.UserId.HasValue)
+                {
+                    customer = await _customerRepository.FindByUserIdAsync(command.UserId.Value, cancellationToken);
+                    if (customer is null)
+                    {
+                        return Result<OrderResponse>.Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
+                    }
+
+                    cart = await _cartRepository.FindWithItemsByCustomerIdAsync(customer.Id, cancellationToken);
+                }
+                else if (!string.IsNullOrWhiteSpace(command.SessionId))
+                {
+                    cart = await _cartRepository.FindWithItemsBySessionIdAsync(command.SessionId, cancellationToken);
+                }
+
+                if (cart is null || cart.CartItems.Count == 0)
+                {
+                    return Result<OrderResponse>.Fail("Cart is empty.", HttpStatusCode.BadRequest);
+                }
+
+                var branch = await _branchRepository.FindByIdAsync(command.Body.BranchId, cancellationToken);
+                if (branch is null)
+                {
+                    return Result<OrderResponse>.Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
+                }
+
+                var cartItemsToOrder = cart.CartItems.AsEnumerable();
+                if (command.Body.SelectedCartItemIds != null && command.Body.SelectedCartItemIds.Any())
+                {
+                    var selectedIds = command.Body.SelectedCartItemIds.ToHashSet();
+                    cartItemsToOrder = cart.CartItems.Where(x => selectedIds.Contains(x.PublicId)).ToList();
+
+                    if (!cartItemsToOrder.Any())
+                    {
+                        return Result<OrderResponse>.Fail("No valid cart items found to order.", HttpStatusCode.BadRequest);
+                    }
+                }
+
+                var orderDetailRequests = cartItemsToOrder.Select(ci => new CreateOrderDetailRequest
+                {
+                    ProductId = ci.Product.PublicId,
+                    Quantity = ci.Quantity
+                }).ToList();
+
+                var order = Order.Create(
+                    customer?.Id,
+                    employeeId: null,
+                    branch.Id,
+                    restaurantTableId: null,
+                    OrderType.Delivery,
+                    command.Body.Note,
+                    command.Body.DeliveryAddress);
+
+                var orderDetailsResult = await ProcessOrderDetailsAndInventoryAsync(
+                    order,
+                    branch.Id,
+                    orderDetailRequests,
+                    cancellationToken);
+
+                if (!orderDetailsResult.IsSucceed)
+                {
+                    return Result<OrderResponse>
+                        .Fail(orderDetailsResult.Message, (HttpStatusCode)orderDetailsResult.StatusCode);
+                }
+
+                _orderRepository.Add(order);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+                await _invoiceService.InitializeAsync(order, cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+
+                specification.ApplyCriteria(order.Id);
+                var createdOrder = await _orderRepository.FindAsync(specification, cancellationToken);
+
+                var response = _mapper.Map<OrderResponse>(createdOrder);
+                return Result<OrderResponse>
+                    .Succeed(response, Success.Created("Order"), HttpStatusCode.Created);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to create order from cart.");
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
+        }
+
         public async Task<Result<OrderResponse>> AddItemsAsync(
             Guid orderId,
             AddOrderItemsRequest request,
@@ -259,7 +363,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
                 if (order.Status == OrderStatus.Served)
                 {
-                    order.Preparing();
+                    order.Prepare();
                 }
 
                 if (order.Invoice is not null && order.Invoice.Status == InvoiceStatus.Draft)
