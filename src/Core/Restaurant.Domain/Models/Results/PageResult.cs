@@ -12,7 +12,6 @@ namespace Restaurant.Domain.Models.Results
         private PageResult(T? data, bool isSucceed, string message, HttpStatusCode statusCode)
             : base(data, isSucceed, message, statusCode)
         {
-
         }
 
         private PageResult(T? data,

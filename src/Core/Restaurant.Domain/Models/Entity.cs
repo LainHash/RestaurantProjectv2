@@ -11,7 +11,9 @@ namespace Restaurant.Domain.Models
     public abstract class AuditableEntity : Entity
     {
         public DateTime CreatedAt { get; private set; }
+        public long? CreatedBy { get; private set; }
         public DateTime UpdatedAt { get; private set; }
+        public long? UpdatedBy { get; private set; }
 
         public void MarkCreated(DateTime now)
         {
@@ -29,6 +31,7 @@ namespace Restaurant.Domain.Models
     {
         public bool IsDeleted { get; private set; }
         public DateTime? DeletedAt { get; private set; }
+        public long? DeletedBy { get; private set; }
 
         public void SoftDelete()
         {
