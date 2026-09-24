@@ -1,4 +1,5 @@
 ﻿using Restaurant.Domain.Specifications;
+using System.Linq.Expressions;
 
 namespace Restaurant.Domain.Repositories
 {
@@ -8,6 +9,7 @@ namespace Restaurant.Domain.Repositories
         Task<IEnumerable<TEntity>> ToListAsync(CancellationToken cancellationToken = default);
         Task<IEnumerable<TEntity>> ToListAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
         Task<TEntity?> FindAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
+        Task<int> CountAsync(CancellationToken cancellationToken = default);
         Task<int> CountAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
         Task<bool> AnyAsync(ISpecification<TEntity> specification, CancellationToken cancellationToken = default);
 
