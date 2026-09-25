@@ -7,16 +7,12 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
     {
         public Guid BranchId { get; set; }
 
-        public DateTime ReservationDate { get; set; }
-        public TimeSpan ReservationTime { get; set; }
+        public DateOnly ReservationDate { get; set; }
+        public TimeOnly ReservationTime { get; set; }
 
         public int GuestCount { get; set; }
 
         public string? Note { get; set; }
-
-        public DateTime? ConfirmedAt { get; set; }
-        public DateTime? CancelledAt { get; set; }
-        public string? CancellationReason { get; set; }
 
         public string? GuestName { get; set; }
         public string? GuestPhone { get; set; }

@@ -22,12 +22,12 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll
 
             if (query.FromDate.HasValue)
             {
-                AddCriteria(r => r.ReservationDate >= query.FromDate.Value);
+                AddCriteria(r => r.ReservationDate.ToDateTime(r.ReservationTime) >= query.FromDate.Value);
             }
 
             if (query.ToDate.HasValue)
             {
-                AddCriteria(r => r.ReservationDate <= query.ToDate.Value);
+                AddCriteria(r => r.ReservationDate.ToDateTime(r.ReservationTime) <= query.ToDate.Value);
             }
 
             switch (query.SortField)

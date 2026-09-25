@@ -10,8 +10,8 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
         public string BranchCode { get; set; } = null!;
         public string ReservationCode { get; set; } = null!;
 
-        public DateTime ReservationDate { get; set; }
-        public TimeSpan ReservationTime { get; set; }
+        public DateOnly ReservationDate { get; set; }
+        public TimeOnly ReservationTime { get; set; }
 
         public int GuestCount { get; set; }
 

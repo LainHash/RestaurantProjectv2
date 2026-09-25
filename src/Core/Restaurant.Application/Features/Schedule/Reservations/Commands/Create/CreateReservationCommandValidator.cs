@@ -16,14 +16,14 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                     .NotEmpty().WithMessage("BranchId is required.");
 
                 RuleFor(x => x.Body.ReservationDate)
-                    .NotEmpty().WithMessage("ReservationDate is required.")
-                    .Must(date => date.Date >= DateTime.UtcNow.Date.AddDays(-1))
+                    .Must(date => date >= DateOnly.FromDateTime(DateTime.UtcNow))
                     .WithMessage("Reservation date cannot be in the past.");
 
                 RuleFor(x => x.Body.ReservationTime)
-                    .GreaterThanOrEqualTo(TimeSpan.Zero)
-                    .LessThan(TimeSpan.FromHours(24))
-                    .WithMessage("ReservationTime must be a valid time of day.");
+                    .InclusiveBetween(
+                        new TimeOnly(8, 0),
+                        new TimeOnly(21, 0))
+                    .WithMessage("ReservationTime must be between 08:00 and 21:00.");
 
                 RuleFor(x => x.Body.GuestCount)
                     .GreaterThan(0).WithMessage("GuestCount must be greater than 0.");
@@ -31,10 +31,6 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                 RuleFor(x => x.Body.Note)
                     .MaximumLength(1000).WithMessage("Note must not exceed 1000 characters.")
                     .When(x => !string.IsNullOrEmpty(x.Body.Note));
-
-                RuleFor(x => x.Body.CancellationReason)
-                    .MaximumLength(500).WithMessage("CancellationReason must not exceed 500 characters.")
-                    .When(x => !string.IsNullOrEmpty(x.Body.CancellationReason));
 
                 RuleFor(x => x.Body.ReservationTables)
                     .Must(tables => tables.Select(t => t.RestaurantTableId).Distinct().Count() == tables.Count())

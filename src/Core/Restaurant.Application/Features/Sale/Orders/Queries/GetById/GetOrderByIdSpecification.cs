@@ -9,10 +9,10 @@ namespace Restaurant.Application.Features.Sale.Orders.Queries.GetById
     {
         public GetOrderByIdSpecification(GetOrderByIdQuery query)
         {
-            AddInclude(x => x.Customer);
-            AddInclude(x => x.Employee);
+            AddInclude(x => x.Customer!);
+            AddInclude(x => x.Employee!);
             AddInclude(x => x.Branch);
-            AddInclude(x => x.RestaurantTable);
+            AddInclude(x => x.RestaurantTable!);
             AddIncludeAggregator(x => x.Include(o => o.OrderDetails)
                                         .ThenInclude(od => od.OrderPreparation));
 

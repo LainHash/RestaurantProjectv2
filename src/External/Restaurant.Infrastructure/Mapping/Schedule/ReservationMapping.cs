@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
 using Restaurant.Domain.Entities.Schedule;
 
@@ -19,8 +19,8 @@ namespace Restaurant.Infrastructure.Mapping.Schedule
                     .MapFrom(src => src.ReservationTables));
 
             CreateMap<CreateReservationRequest, Reservation>()
-                .ForMember(dest => dest.ReservationTables, opt => opt
-                    .MapFrom(src => src.ReservationTables));
+                .ForMember(dest => dest.ReservationTables, opt => opt.Ignore())
+                .ForMember(dest => dest.BranchId, opt => opt.Ignore());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using NanoidDotNet;
+using NanoidDotNet;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
@@ -18,12 +18,13 @@ namespace Restaurant.Domain.Entities.Schedule
         public string GuestPhone { get; set; } = null!;
         public string? GuestEmail { get; set; }
 
-        public DateTime ReservationDate { get; set; }
-        public TimeSpan ReservationTime { get; set; }
+        public DateOnly ReservationDate { get; set; }
+        public TimeOnly ReservationTime { get; set; }
+        public int Duration { get; set; } = 2; //Hours
 
         public int GuestCount { get; set; }
 
-        public ReservationStatus Status { get; set; }
+        public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
 
         public string? Note { get; set; }
 
@@ -53,9 +54,16 @@ namespace Restaurant.Domain.Entities.Schedule
 
         public Reservation SetGuest(Customer customer)
         {
+            CustomerId = customer.Id;
             GuestName = customer.User.PersonalProfile!.FirstName + " " + customer.User.PersonalProfile!.LastName;
             GuestPhone = customer.User.PersonalProfile.Phone;
             GuestEmail = customer.User.Email;
+            return this;
+        }
+
+        public Reservation SetReservationTables(IEnumerable<ReservationTable> reservationTables)
+        {
+            ReservationTables = [.. reservationTables];
             return this;
         }
     }

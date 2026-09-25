@@ -10,10 +10,10 @@ namespace Restaurant.Application.Features.Sale.Orders.Queries.GetAll
     {
         public GetAllOrdersSpecification(GetAllOrdersQuery query)
         {
-            AddInclude(x => x.Customer);
-            AddInclude(x => x.Employee);
+            AddInclude(x => x.Customer!);
+            AddInclude(x => x.Employee!);
             AddInclude(x => x.Branch);
-            AddInclude(x => x.RestaurantTable);
+            AddInclude(x => x.RestaurantTable!);
 
             if (!string.IsNullOrWhiteSpace(query.Keyword))
             {
@@ -25,13 +25,13 @@ namespace Restaurant.Application.Features.Sale.Orders.Queries.GetAll
             if (query.CustomerCode is not null)
             {
                 AddCriteria(p =>
-                    p.Customer.CustomerCode == query.CustomerCode);
+                    p.Customer!.CustomerCode == query.CustomerCode);
             }
 
             if (query.EmployeeCode is not null)
             {
                 AddCriteria(p =>
-                    p.Employee.EmployeeCode == query.EmployeeCode);
+                    p.Employee!.EmployeeCode == query.EmployeeCode);
             }
 
             if (query.BranchCode is not null)

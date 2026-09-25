@@ -43,6 +43,7 @@ namespace Restaurant.API.Controllers.Schedule
         }
 
         [AllowAnonymous]
+        [HttpGet("code/{code}")]
         public async Task<IActionResult> GetByCode(
             [FromRoute] string code,
             CancellationToken cancellationToken = default)
