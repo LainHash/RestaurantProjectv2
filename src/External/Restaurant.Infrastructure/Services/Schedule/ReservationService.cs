@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
+using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Application.Services.Business;
 using Restaurant.Application.Services.Schedule;
@@ -59,6 +60,22 @@ namespace Restaurant.Infrastructure.Services.Schedule
         {
             var reservation = await _reservationRepository.FindAsync(specification, cancellationToken);
             if(reservation is null)
+            {
+                return Result<ReservationDetailResponse>
+                    .Fail(Error.NotFound("Reservation"), HttpStatusCode.NotFound);
+            }
+
+            var response = _mapper.Map<ReservationDetailResponse>(reservation);
+            return Result<ReservationDetailResponse>
+                .Succeed(response, Success.Retrieved("Reservation"));
+        }
+
+        public async Task<Result<ReservationDetailResponse>> GetByCodeAsync(
+            GetReservationByCodeSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var reservation = await _reservationRepository.FindAsync(specification, cancellationToken);
+            if (reservation is null)
             {
                 return Result<ReservationDetailResponse>
                     .Fail(Error.NotFound("Reservation"), HttpStatusCode.NotFound);

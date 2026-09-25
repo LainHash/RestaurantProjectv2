@@ -8,6 +8,7 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
         public Guid Id { get; set; }
 
         public string BranchCode { get; set; } = null!;
+        public string ReservationCode { get; set; } = null!;
 
         public DateTime ReservationDate { get; set; }
         public TimeSpan ReservationTime { get; set; }

@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Entities.Guest;
+﻿using NanoidDotNet;
+using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
 using Restaurant.Domain.Models;
@@ -10,6 +11,8 @@ namespace Restaurant.Domain.Entities.Schedule
         public long BranchId { get; set; }
 
         public long? CustomerId { get; set; }
+
+        public string ReservationCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
         public string GuestName { get; set; } = null!;
         public string GuestPhone { get; set; } = null!;

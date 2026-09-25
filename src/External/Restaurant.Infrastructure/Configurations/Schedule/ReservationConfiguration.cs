@@ -22,6 +22,10 @@ namespace Restaurant.Infrastructure.Configurations.Schedule
             builder.Property(x => x.BranchId)
                 .IsRequired();
 
+            builder.Property(x => x.ReservationCode)
+                .HasMaxLength(20)
+                .IsRequired();
+
             builder.Property(x => x.CustomerId);
 
             builder.Property(x => x.GuestName)

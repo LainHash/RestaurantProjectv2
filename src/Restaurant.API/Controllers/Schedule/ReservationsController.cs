@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
+using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
@@ -37,6 +38,16 @@ namespace Restaurant.API.Controllers.Schedule
             CancellationToken cancellationToken)
         {
             var query = new GetReservationByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [AllowAnonymous]
+        public async Task<IActionResult> GetByCode(
+            [FromRoute] string code,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new GetReservationByCodeQuery(code);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }
