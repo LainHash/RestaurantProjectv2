@@ -1,6 +1,7 @@
 using AutoMapper;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
+using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllForCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Application.Services.Business;
@@ -47,6 +48,19 @@ namespace Restaurant.Infrastructure.Services.Schedule
 
         public async Task<PageResult<IEnumerable<ReservationResponse>>> GetAllAsync(
             GetAllReservationsSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var totalItems = await _reservationRepository.CountAsync(specification, cancellationToken);
+
+            var reservations = await _reservationRepository.ToListAsync(specification, cancellationToken);
+
+            var response = _mapper.Map<IEnumerable<ReservationResponse>>(reservations);
+            return PageResult<IEnumerable<ReservationResponse>>
+                .Succeed(response, Success.Retrieved("Reservation"), totalItems, specification.Skip, specification.Take);
+        }
+
+        public async Task<PageResult<IEnumerable<ReservationResponse>>> GetAllForCustomerAsync(
+            GetAllReservationsForCustomerSpecification specification,
             CancellationToken cancellationToken = default)
         {
             var totalItems = await _reservationRepository.CountAsync(specification, cancellationToken);
