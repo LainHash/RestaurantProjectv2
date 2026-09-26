@@ -2,12 +2,12 @@
 using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Specifications;
 
-namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllForCustomer
+namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer
 {
-    public class GetAllReservationsForCustomerSpecification
+    public class GetAllReservationsByCustomerSpecification
         : BaseSpecification<Reservation>
     {
-        public GetAllReservationsForCustomerSpecification(GetAllReservationsForCustomerQuery query)
+        public GetAllReservationsByCustomerSpecification(GetAllReservationsByCustomerQuery query)
         {
             AddInclude(x => x.Branch);
             AddIncludeAggregator(x => x.Include(r => r.Customer)

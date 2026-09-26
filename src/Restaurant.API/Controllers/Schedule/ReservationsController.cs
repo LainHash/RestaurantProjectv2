@@ -4,12 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
-using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllForCustomer;
+using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Application.Services.Auth;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Restaurant.API.Controllers.Schedule
 {
@@ -56,7 +55,7 @@ namespace Restaurant.API.Controllers.Schedule
             {
                 return Unauthorized();
             }
-            var query = new GetAllReservationsForCustomerQuery(userId.Value, fromDate, toDate);
+            var query = new GetAllReservationsByCustomerQuery(userId.Value, fromDate, toDate);
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
         }

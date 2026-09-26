@@ -1,6 +1,6 @@
 ﻿using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
-using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllForCustomer;
+using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetById;
 using Restaurant.Contract.DTOs.Schedule.Reservations;
@@ -14,8 +14,9 @@ namespace Restaurant.Application.Services.Schedule
             GetAllReservationsSpecification specification,
             CancellationToken cancellationToken = default);
 
-        Task<PageResult<IEnumerable<ReservationResponse>>> GetAllForCustomerAsync(
-            GetAllReservationsForCustomerSpecification specification,
+        Task<PageResult<IEnumerable<ReservationMinimalResponse>>> GetAllByCustomerAsync(
+            GetAllReservationsByCustomerQuery query,
+            GetAllReservationsByCustomerSpecification specification,
             CancellationToken cancellationToken = default);
 
         Task<Result<ReservationDetailResponse>> GetByIdAsync(

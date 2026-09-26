@@ -11,6 +11,9 @@ namespace Restaurant.Infrastructure.Mapping.Schedule
             CreateMap<Reservation, ReservationResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
                 .ForMember(dest => dest.BranchCode, opt => opt.MapFrom(src => src.Branch.BranchCode));
+            
+            CreateMap<Reservation, ReservationMinimalResponse>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId));
 
             CreateMap<Reservation, ReservationDetailResponse>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.PublicId))
