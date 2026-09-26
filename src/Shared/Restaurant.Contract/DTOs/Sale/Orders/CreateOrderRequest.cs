@@ -5,10 +5,10 @@ namespace Restaurant.Contract.DTOs.Sale.Orders
 {
     public class CreateOrderRequest
     {
-        public Guid? CustomerId { get; set; }
-        public Guid? EmployeeId { get; set; }
-        public Guid BranchId { get; set; }
-        public Guid? RestaurantTableId { get; set; }
+        public Guid? CustomerPublicId { get; set; }
+        public Guid? EmployeePublicId { get; set; }
+        public Guid BranchPublicId { get; set; }
+        public Guid? RestaurantTablePublicId { get; set; }
         public string? DeliveryAddress { get; set; }
 
         public OrderType Type { get; set; }

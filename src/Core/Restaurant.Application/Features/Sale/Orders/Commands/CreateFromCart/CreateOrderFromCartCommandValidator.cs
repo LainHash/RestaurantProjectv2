@@ -16,7 +16,7 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.CreateFromCart
 
             When(x => x.Body != null, () =>
             {
-                RuleFor(x => x.Body.BranchId)
+                RuleFor(x => x.Body.BranchPublicId)
                     .NotEmpty().WithMessage("BranchId is required.");
 
                 RuleFor(x => x.Body.DeliveryAddress)

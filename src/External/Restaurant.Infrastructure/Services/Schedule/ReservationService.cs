@@ -96,7 +96,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
             CancellationToken cancellationToken = default)
         {
             var branch = await _branchRepository
-                .FindByIdAsync(command.Body.BranchId, cancellationToken);
+                .FindByIdAsync(command.Body.BranchPublicId, cancellationToken);
             if(branch is null)
             {
                 return Result<ReservationDetailResponse>
@@ -165,7 +165,7 @@ namespace Restaurant.Infrastructure.Services.Schedule
             foreach (var tableRequest in tableRequests)
             {
                 var table = await _restaurantTableRepository
-                    .FindByIdAsync(tableRequest.RestaurantTableId, cancellationToken);
+                    .FindByIdAsync(tableRequest.RestaurantTablePublicId, cancellationToken);
 
                 if (table is null)
                 {

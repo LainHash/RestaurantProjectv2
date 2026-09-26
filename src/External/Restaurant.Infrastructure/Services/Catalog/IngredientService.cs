@@ -75,7 +75,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             CreateIngredientRequest request,
             CancellationToken cancellationToken)
         {
-            var category = await _categoryRepository.FindByIdAsync(request.CategoryId, cancellationToken);
+            var category = await _categoryRepository.FindByIdAsync(request.CategoryPublicId, cancellationToken);
             if (category is null)
             {
                 return Result<IngredientResponse>
@@ -83,9 +83,9 @@ namespace Restaurant.Infrastructure.Services.Catalog
             }
 
             Brand? brand = null;
-            if (request.BrandId is not null)
+            if (request.BrandPublicId is not null)
             {
-                brand = await _brandRepository.FindByIdAsync(request.BrandId.Value, cancellationToken);
+                brand = await _brandRepository.FindByIdAsync(request.BrandPublicId.Value, cancellationToken);
 
                 if (brand is null)
                 {
@@ -94,7 +94,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 }
             }
 
-            var unit = await _unitRepository.FindByIdAsync(request.UnitId, cancellationToken);
+            var unit = await _unitRepository.FindByIdAsync(request.UnitPublicId, cancellationToken);
             if (unit is null)
             {
                 return Result<IngredientResponse>
@@ -122,7 +122,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
             UpdateIngredientRequest request,
             CancellationToken cancellationToken)
         {
-            var category = await _categoryRepository.FindByIdAsync(request.CategoryId, cancellationToken);
+            var category = await _categoryRepository.FindByIdAsync(request.CategoryPublicId, cancellationToken);
             if (category is null)
             {
                 return Result<IngredientResponse>
@@ -130,9 +130,9 @@ namespace Restaurant.Infrastructure.Services.Catalog
             }
 
             Brand? brand = null;
-            if (request.BrandId is not null)
+            if (request.BrandPublicId is not null)
             {
-                brand = await _brandRepository.FindByIdAsync(request.BrandId.Value, cancellationToken);
+                brand = await _brandRepository.FindByIdAsync(request.BrandPublicId.Value, cancellationToken);
 
                 if (brand is null)
                 {
@@ -141,7 +141,7 @@ namespace Restaurant.Infrastructure.Services.Catalog
                 }
             }
 
-            var unit = await _unitRepository.FindByIdAsync(request.UnitId, cancellationToken);
+            var unit = await _unitRepository.FindByIdAsync(request.UnitPublicId, cancellationToken);
             if (unit is null)
             {
                 return Result<IngredientResponse>

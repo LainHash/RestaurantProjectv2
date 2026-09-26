@@ -11,7 +11,7 @@ namespace Restaurant.Application.Features.Personnel.Positions.Commands.Create
                 .NotEmpty().WithMessage("Name is required.")
                 .MaximumLength(50).WithMessage("Name must not exceed 50 characters.");
 
-            RuleFor(x => x.Body.DepartmentId)
+            RuleFor(x => x.Body.DepartmentPublicId)
                 .NotEmpty().WithMessage("DepartmentId is required.");
 
             RuleFor(x => x.Body.Description)

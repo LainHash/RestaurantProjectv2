@@ -116,10 +116,10 @@ namespace Restaurant.Infrastructure.Services.Sale
             try
             {
                 Customer? customer = null;
-                if (command.Body.CustomerId is not null)
+                if (command.Body.CustomerPublicId is not null)
                 {
                     customer = await _customerRepository
-                        .FindByIdAsync(command.Body.CustomerId.Value, cancellationToken);
+                        .FindByIdAsync(command.Body.CustomerPublicId.Value, cancellationToken);
 
                     if (customer is null)
                     {
@@ -129,7 +129,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 }
 
                 var branch = await _branchRepository
-                    .FindByIdAsync(command.Body.BranchId, cancellationToken);
+                    .FindByIdAsync(command.Body.BranchPublicId, cancellationToken);
                 if (branch is null)
                 {
                     return Result<OrderResponse>
@@ -142,7 +142,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 if (command.Body.Type != OrderType.Delivery)
                 {
                     var employee = await _employeeRepository
-                        .FindByIdAsync(command.Body.EmployeeId!.Value, cancellationToken);
+                        .FindByIdAsync(command.Body.EmployeePublicId!.Value, cancellationToken);
                     if (employee is null)
                     {
                         return Result<OrderResponse>
@@ -155,7 +155,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                 if (command.Body.Type == OrderType.DineIn)
                 {
                     var tableResult = await ResolveAndOccupyTableAsync(
-                        command.Body.RestaurantTableId!.Value,
+                        command.Body.RestaurantTablePublicId!.Value,
                         branch.Id,
                         cancellationToken);
 
@@ -246,7 +246,7 @@ namespace Restaurant.Infrastructure.Services.Sale
                     return Result<OrderResponse>.Fail("Cart is empty.", HttpStatusCode.BadRequest);
                 }
 
-                var branch = await _branchRepository.FindByIdAsync(command.Body.BranchId, cancellationToken);
+                var branch = await _branchRepository.FindByIdAsync(command.Body.BranchPublicId, cancellationToken);
                 if (branch is null)
                 {
                     return Result<OrderResponse>.Fail(Error.NotFound("Branch"), HttpStatusCode.NotFound);
@@ -266,7 +266,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
                 var orderDetailRequests = cartItemsToOrder.Select(ci => new CreateOrderDetailRequest
                 {
-                    ProductId = ci.Product.PublicId,
+                    ProductPublicId = ci.Product.PublicId,
                     Quantity = ci.Quantity
                 }).ToList();
 
@@ -451,7 +451,7 @@ namespace Restaurant.Infrastructure.Services.Sale
             CancellationToken cancellationToken)
         {
             var productIds = items
-                .Select(x => x.ProductId)
+                .Select(x => x.ProductPublicId)
                 .Distinct()
                 .ToList();
 
@@ -466,7 +466,7 @@ namespace Restaurant.Infrastructure.Services.Sale
 
             foreach (var item in items)
             {
-                if (!productMap.TryGetValue(item.ProductId, out var product))
+                if (!productMap.TryGetValue(item.ProductPublicId, out var product))
                 {
                     return Result<List<(Product Product, int Quantity)>>
                         .Fail(Error.NotFound("Product"), HttpStatusCode.NotFound);

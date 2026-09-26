@@ -2,6 +2,6 @@
 {
     public class CreateReservationTableRequest
     {
-        public Guid RestaurantTableId { get; set; }
+        public Guid RestaurantTablePublicId { get; set; }
     }
 }

@@ -81,21 +81,21 @@ namespace Restaurant.Infrastructure.Services.Personnel
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
             try
             {
-                var user = await _userRepository.FindByIdAsync(command.Body.UserId, cancellationToken);
+                var user = await _userRepository.FindByIdAsync(command.Body.UserPublicId, cancellationToken);
                 if(user is null)
                 {
                     return Result<EmployeeResponse>
                         .Fail(Error.NotFound("User"), HttpStatusCode.NotFound);
                 }
 
-                var position = await _positionRepository.FindByIdAsync(command.Body.PositionId, cancellationToken);
+                var position = await _positionRepository.FindByIdAsync(command.Body.PositionPublicId, cancellationToken);
                 if(position is null)
                 {
                     return Result<EmployeeResponse>
                         .Fail(Error.NotFound("Position"), HttpStatusCode.NotFound);
                 }
 
-                var branch = await _branchRepository.FindByIdAsync(command.Body.BranchId, cancellationToken);
+                var branch = await _branchRepository.FindByIdAsync(command.Body.BranchPublicId, cancellationToken);
                 if(branch is null)
                 {
                     return Result<EmployeeResponse>

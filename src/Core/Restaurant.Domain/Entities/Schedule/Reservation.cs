@@ -8,33 +8,33 @@ namespace Restaurant.Domain.Entities.Schedule
 {
     public partial class Reservation : SoftDeletableEntity
     {
-        public long BranchId { get; set; }
+        public long BranchId { get; private set; }
 
-        public long? CustomerId { get; set; }
+        public long? CustomerId { get; private set; }
 
         public string ReservationCode { get; private set; } = Nanoid.Generate("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", 20);
 
-        public string GuestName { get; set; } = null!;
-        public string GuestPhone { get; set; } = null!;
-        public string? GuestEmail { get; set; }
+        public string GuestName { get; private set; } = null!;
+        public string GuestPhone { get; private set; } = null!;
+        public string? GuestEmail { get; private set; }
 
-        public DateOnly ReservationDate { get; set; }
-        public TimeOnly ReservationTime { get; set; }
-        public int Duration { get; set; } = 2; //Hours
+        public DateOnly ReservationDate { get; private set; }
+        public TimeOnly ReservationTime { get; private set; }
+        public int Duration { get; private set; } = 2; //Hours
 
-        public int GuestCount { get; set; }
+        public int GuestCount { get; private set; }
 
-        public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
+        public ReservationStatus Status { get; private set; } = ReservationStatus.Pending;
 
-        public string? Note { get; set; }
+        public string? Note { get; private set; }
 
-        public DateTime? ConfirmedAt { get; set; }
-        public DateTime? CancelledAt { get; set; }
-        public string? CancellationReason { get; set; }
+        public DateTime? ConfirmedAt { get; private set; }
+        public DateTime? CancelledAt { get; private set; }
+        public string? CancellationReason { get; private set; }
 
-        public Branch Branch { get; set; } = null!;
-        public Customer? Customer { get; set; }
-        public ICollection<ReservationTable> ReservationTables { get; set; } = [];
+        public Branch Branch { get; private set; } = null!;
+        public Customer? Customer { get; private set; }
+        public ICollection<ReservationTable> ReservationTables { get; private set; } = [];
     }
 
     public partial class Reservation

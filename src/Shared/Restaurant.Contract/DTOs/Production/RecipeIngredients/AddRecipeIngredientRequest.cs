@@ -2,8 +2,8 @@
 {
     public class AddRecipeIngredientRequest
     {
-        public Guid IngredientId { get; set; }
+        public Guid IngredientPublicId { get; set; }
         public decimal Quantity { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid UnitPublicId { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
 
             When(x => x.Body != null, () =>
             {
-                RuleFor(x => x.Body.BranchId)
+                RuleFor(x => x.Body.BranchPublicId)
                     .NotEmpty().WithMessage("BranchId is required.");
 
                 RuleFor(x => x.Body.ReservationDate)
@@ -33,7 +33,7 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
                     .When(x => !string.IsNullOrEmpty(x.Body.Note));
 
                 RuleFor(x => x.Body.ReservationTables)
-                    .Must(tables => tables.Select(t => t.RestaurantTableId).Distinct().Count() == tables.Count())
+                    .Must(tables => tables.Select(t => t.RestaurantTablePublicId).Distinct().Count() == tables.Count())
                     .WithMessage("Each table can only appear once in a reservation.")
                     .When(x => x.Body.ReservationTables != null && x.Body.ReservationTables.Any());
 
@@ -57,7 +57,7 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Commands.Create
 
                 RuleForEach(x => x.Body.ReservationTables).ChildRules(table =>
                 {
-                    table.RuleFor(t => t.RestaurantTableId)
+                    table.RuleFor(t => t.RestaurantTablePublicId)
                         .NotEmpty().WithMessage("RestaurantTableId is required.");
                 });
             });

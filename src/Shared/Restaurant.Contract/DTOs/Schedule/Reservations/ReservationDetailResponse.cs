@@ -12,6 +12,7 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
 
         public DateOnly ReservationDate { get; set; }
         public TimeOnly ReservationTime { get; set; }
+        public int Duration { get; set; }
 
         public int GuestCount { get; set; }
 

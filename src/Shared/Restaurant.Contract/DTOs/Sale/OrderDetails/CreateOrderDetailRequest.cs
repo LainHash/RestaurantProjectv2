@@ -2,7 +2,7 @@
 {
     public class CreateOrderDetailRequest
     {
-        public Guid ProductId { get; set; }
+        public Guid ProductPublicId { get; set; }
 
         public int Quantity { get; set; }
 

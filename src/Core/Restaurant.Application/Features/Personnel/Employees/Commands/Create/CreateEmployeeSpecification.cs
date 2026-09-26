@@ -9,7 +9,7 @@ namespace Restaurant.Application.Features.Personnel.Employees.Commands.Create
     {
         public CreateEmployeeSpecification(CreateEmployeeCommand command)
         {
-            AddCriteria(x => x.User.PublicId == command.Body.UserId);
+            AddCriteria(x => x.User.PublicId == command.Body.UserPublicId);
 
             AddInclude(x => x.Position);
             AddIncludeAggregator(x => x.Include(c => c.User)

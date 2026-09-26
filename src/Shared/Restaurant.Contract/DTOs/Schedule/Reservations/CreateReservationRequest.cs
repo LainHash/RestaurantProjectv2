@@ -5,10 +5,11 @@ namespace Restaurant.Contract.DTOs.Schedule.Reservations
 {
     public class CreateReservationRequest
     {
-        public Guid BranchId { get; set; }
+        public Guid BranchPublicId { get; set; }
 
         public DateOnly ReservationDate { get; set; }
         public TimeOnly ReservationTime { get; set; }
+        public int Duration { get; set; }
 
         public int GuestCount { get; set; }
 

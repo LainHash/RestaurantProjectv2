@@ -8,9 +8,9 @@ namespace Restaurant.Contract.DTOs.Catalog.Products
         public string? Description { get; set; }
         public InventoryType InventoryType { get; set; }
 
-        public Guid? BrandId { get; set; }
-        public Guid CategoryId { get; set; }
-        public Guid UnitId { get; set; }
+        public Guid? BrandPublicId { get; set; }
+        public Guid CategoryPublicId { get; set; }
+        public Guid UnitPublicId { get; set; }
 
         public decimal UnitPrice { get; set; }
         public string Currency { get; set; } = string.Empty;

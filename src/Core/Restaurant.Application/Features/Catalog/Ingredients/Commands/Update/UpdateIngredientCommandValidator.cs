@@ -11,10 +11,10 @@ namespace Restaurant.Application.Features.Catalog.Ingredients.Commands.Update
                 .NotEmpty().WithMessage("Name is required.")
                 .MaximumLength(100).WithMessage("Name must not exceed 100 characters.");
 
-            RuleFor(x => x.Body.CategoryId)
+            RuleFor(x => x.Body.CategoryPublicId)
                 .NotEmpty().WithMessage("CategoryId is required.");
 
-            RuleFor(x => x.Body.UnitId)
+            RuleFor(x => x.Body.UnitPublicId)
                 .NotEmpty().WithMessage("UnitId is required.");
 
             RuleFor(x => x.Body.UnitPrice)

@@ -18,12 +18,12 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.AddItems
                     .NotEmpty().WithMessage("At least one order item is required.");
 
                 RuleFor(x => x.Body.OrderDetails)
-                    .Must(x => x.Select(i => i.ProductId).Distinct().Count() == x.Count())
+                    .Must(x => x.Select(i => i.ProductPublicId).Distinct().Count() == x.Count())
                     .WithMessage("Each product can only appear once in an order update.");
 
                 RuleForEach(x => x.Body.OrderDetails).ChildRules(detail =>
                 {
-                    detail.RuleFor(d => d.ProductId)
+                    detail.RuleFor(d => d.ProductPublicId)
                         .NotEmpty().WithMessage("ProductId is required.");
 
                     detail.RuleFor(d => d.Quantity)

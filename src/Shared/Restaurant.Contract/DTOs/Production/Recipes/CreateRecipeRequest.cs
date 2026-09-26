@@ -2,7 +2,7 @@
 {
     public class CreateRecipeRequest
     {
-        public Guid ProductId { get; set; }
+        public Guid ProductPublicId { get; set; }
         public string? Instructions { get; set; }
     }
 }

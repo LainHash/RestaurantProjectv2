@@ -66,7 +66,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
             CreatePositionCommand command,
             CancellationToken cancellationToken = default)
         {
-            var department = await _departmentRepository.FindByIdAsync(command.Body.DepartmentId, cancellationToken);
+            var department = await _departmentRepository.FindByIdAsync(command.Body.DepartmentPublicId, cancellationToken);
             if (department is null)
             {
                 return Result<PositionResponse>
@@ -115,7 +115,7 @@ namespace Restaurant.Infrastructure.Services.Personnel
                     .Fail(Error.ExistedName("Position"), HttpStatusCode.Conflict);
             }
 
-            var department = await _departmentRepository.FindByIdAsync(command.Body.DepartmentId, cancellationToken);
+            var department = await _departmentRepository.FindByIdAsync(command.Body.DepartmentPublicId, cancellationToken);
             if (department is null)
             {
                 return Result<PositionResponse>

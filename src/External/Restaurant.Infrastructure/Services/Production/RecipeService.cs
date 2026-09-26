@@ -82,7 +82,7 @@ namespace Restaurant.Infrastructure.Services.Production
             CreateRecipeSpecification specification,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            var product = await _productRepository.FindByIdAsync(command.Body.ProductPublicId, cancellationToken);
             if (product is null)
             {
                 return Result<RecipeResponse>
@@ -114,7 +114,7 @@ namespace Restaurant.Infrastructure.Services.Production
             UpdateRecipeSpecification specification,
             CancellationToken cancellationToken)
         {
-            var product = await _productRepository.FindByIdAsync(command.Body.ProductId, cancellationToken);
+            var product = await _productRepository.FindByIdAsync(command.Body.ProductPublicId, cancellationToken);
             if (product is null)
             {
                 return Result<RecipeResponse>
@@ -159,14 +159,14 @@ namespace Restaurant.Infrastructure.Services.Production
 
             foreach (var item in command.Body)
             {
-                var ingredient = await _ingredientRepository.FindByIdAsync(item.IngredientId, cancellationToken);
+                var ingredient = await _ingredientRepository.FindByIdAsync(item.IngredientPublicId, cancellationToken);
                 if (ingredient is null)
                 {
                     return Result<RecipeResponse>
                         .Fail(Error.NotFound("Ingredient"), HttpStatusCode.NotFound);
                 }
 
-                var unit = await _unitRepository.FindByIdAsync(item.UnitId, cancellationToken);
+                var unit = await _unitRepository.FindByIdAsync(item.UnitPublicId, cancellationToken);
                 if (unit is null)
                 {
                     return Result<RecipeResponse>

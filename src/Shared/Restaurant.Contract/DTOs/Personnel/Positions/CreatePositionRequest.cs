@@ -4,6 +4,6 @@ namespace Restaurant.Contract.DTOs.Personnel.Positions
     {
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public Guid DepartmentId { get; set; }
+        public Guid DepartmentPublicId { get; set; }
     }
 }

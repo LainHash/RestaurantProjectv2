@@ -14,7 +14,7 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
             When(x => x.Body != null, () =>
             {
                 // BranchId — always required
-                RuleFor(x => x.Body.BranchId)
+                RuleFor(x => x.Body.BranchPublicId)
                     .NotEmpty().WithMessage("BranchId is required.");
 
                 // Type — always required
@@ -22,23 +22,23 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
                     .IsInEnum().WithMessage("Invalid order type.");
 
                 // EmployeeId — required for DineIn and TakeAway, not for Delivery
-                RuleFor(x => x.Body.EmployeeId)
+                RuleFor(x => x.Body.EmployeePublicId)
                     .NotEmpty().WithMessage("EmployeeId is required for dine-in and take-away orders.")
                     .When(x => x.Body.Type != OrderType.Delivery);
 
                 // RestaurantTableId — required only for DineIn
-                RuleFor(x => x.Body.RestaurantTableId)
+                RuleFor(x => x.Body.RestaurantTablePublicId)
                     .NotEmpty().WithMessage("RestaurantTableId is required for dine-in orders.")
                     .When(x => x.Body.Type == OrderType.DineIn);
 
                 // CustomerId — required for Delivery, optional otherwise (validate non-empty if provided)
-                RuleFor(x => x.Body.CustomerId)
+                RuleFor(x => x.Body.CustomerPublicId)
                     .NotEmpty().WithMessage("CustomerId is required for delivery orders.")
                     .When(x => x.Body.Type == OrderType.Delivery);
 
-                RuleFor(x => x.Body.CustomerId)
+                RuleFor(x => x.Body.CustomerPublicId)
                     .Must(id => id != Guid.Empty)
-                    .When(x => x.Body.Type != OrderType.Delivery && x.Body.CustomerId.HasValue)
+                    .When(x => x.Body.Type != OrderType.Delivery && x.Body.CustomerPublicId.HasValue)
                     .WithMessage("CustomerId must not be empty.");
 
                 // DeliveryAddress — required for Delivery
@@ -57,12 +57,12 @@ namespace Restaurant.Application.Features.Sale.Orders.Commands.Create
                     .NotEmpty().WithMessage("Order must contain at least one order detail.");
 
                 RuleFor(x => x.Body.CreateOrderDetails)
-                    .Must(x => x.Select(i => i.ProductId).Distinct().Count() == x.Count())
+                    .Must(x => x.Select(i => i.ProductPublicId).Distinct().Count() == x.Count())
                     .WithMessage("Each product can only appear once in an order.");
 
                 RuleForEach(x => x.Body.CreateOrderDetails).ChildRules(detail =>
                 {
-                    detail.RuleFor(d => d.ProductId)
+                    detail.RuleFor(d => d.ProductPublicId)
                         .NotEmpty().WithMessage("ProductId is required.");
 
                     detail.RuleFor(d => d.Quantity)
