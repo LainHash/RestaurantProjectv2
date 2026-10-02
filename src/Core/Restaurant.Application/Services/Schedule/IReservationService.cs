@@ -1,4 +1,5 @@
 ﻿using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
+using Restaurant.Application.Features.Schedule.Reservations.Commands.UpdateByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
@@ -30,6 +31,11 @@ namespace Restaurant.Application.Services.Schedule
         Task<Result<ReservationDetailResponse>> CreateAsync(
             CreateReservationCommand command,
             CreateReservationSpecification specification,
+            CancellationToken cancellationToken = default);
+
+        Task<Result<ReservationMinimalResponse>> UpdateByCustomerAsync(
+            UpdateReservationByCustomerCommand command,
+            UpdateReservationByCustomerSpecification specification,
             CancellationToken cancellationToken = default);
 
 

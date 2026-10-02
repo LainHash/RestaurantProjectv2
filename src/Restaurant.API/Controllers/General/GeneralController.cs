@@ -10,7 +10,8 @@ namespace Restaurant.API.Controllers.General
     [ApiController]
     public class GeneralController(
         IMediator mediator,
-        ICurrentUserService currentUserService) : ControllerBase
+        ICurrentUserService currentUserService,
+        IEnumerable<EndpointDataSource> endpointSources) : ControllerBase
     {
         private readonly IMediator _mediator = mediator;
         private readonly ICurrentUserService _currentUserService = currentUserService;
@@ -30,6 +31,39 @@ namespace Restaurant.API.Controllers.General
 
             var result = await _mediator.Send(query, cancellationToken);
             return this.ToActionResult(result);
+        }
+
+        [HttpGet("routes")]
+        public IActionResult GetRoutes()
+        {
+            var endpoints = endpointSources
+                .SelectMany(es => es.Endpoints);
+
+            var routes = endpoints
+                .OfType<RouteEndpoint>()
+                .Select(e => new
+                {
+                    Method = e.Metadata
+                        .OfType<HttpMethodMetadata>()
+                        .FirstOrDefault()
+                        ?.HttpMethods
+                        .FirstOrDefault(),
+
+                    Route = e.RoutePattern.RawText
+                });
+
+            return Ok(routes);
+        }
+
+        [HttpGet]
+        public IActionResult GetRoot()
+        {
+            return Ok(new
+            {
+                success = true,
+                message = "API is running",
+                version = "1.0.0"
+            });
         }
     }
 }

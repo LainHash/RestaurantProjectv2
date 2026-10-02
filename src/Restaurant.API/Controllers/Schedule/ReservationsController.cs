@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
+using Restaurant.Application.Features.Schedule.Reservations.Commands.UpdateByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
@@ -79,6 +80,18 @@ namespace Restaurant.API.Controllers.Schedule
         {
             var userId = _currentUserService.UserId;
             var command = new CreateReservationCommand(userId, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize(Roles = "Customer")]
+        [HttpPut("{id}/me")]
+        public async Task<IActionResult> UpdateByCustomer(
+            [FromRoute] Guid id,
+            [FromBody] UpdateReservationByCustomerRequest body,
+            CancellationToken cancellationToken = default)
+        {
+            var command = new UpdateReservationByCustomerCommand(id, body);
             var result = await _mediator.Send(command, cancellationToken);
             return this.ToActionResult(result);
         }

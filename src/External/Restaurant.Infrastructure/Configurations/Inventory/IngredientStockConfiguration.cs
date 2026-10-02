@@ -28,6 +28,8 @@ namespace Restaurant.Infrastructure.Configurations.Inventory
                 .HasDefaultValue(0)
                 .HasColumnType("decimal(18,2)");
 
+            builder.Ignore(x => x.AvailableQuantity);
+
             builder.Property(x => x.ReorderLevel)
                 .IsRequired()
                 .HasDefaultValue(0)

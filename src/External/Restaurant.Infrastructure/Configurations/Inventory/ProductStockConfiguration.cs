@@ -36,6 +36,8 @@ namespace Restaurant.Infrastructure.Configurations.Inventory
             builder.HasIndex(x => new { x.BranchId, x.ProductId })
                 .IsUnique();
 
+            builder.Ignore(x => x.AvailableQuantity);
+
             builder.HasOne(x => x.Product)
                 .WithMany(x => x.ProductStocks)
                 .HasForeignKey(x => x.ProductId)

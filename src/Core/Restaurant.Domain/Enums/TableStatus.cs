@@ -7,7 +7,6 @@ namespace Restaurant.Domain.Enums
     {
         Available,
         Occupied,
-        Cleaning,
         Maintenance,
         Inactive
     }

@@ -9,7 +9,6 @@ namespace Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllBy
     {
         public GetAllReservationsByCustomerSpecification(GetAllReservationsByCustomerQuery query)
         {
-            AddInclude(x => x.Branch);
             AddIncludeAggregator(x => x.Include(r => r.Customer)
                                         .ThenInclude(c => c!.User));
 

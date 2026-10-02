@@ -1,5 +1,6 @@
 using AutoMapper;
 using Restaurant.Application.Features.Schedule.Reservations.Commands.Create;
+using Restaurant.Application.Features.Schedule.Reservations.Commands.UpdateByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAll;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetAllByCustomer;
 using Restaurant.Application.Features.Schedule.Reservations.Queries.GetByCode;
@@ -64,16 +65,19 @@ namespace Restaurant.Infrastructure.Services.Schedule
             GetAllReservationsByCustomerSpecification specification,
             CancellationToken cancellationToken = default)
         {
-            var customer = await _customerRepository.FindByUserIdAsync(query.UserId, cancellationToken);
+            var customer = await _customerRepository
+                .FindByUserIdAsync(query.UserId, cancellationToken);
             if(customer is null)
             {
                 return PageResult<IEnumerable<ReservationMinimalResponse>>
                     .Fail(Error.NotFound("Customer"), HttpStatusCode.NotFound);
             }
 
-            var totalItems = await _reservationRepository.CountAsync(specification, cancellationToken);
+            var totalItems = await _reservationRepository
+                .CountAsync(specification, cancellationToken);
 
-            var reservations = await _reservationRepository.ToListAsync(specification, cancellationToken);
+            var reservations = await _reservationRepository
+                .ToListAsync(specification, cancellationToken);
 
             var response = _mapper.Map<IEnumerable<ReservationMinimalResponse>>(reservations);
             return PageResult<IEnumerable<ReservationMinimalResponse>>
@@ -206,6 +210,22 @@ namespace Restaurant.Infrastructure.Services.Schedule
 
             return Result<List<ReservationTable>>
                 .Succeed(reservationTables, string.Empty);
+        }
+
+        public async Task<Result<ReservationMinimalResponse>> UpdateByCustomerAsync(
+            UpdateReservationByCustomerCommand command,
+            UpdateReservationByCustomerSpecification specification,
+            CancellationToken cancellationToken = default)
+        {
+            var reservation = await _reservationRepository.FindAsync(specification, cancellationToken);
+            if (reservation is null)
+            {
+                return Result<ReservationMinimalResponse>
+                    .Fail(Error.NotFound("Reservation"), HttpStatusCode.NotFound);
+            }
+
+            _mapper.Map(command.Body, reservation);
+            throw new NotImplementedException();
         }
     }
 }
