@@ -1,5 +1,4 @@
 using AutoMapper;
-using Restaurant.Contract.DTOs.Catalog.Categories;
 using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 using Restaurant.Domain.Entities.Catalog;
 

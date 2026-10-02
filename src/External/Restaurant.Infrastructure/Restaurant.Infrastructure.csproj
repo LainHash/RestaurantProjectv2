@@ -40,6 +40,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Configurations\Schedule\" />
+	  <Folder Include="Services\Production\" />
 	</ItemGroup>
 
 </Project>

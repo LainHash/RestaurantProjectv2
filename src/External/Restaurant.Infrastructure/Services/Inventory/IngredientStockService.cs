@@ -8,7 +8,6 @@ using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Models.Messages;
 using Restaurant.Domain.Models.Results;
-using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Domain.Repositories.Inventory;
 using Restaurant.Domain.Repositories.Territory;
 using System.Net;

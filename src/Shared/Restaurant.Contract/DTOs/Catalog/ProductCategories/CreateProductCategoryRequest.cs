@@ -1,4 +1,4 @@
-﻿namespace Restaurant.Contract.DTOs.Catalog.Categories
+﻿namespace Restaurant.Contract.DTOs.Catalog.ProductCategories
 {
     public class CreateProductCategoryRequest
     {

@@ -12,7 +12,6 @@ using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Pricing;
-using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Schedule;
 using Restaurant.Domain.Entities.Storage;

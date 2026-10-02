@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Restaurant.Domain.Entities.Catalog;
-using Restaurant.Domain.Repositories.Catalog;
 using Restaurant.Infrastructure.Repositories;
 using Restaurant.Infrastructure.Context;
+using Restaurant.Domain.Entities.Inventory;
+using Restaurant.Domain.Repositories.Inventory;
 
 namespace Restaurant.Infrastructure.Repositories.Catalog
 {

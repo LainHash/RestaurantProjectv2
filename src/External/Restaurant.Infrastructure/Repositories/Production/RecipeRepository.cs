@@ -1,5 +1,5 @@
-﻿using Restaurant.Domain.Entities.Production;
-using Restaurant.Domain.Repositories.Production;
+﻿using Restaurant.Domain.Entities.Inventory;
+using Restaurant.Domain.Repositories.Inventory;
 using Restaurant.Infrastructure.Context;
 
 namespace Restaurant.Infrastructure.Repositories.Production

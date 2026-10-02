@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Restaurant.Application.Services.Business;
-using Restaurant.Domain.Entities.Catalog;
+using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Infrastructure.Context;
 using Restaurant.Seeding.DataRecords.Catalog;
 

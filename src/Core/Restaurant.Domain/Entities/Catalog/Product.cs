@@ -2,7 +2,6 @@
 using Restaurant.Domain.Entities.Commerce;
 using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Pricing;
-using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Entities.Sale;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Enums;

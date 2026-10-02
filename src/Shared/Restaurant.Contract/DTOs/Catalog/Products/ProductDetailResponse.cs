@@ -1,6 +1,5 @@
-﻿using Restaurant.Contract.DTOs.Production.Recipes;
+﻿using Restaurant.Contract.DTOs.Inventory.Recipes;
 using Restaurant.Contract.DTOs.Storage.Images;
-using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Enums;
 
 namespace Restaurant.Contract.DTOs.Catalog.Products

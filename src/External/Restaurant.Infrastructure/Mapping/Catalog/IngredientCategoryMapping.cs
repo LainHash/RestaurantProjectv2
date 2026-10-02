@@ -1,6 +1,6 @@
 using AutoMapper;
-using Restaurant.Contract.DTOs.Catalog.IngredientCategories;
-using Restaurant.Domain.Entities.Catalog;
+using Restaurant.Contract.DTOs.Inventory.IngredientCategories;
+using Restaurant.Domain.Entities.Inventory;
 
 namespace Restaurant.Infrastructure.Mapping.Catalog
 {

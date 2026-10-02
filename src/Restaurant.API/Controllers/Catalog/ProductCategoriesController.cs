@@ -8,7 +8,7 @@ using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Restore
 using Restaurant.Application.Features.Catalog.ProductCategories.Commands.Update;
 using Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetAll;
 using Restaurant.Application.Features.Catalog.ProductCategories.Queries.GetById;
-using Restaurant.Contract.DTOs.Catalog.Categories;
+using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 
 namespace Restaurant.API.Controllers.Catalog
 {

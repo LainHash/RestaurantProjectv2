@@ -1,0 +1,77 @@
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Restaurant.API.Extensions;
+using Restaurant.Application.Features.Inventory.Recipes.Queries.GetAll;
+using Restaurant.Application.Features.Inventory.Recipes.Commands.AddIngredient;
+using Restaurant.Application.Features.Inventory.Recipes.Commands.Create;
+using Restaurant.Application.Features.Inventory.Recipes.Commands.Update;
+using Restaurant.Application.Features.Inventory.Recipes.Queries.GetById;
+using Restaurant.Contract.DTOs.Inventory.Recipes;
+using Restaurant.Contract.DTOs.Inventory.RecipeIngredients;
+
+namespace Restaurant.API.Controllers.Inventory
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class RecipesController(IMediator mediator) : ControllerBase
+    {
+        private readonly IMediator _mediator = mediator;
+
+        [Authorize(Roles = "SuperAdmin,Admin,Manager,Chef")]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [FromQuery] GetAllRecipesQuery query,
+            CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize(Roles = "SuperAdmin,Admin,Manager,Chef")]
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(
+            [FromRoute] Guid id,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetRecipeByIdQuery(id);
+            var result = await _mediator.Send(query, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize(Roles = "SuperAdmin,Admin,Chef")]
+        [HttpPost]
+        public async Task<IActionResult> Create(
+            [FromBody] CreateRecipeRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new CreateRecipeCommand(body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize(Roles = "SuperAdmin,Admin,Chef")]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] Guid id,
+            [FromBody] UpdateRecipeRequest body,
+            CancellationToken cancellationToken)
+        {
+            var command = new UpdateRecipeCommand(id, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+
+        [Authorize(Roles = "SuperAdmin,Admin,Chef")]
+        [HttpPatch("{id}/ingredients")]
+        public async Task<IActionResult> AddIngredient(
+            [FromRoute] Guid id,
+            [FromBody] IEnumerable<AddRecipeIngredientRequest> body,
+            CancellationToken cancellationToken)
+        {
+            var command = new AddRecipeIngredientCommand(id, body);
+            var result = await _mediator.Send(command, cancellationToken);
+            return this.ToActionResult(result);
+        }
+    }
+}

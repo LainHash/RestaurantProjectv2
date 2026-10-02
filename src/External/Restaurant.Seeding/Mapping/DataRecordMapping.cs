@@ -1,12 +1,10 @@
 using AutoMapper;
-using CloudinaryDotNet.Core;
 using Restaurant.Domain.Entities.Catalog;
 using Restaurant.Domain.Entities.Guest;
 using Restaurant.Domain.Entities.Identity;
 using Restaurant.Domain.Entities.Inventory;
 using Restaurant.Domain.Entities.Personnel;
 using Restaurant.Domain.Entities.Pricing;
-using Restaurant.Domain.Entities.Production;
 using Restaurant.Domain.Entities.Storage;
 using Restaurant.Domain.Entities.Territory;
 using Restaurant.Domain.Enums;
