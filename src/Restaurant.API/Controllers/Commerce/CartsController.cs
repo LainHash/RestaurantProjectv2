@@ -10,7 +10,7 @@ using Restaurant.Contract.DTOs.Commerce.CartItems;
 
 namespace Restaurant.API.Controllers.Commerce
 {
-    [Route("api/[controller]")]
+    [Route("api/commerce/[controller]")]
     [ApiController]
     public class CartsController(
         IMediator mediator,

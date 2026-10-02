@@ -12,7 +12,7 @@ using Restaurant.Contract.DTOs.Catalog.ProductCategories;
 
 namespace Restaurant.API.Controllers.Catalog
 {
-    [Route("api/[controller]")]
+    [Route("api/catalog/categories")]
     [ApiController]
     public class ProductCategoriesController(IMediator mediator) : ControllerBase
     {

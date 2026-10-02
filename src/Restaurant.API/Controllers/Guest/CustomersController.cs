@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace Restaurant.API.Controllers.Guest
 {
-    [Route("api/[controller]")]
+    [Route("api/guest/[controller]")]
     [ApiController]
     [Authorize]
     public class CustomersController(

@@ -9,11 +9,10 @@ using Restaurant.Application.Features.Identity.Roles.Commands.Update;
 using Restaurant.Application.Features.Identity.Roles.Queries.GetAll;
 using Restaurant.Application.Features.Identity.Roles.Queries.GetById;
 using Restaurant.Contract.DTOs.Identity.Roles;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Restaurant.API.Controllers.Identity
 {
-    [Route("api/[controller]")]
+    [Route("api/identity/[controller]")]
     [ApiController]
     public class RolesController(IMediator mediator) : ControllerBase
     {

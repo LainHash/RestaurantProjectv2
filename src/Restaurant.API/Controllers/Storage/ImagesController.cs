@@ -6,7 +6,7 @@ using Restaurant.Application.Features.Storage.Images.Queries.GetAll;
 
 namespace Restaurant.API.Controllers.Storage
 {
-    [Route("api/[controller]")]
+    [Route("api/storage/[controller]")]
     [ApiController]
     public class ImagesController(IMediator mediator) : ControllerBase
     {

@@ -12,7 +12,7 @@ using Restaurant.Contract.DTOs.Inventory.RecipeIngredients;
 
 namespace Restaurant.API.Controllers.Inventory
 {
-    [Route("api/[controller]")]
+    [Route("api/inventory/[controller]")]
     [ApiController]
     public class RecipesController(IMediator mediator) : ControllerBase
     {

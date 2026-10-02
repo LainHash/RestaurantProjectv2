@@ -17,7 +17,7 @@ using Restaurant.Contract.DTOs.Storage.Images;
 
 namespace Restaurant.API.Controllers.Catalog
 {
-    [Route("api/[controller]")]
+    [Route("api/catalog/[controller]")]
     [ApiController]
     public class ProductsController(IMediator mediator) : ControllerBase
     {

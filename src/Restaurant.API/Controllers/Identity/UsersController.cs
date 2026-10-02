@@ -3,17 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.API.Extensions;
 using Restaurant.Application.DTOs.Identity.Users;
-using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.CompleteProfile;
-using Restaurant.Application.Features.Identity.PersonalProfiles.Commands.Update;
 using Restaurant.Application.Features.Identity.Users.Commands.CreateForEmployee;
 using Restaurant.Application.Features.Identity.Users.Queries.GetAll;
 using Restaurant.Application.Features.Identity.Users.Queries.GetById;
-using Restaurant.Contract.DTOs.Identity.PersonalProfiles;
-using System.Security.Claims;
 
 namespace Restaurant.API.Controllers.Identity
 {
-    [Route("api/[controller]")]
+    [Route("api/identity/[controller]")]
     [ApiController]
     public class UsersController(IMediator mediator) : ControllerBase
     {

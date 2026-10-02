@@ -12,7 +12,7 @@ using Restaurant.Contract.DTOs.Personnel.Departments;
 
 namespace Restaurant.API.Controllers.Personnel
 {
-    [Route("api/[controller]")]
+    [Route("api/personnel/[controller]")]
     [ApiController]
     public class DepartmentsController(IMediator mediator) : ControllerBase
     {

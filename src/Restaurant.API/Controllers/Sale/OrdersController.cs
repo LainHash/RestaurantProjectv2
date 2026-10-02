@@ -13,7 +13,7 @@ using Restaurant.Contract.DTOs.Sale.Orders;
 namespace Restaurant.API.Controllers.Sale
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/sale/[controller]")]
     [ApiController]
     public class OrdersController(
         IMediator mediator,

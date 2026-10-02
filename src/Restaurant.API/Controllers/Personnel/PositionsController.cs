@@ -12,7 +12,7 @@ using Restaurant.Contract.DTOs.Personnel.Positions;
 
 namespace Restaurant.API.Controllers.Personnel
 {
-    [Route("api/[controller]")]
+    [Route("api/personnel/[controller]")]
     [ApiController]
     public class PositionsController(IMediator mediator) : ControllerBase
     {

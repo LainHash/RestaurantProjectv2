@@ -12,7 +12,7 @@ using Restaurant.Contract.DTOs.Territory.Areas;
 
 namespace Restaurant.API.Controllers.Territory
 {
-    [Route("api/[controller]")]
+    [Route("api/territory/[controller]")]
     [ApiController]
     public class AreasController(IMediator mediator) : ControllerBase
     {

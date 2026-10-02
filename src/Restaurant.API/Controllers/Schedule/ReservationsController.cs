@@ -13,7 +13,7 @@ using Restaurant.Contract.DTOs.Schedule.Reservations;
 
 namespace Restaurant.API.Controllers.Schedule
 {
-    [Route("api/[controller]")]
+    [Route("api/schedule/[controller]")]
     [ApiController]
     public class ReservationsController(
         IMediator mediator,

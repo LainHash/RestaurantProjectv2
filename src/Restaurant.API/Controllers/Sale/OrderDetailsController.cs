@@ -10,7 +10,7 @@ using Restaurant.Application.Features.Sale.OrderPreparations.Commands.Serve;
 namespace Restaurant.API.Controllers.Sale
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/sale/[controller]")]
     [ApiController]
     public class OrderDetailsController(IMediator mediator) : ControllerBase
     {

@@ -11,7 +11,7 @@ using Restaurant.Application.Features.Pricing.Discounts.Queries.GetAll;
 
 namespace Restaurant.API.Controllers.Pricing
 {
-    [Route("api/[controller]")]
+    [Route("api/pricing/[controller]")]
     [ApiController]
     public class DiscountsController(IMediator mediator) : ControllerBase
     {

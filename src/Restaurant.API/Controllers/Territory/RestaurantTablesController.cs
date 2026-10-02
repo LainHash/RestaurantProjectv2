@@ -10,7 +10,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Restaurant.API.Controllers.Territory
 {
-    [Route("api/[controller]")]
+    [Route("api/territory/[controller]")]
     [ApiController]
     public class RestaurantTablesController(IMediator mediator) : ControllerBase
     {

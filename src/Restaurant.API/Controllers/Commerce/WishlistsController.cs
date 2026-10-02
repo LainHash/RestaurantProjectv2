@@ -12,7 +12,7 @@ using System.Security.Claims;
 
 namespace Restaurant.API.Controllers.Commerce
 {
-    [Route("api/[controller]")]
+    [Route("api/commerce/[controller]")]
     [ApiController]
     public class WishlistsController(
         IMediator mediator,

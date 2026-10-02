@@ -10,7 +10,7 @@ using Restaurant.Contract.DTOs.Billing.Invoices;
 namespace Restaurant.API.Controllers.Billing
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("api/billing/[controller]")]
     [ApiController]
     public class InvoicesController(IMediator mediator) : ControllerBase
     {

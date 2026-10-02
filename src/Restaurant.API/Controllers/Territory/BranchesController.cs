@@ -7,7 +7,7 @@ using Restaurant.Application.Features.Territory.Branches.Queries.GetById;
 
 namespace Restaurant.API.Controllers.Territory
 {
-    [Route("api/[controller]")]
+    [Route("api/territory/[controller]")]
     [ApiController]
     public class BranchesController(IMediator mediator) : ControllerBase
     {
